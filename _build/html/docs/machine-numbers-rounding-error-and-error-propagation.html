@@ -1,0 +1,1430 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.2. Machine Numbers, Rounding Error and Error Propagation &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.3. Partial Pivoting" href="linear-equations-2-pivoting.html" />
+    <link rel="prev" title="3.1. Row Reduction/Gaussian Elimination" href="linear-equations-1-row-reduction.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/machine-numbers-rounding-error-and-error-propagation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/machine-numbers-rounding-error-and-error-propagation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overview">
+   Overview
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#robustness-and-well-posedness">
+   Robustness and well-posedness
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#rounding-error-and-accuracy-problems-due-to-loss-of-significance">
+   Rounding error and accuracy problems due to “loss of significance”
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#refine-to-get-a-more-robust-algorithm">
+     2. Refine to get a more
+     <strong>
+      robust
+     </strong>
+     algorithm
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-essentials-of-machine-numbers-and-rounding-in-machine-arithmetic">
+   The essentials of machine numbers and rounding in machine arithmetic
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#binary-floating-point-machine-numbers">
+     Binary floating point machine numbers
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#worst-case-rounding-error">
+     Worst case rounding error
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#rounding-error-in-the-mantissa-1-b-1-b-2-dots-b-p-1-2">
+       Rounding error in the mantissa,
+       <span class="math notranslate nohighlight">
+        \((1. b_1 b_2 \dots b_{p-1})_2\)
+       </span>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#rounding-error-in-general-for-pm-1-b-1-b-2-dots-b-p-1-2-cdot-2-e">
+       Rounding error in general, for
+       <span class="math notranslate nohighlight">
+        \( \pm (1. b_1 b_2 \dots b_{p-1})_2 \cdot 2^e\)
+       </span>
+       .
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ieee-64-bit-numbers-more-details-and-some-experiments">
+     IEEE 64-bit numbers: more details and some experiments
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#propagation-of-error-in-arithmetic">
+   Propagation of error in arithmetic
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#notation-x-a-x-1-delta-x-for-errors-and-fl-x-for-rounding">
+     Notation:
+     <span class="math notranslate nohighlight">
+      \(x_a = x(1 + \delta_x)\)
+     </span>
+     for errors and
+     <span class="math notranslate nohighlight">
+      \(fl(x)\)
+     </span>
+     for rounding
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#propagation-of-error-in-products">
+     Propagation of error in products
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#propagation-or-error-in-sums-of-positive-numbers">
+     Propagation or error in sums (of positive numbers)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#propagation-or-error-in-differences-of-positive-numbers-loss-of-significance-loss-of-precision">
+     Propagation or error in differences (of positive numbers): loss of significance/loss of precision
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#upper-and-lower-bounds-on-the-relative-error-in-subtraction">
+     Upper and lower bounds on the relative error in subtraction
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#conclusions-from-this-example">
+     Conclusions from this example
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2">
+     Exercise 2
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-3">
+     Exercise 3
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Machine Numbers, Rounding Error and Error Propagation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#overview">
+   Overview
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#robustness-and-well-posedness">
+   Robustness and well-posedness
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#rounding-error-and-accuracy-problems-due-to-loss-of-significance">
+   Rounding error and accuracy problems due to “loss of significance”
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#refine-to-get-a-more-robust-algorithm">
+     2. Refine to get a more
+     <strong>
+      robust
+     </strong>
+     algorithm
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-essentials-of-machine-numbers-and-rounding-in-machine-arithmetic">
+   The essentials of machine numbers and rounding in machine arithmetic
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#binary-floating-point-machine-numbers">
+     Binary floating point machine numbers
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#worst-case-rounding-error">
+     Worst case rounding error
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#rounding-error-in-the-mantissa-1-b-1-b-2-dots-b-p-1-2">
+       Rounding error in the mantissa,
+       <span class="math notranslate nohighlight">
+        \((1. b_1 b_2 \dots b_{p-1})_2\)
+       </span>
+      </a>
+     </li>
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#rounding-error-in-general-for-pm-1-b-1-b-2-dots-b-p-1-2-cdot-2-e">
+       Rounding error in general, for
+       <span class="math notranslate nohighlight">
+        \( \pm (1. b_1 b_2 \dots b_{p-1})_2 \cdot 2^e\)
+       </span>
+       .
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#ieee-64-bit-numbers-more-details-and-some-experiments">
+     IEEE 64-bit numbers: more details and some experiments
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#propagation-of-error-in-arithmetic">
+   Propagation of error in arithmetic
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#notation-x-a-x-1-delta-x-for-errors-and-fl-x-for-rounding">
+     Notation:
+     <span class="math notranslate nohighlight">
+      \(x_a = x(1 + \delta_x)\)
+     </span>
+     for errors and
+     <span class="math notranslate nohighlight">
+      \(fl(x)\)
+     </span>
+     for rounding
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#propagation-of-error-in-products">
+     Propagation of error in products
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#propagation-or-error-in-sums-of-positive-numbers">
+     Propagation or error in sums (of positive numbers)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#propagation-or-error-in-differences-of-positive-numbers-loss-of-significance-loss-of-precision">
+     Propagation or error in differences (of positive numbers): loss of significance/loss of precision
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#upper-and-lower-bounds-on-the-relative-error-in-subtraction">
+     Upper and lower bounds on the relative error in subtraction
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#conclusions-from-this-example">
+     Conclusions from this example
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2">
+     Exercise 2
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-3">
+     Exercise 3
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="machine-numbers-rounding-error-and-error-propagation">
+<h1><span class="section-number">3.2. </span>Machine Numbers, Rounding Error and Error Propagation<a class="headerlink" href="#machine-numbers-rounding-error-and-error-propagation" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Sections 0.3 <em>Floating Point Represenation of Real Numbers</em> and 0.4 *<em>Loss of Sinnificance</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 1.2 <em>Round-off Errors and Computer Arithmetic</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Sections 1.3 and 1.4 of <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">#</a></h2>
+<p>The naive Gaussian elimination algorithm seen in <a class="reference internal" href="linear-equations-1-row-reduction.html"><span class="doc">Row Reduction/Gaussian Elimination</span></a>.
+has several related weaknesses which make it less robust and flexible than desired.</p>
+<p>Most obviously, it can fail even when the equations are solvable, due to its naive insistence on always working from the top down.
+For example, as seen in
+<a class="reference internal" href="linear-equations-1-row-reduction.html#example-obvious-division-by-zero">Example 3.1</a>
+of that section, it fails with the system</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[ \begin{array}{cc} 0 &amp; 1 \\ 1 &amp; 1 \end{array} \right] \left[ \begin{array}{c} x_1 \\ x_2 \end{array} \right] = \left[ \begin{array}{c} 1 \\ 2 \end{array} \right]
+\end{split}\]</div>
+<p>because the formula for the first multiplier <span class="math notranslate nohighlight">\(l_{2,1} = a_{2,1}/a_{1,1}\)</span> gives <span class="math notranslate nohighlight">\(1/0\)</span>.</p>
+<p>Yet the equations are easily solvable, indeed with no reduction needed:
+the first equation just says <span class="math notranslate nohighlight">\(x_2 = 1\)</span>, and then the second gives <span class="math notranslate nohighlight">\(x_1 = 2 - x_2 = 1\)</span>.</p>
+<p>All one has to do here to avoid this problem is change the order of the equations.
+Indeed we will see that such reordering is <em>all that one ever needs to do,</em> so long as the original equation has a unique solution.</p>
+<p>However, to develop a good strategy, we will also take account of errors introduced by rounding in computer arithmetic, so that is our next topic.</p>
+</section>
+<section id="robustness-and-well-posedness">
+<h2>Robustness and well-posedness<a class="headerlink" href="#robustness-and-well-posedness" title="Permalink to this headline">#</a></h2>
+<p>The above claim raises the concept of <strong>robustness</strong> and the importance of both existence and uniqueness of solutions.</p>
+<div class="proof definition admonition" id="well-posed">
+<p class="admonition-title"><span class="caption-number">Definition 3.3 </span> (Well-Posed)</p>
+<section class="definition-content" id="proof-content">
+<p>A problem is <strong>well-posed</strong> if it is stated in a way that it has a unique solution.
+(Note that this might include asking for the set of all solutions, such as asking for all roots of a polynomial.)</p>
+</section>
+</div><p>For example, the problem of finding the root of a continuous, monotonic function
+<span class="math notranslate nohighlight">\(f:[a, b] \to \mathbb{R}\)</span>
+with <span class="math notranslate nohighlight">\(f(a)\)</span> and <span class="math notranslate nohighlight">\(f(b)\)</span> of opposite sign is well-posed.
+Note the care taken with details to ensure both existence and uniqueness of the solution.</p>
+<div class="proof definition admonition" id="robust">
+<p class="admonition-title"><span class="caption-number">Definition 3.4 </span> (Robust)</p>
+<section class="definition-content" id="proof-content">
+<p>An algorithm for solving a class of problems is <strong>robust</strong> if it is guaranteed to solve any well-posed problem in the class.</p>
+</section>
+</div><p>For example, the bisection method is robust for the above class of problems.
+On the other hand, Newton’s method is not, and if we dropped the specification of monotonicity (so allowing multiple solutons) then the bisection method in its current form would not be robust: it would fail whenever there is more that one solution in the interval <span class="math notranslate nohighlight">\([a, b]\)</span>.</p>
+</section>
+<section id="rounding-error-and-accuracy-problems-due-to-loss-of-significance">
+<h2>Rounding error and accuracy problems due to “loss of significance”<a class="headerlink" href="#rounding-error-and-accuracy-problems-due-to-loss-of-significance" title="Permalink to this headline">#</a></h2>
+<p>There is a second slightly less obvious problem with the naive algorithm for Guassian elimination, closely related to the first.
+As soon as the algorithm is implemented using any rounding in the arithmetic (rather than, say, working with exact arithmetic on rational numbers) division by values that are very close to zero can lead to very large intermediate values, which thus have very few correct decimals (correct bits); that is, very large absolute errors.
+These large errors can then propagate, leading to low accuracy in the final results,
+as seen in
+<a class="reference internal" href="linear-equations-1-row-reduction.html#example-less-obvious-division-by-zero">Example 3.2</a>
+and
+<a class="reference internal" href="linear-equations-1-row-reduction.html#example-avoiding-small-denominators">Example 3.4</a>
+of
+<a class="reference internal" href="linear-equations-1-row-reduction.html"><span class="doc">Row Reduction/Gaussian Elimination</span></a></p>
+<p>This is the hazard of <em>loss of significance</em>, discussed in
+Section 0.4 of <span id="id4">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>
+and
+Section 1.4 of <span id="id5">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p>
+<p>So it is time to take Step 2 of the strategy described in the previous notes:</p>
+<section id="refine-to-get-a-more-robust-algorithm">
+<h3>2. Refine to get a more <strong>robust</strong> algorithm<a class="headerlink" href="#refine-to-get-a-more-robust-algorithm" title="Permalink to this headline">#</a></h3>
+<ol class="simple">
+<li><p>Identify cases that can lead to failure due to division by zero and such, and revise to avoid them.</p></li>
+<li><p>Avoid inaccuracy due to problems like severe rounding error. One rule of thumb is that anywhere that a zero value is a fatal flaw (in particular, division by zero), a very small value is also a hazard when rounding error is present. So avoid very small denominators. …</p></li>
+</ol>
+</section>
+</section>
+<section id="the-essentials-of-machine-numbers-and-rounding-in-machine-arithmetic">
+<h2>The essentials of machine numbers and rounding in machine arithmetic<a class="headerlink" href="#the-essentials-of-machine-numbers-and-rounding-in-machine-arithmetic" title="Permalink to this headline">#</a></h2>
+<p>As a very quick summary, standard computer arithmetic handles real numbers using <em>binary machine numbers</em> with <span class="math notranslate nohighlight">\(p\)</span> significant bits, and rounding off of other numbers to such <em>machine numbers</em> introduces a relative error of at most <span class="math notranslate nohighlight">\(2^{-p}\)</span>.
+The current dominant choice for machine numbers and arithmetic is IEEE-64, using 64 bits in total and with
+<span class="math notranslate nohighlight">\(p=53\)</span>
+significant bits, so that
+<span class="math notranslate nohighlight">\(1/2^p \approx 1.11 \cdot 10^{-16}\)</span>,
+giving about fifteen significant digits.
+(The other bits are used for an exponent and the sign.)</p>
+<p>(Note: in the above, I ignore the extra problems with real numbers whose magnitude is too large or too small to be represented: <em>underflow</em> and <em>overflow</em>.
+Since the allowable range of magnitudes is from <span class="math notranslate nohighlight">\(2^{-1022} \approx 2.2 \cdot 10^{-308}\)</span> to
+<span class="math notranslate nohighlight">\(2^{1024} \approx 1.8 \cdot 10^{308}\)</span>, this is rarely a problem in practice.)</p>
+<p>With other systems of binary machine numbers (like older 32-bit versions, or higher precision options like 128 bits) the significant differences are mostly encapsulated in that one number, the <strong>machine unit</strong>, <span class="math notranslate nohighlight">\(u = 1/2^p\)</span>.</p>
+<section id="binary-floating-point-machine-numbers">
+<h3>Binary floating point machine numbers<a class="headerlink" href="#binary-floating-point-machine-numbers" title="Permalink to this headline">#</a></h3>
+<p>The basic representation is a binary version of the familiar <em>scientific</em> or <em>decimal floating point</em> notation:
+in place of the form
+<span class="math notranslate nohighlight">\(\pm d_0 . d_1 d_2 \dots d_{p-1} \times 10^e\)</span>
+where the <em>fractional part</em> or <em>mantissa</em> is
+<span class="math notranslate nohighlight">\(f = d_0 . d_1 d_2 \dots d_{p-1} = d_0 + \frac{d_1}{10} + \cdots + \frac{d_{p-1}}{10^{p-1}}\)</span>.</p>
+<p><strong>Binary floating point machine numbers</strong> with <span class="math notranslate nohighlight">\(p\)</span> significant bits can be described as</p>
+<div class="math notranslate nohighlight">
+\[
+\pm (b_0. b_1 b_2 \dots b_{p-1})_2 \times 2^e
+= \pm \left( b_0 + \frac{b_1}{2} + \frac{b_2}{2^2} + \cdots \frac{b_{p-1}}{2^{p-1}} \right) \times 2^e
+\]</div>
+<p>Just as decimal floating point numbers are typically written with the exponent chosen to have non-zero leading digit <span class="math notranslate nohighlight">\(d_0 \neq 0\)</span>, <strong>normalized</strong> binary floating point machine numbers have exponent <span class="math notranslate nohighlight">\(e\)</span> chosen so that <span class="math notranslate nohighlight">\(b_0 \neq 0\)</span>.
+Thus in fact <span class="math notranslate nohighlight">\(b_0=1\)</span> — and so it need not be stored; only <span class="math notranslate nohighlight">\(p-1\)</span> bits are needed to stored for the mantissa.</p>
+</section>
+<section id="worst-case-rounding-error">
+<h3>Worst case rounding error<a class="headerlink" href="#worst-case-rounding-error" title="Permalink to this headline">#</a></h3>
+<p>It turns out that the relative errors are determined solely by the number of significant bits in the mantissa, regardless of the exponent, so we look at that part first.</p>
+<section id="rounding-error-in-the-mantissa-1-b-1-b-2-dots-b-p-1-2">
+<h4>Rounding error in the mantissa, <span class="math notranslate nohighlight">\((1. b_1 b_2 \dots b_{p-1})_2\)</span><a class="headerlink" href="#rounding-error-in-the-mantissa-1-b-1-b-2-dots-b-p-1-2" title="Permalink to this headline">#</a></h4>
+<p>The spacing of consecutive mantissa values <span class="math notranslate nohighlight">\((1. b_1 b_2 \dots b_{p-1})_2\)</span> is one in the last bit, or <span class="math notranslate nohighlight">\(2^{1-p}\)</span>.
+Thus rounding of any intermediate value <span class="math notranslate nohighlight">\(x\)</span> to the nearest number of this form introduces an absolute error of at most half of this: <span class="math notranslate nohighlight">\(u = 2^{-p}\)</span>, which is called the <em>machine unit</em></p>
+<p>How large can the <em>relative</em> error be?
+It is largest for the smallest possible denominator, which is <span class="math notranslate nohighlight">\((1.00 \dots 0)_2 = 1\)</span>, so the relative error due to rounding is also at most <span class="math notranslate nohighlight">\(2^{-p}\)</span>.</p>
+</section>
+<section id="rounding-error-in-general-for-pm-1-b-1-b-2-dots-b-p-1-2-cdot-2-e">
+<h4>Rounding error in general, for <span class="math notranslate nohighlight">\( \pm (1. b_1 b_2 \dots b_{p-1})_2 \cdot 2^e\)</span>.<a class="headerlink" href="#rounding-error-in-general-for-pm-1-b-1-b-2-dots-b-p-1-2-cdot-2-e" title="Permalink to this headline">#</a></h4>
+<p>The sign has no effect on the absolute error, and the exponent changes the spacing of consecutive machine numbers by a factor of <span class="math notranslate nohighlight">\(2^e\)</span>.
+This scales the maximum possible absolute error to <span class="math notranslate nohighlight">\(2^{e-p}\)</span>, but in the relative error calculation, the smallest possible denominator is also scaled up to <span class="math notranslate nohighlight">\(2^e\)</span>, so the largest possible relative error is again the machine unit, <span class="math notranslate nohighlight">\(u = 2^{-p}\)</span>.</p>
+<p>One way to describe the machine unit u (sometimes called <em>machine epsilon</em>) is to note that the next number above <span class="math notranslate nohighlight">\(1\)</span> is <span class="math notranslate nohighlight">\(1 + 2^{1-p} = 1 + 2u\)</span>.
+Thus <span class="math notranslate nohighlight">\(1+u\)</span> is at the threshold between rounding down to 1 and rounding up to a higher value.</p>
+</section>
+</section>
+<section id="ieee-64-bit-numbers-more-details-and-some-experiments">
+<h3>IEEE 64-bit numbers: more details and some experiments<a class="headerlink" href="#ieee-64-bit-numbers-more-details-and-some-experiments" title="Permalink to this headline">#</a></h3>
+<p>For completely full details, you could read about the
+<a class="reference external" href="https://en.wikipedia.org/wiki/IEEE_754">IEEE 754 Standard for Floating-Point Arithmetic</a>
+and specifically the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format">binary64</a>
+case.
+(For historical reasons, this is known as “Double-precision floating-point format”,
+from the era when computers were typicaly used 32-bit words, so 64-bit numbers needed two words.)</p>
+<p>In the standard IEEE-64 number system:</p>
+<ul class="simple">
+<li><p>64 bit words are used to store real numbers (a.k.a. <em>floating point</em> numbers, sometimes called <em>floats</em>.)</p></li>
+<li><p>There are <span class="math notranslate nohighlight">\(p=53\)</span> bits of precision, so that 52 bits are used to store the mantissa (fractional part).</p></li>
+<li><p>The sign is stored with one bit <span class="math notranslate nohighlight">\(s\)</span>: effectively a factor of <span class="math notranslate nohighlight">\((-1)^s\)</span>, so <span class="math notranslate nohighlight">\(s=0\)</span> for positive, <span class="math notranslate nohighlight">\(s=1\)</span> for negative.</p></li>
+<li><p>The remaining 11 bits are use for the exponent, which allows for <span class="math notranslate nohighlight">\(2^{11} = 2048\)</span> possibilities;
+these are chosen in the range <span class="math notranslate nohighlight">\(-1023 \leq e \leq 1024\)</span>.</p></li>
+<li><p>However, so far, this does not allow for the value zero!
+This is handled by giving a special meaning for the smallest exponent <span class="math notranslate nohighlight">\(e=-1023\)</span>, so the smallest exponent for <em>normalized</em> numbers is <span class="math notranslate nohighlight">\(e = -1022\)</span>.</p></li>
+<li><p>At the other extreme, the largest exponent <span class="math notranslate nohighlight">\(e=1024\)</span> is used to encode “infinite” numbers, which can arise when a calculation gives a value too large to represent (displayed as <code class="docutils literal notranslate"><span class="pre">inf</span></code> and <code class="docutils literal notranslate"><span class="pre">-inf</span></code>).
+This exponent is also used to encode “Not a Number”, for situations like trying to divide zero by zero or multiply zero by <code class="docutils literal notranslate"><span class="pre">inf</span></code> (displayed as <code class="docutils literal notranslate"><span class="pre">NaN</span></code>).</p></li>
+<li><p>Thus, the exponential factors for normlaized numbers are in the range <span class="math notranslate nohighlight">\(2^{-1022} \approx 2 \times 10^{-308}\)</span> to <span class="math notranslate nohighlight">\(2^{1023} \approx 9 \times 10^{307}\)</span>.
+Since the mantissa ranges from 1 to just under 2, the range of magnitudes of normalized real numbers is thus from <span class="math notranslate nohighlight">\(2^{-1022} \approx 2 \times 10^{-308}\)</span> to just under <span class="math notranslate nohighlight">\(2^{1024} \approx 1.8 \times 10^{308}\)</span>.</p></li>
+</ul>
+<p>Some computational experiments:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="mi">53</span>
+<span class="n">u</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;For IEEE-64 arithmetic, there are </span><span class="si">$</span><span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="s"> bits of precision and the machine unit is u=</span><span class="si">$</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="s">.&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The next numbers above 1 are 1+2u = </span><span class="si">$</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="p">)</span><span class="s">, 1+4u = </span><span class="si">$</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">4</span><span class="o">*</span><span class="n">u</span><span class="p">)</span><span class="s"> and so on.&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">factor</span> <span class="k">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">1.00000000001</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">one_plus_small</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">u</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;1 + </span><span class="si">$</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span><span class="s">u rounds to </span><span class="si">$</span><span class="p">(</span><span class="n">one_plus_small</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">difference</span> <span class="o">=</span> <span class="n">one_plus_small</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">This is more than 1 by </span><span class="si">$</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span><span class="s">, which is </span><span class="si">$</span><span class="p">(</span><span class="n">difference</span><span class="o">/</span><span class="n">u</span><span class="p">)</span><span class="s"> times u&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>For IEEE-64 arithmetic, there are 53 bits of precision and the machine unit is u=1.1102230246251565e-16.
+The next numbers above 1 are 1+2u = 1.0000000000000002, 1+4u = 1.0000000000000004 and so on.
+1 + 3.0u rounds to 1.0000000000000004
+	This is more than 1 by 4.440892098500626e-16, which is 4.0 times u
+1 + 2.0u rounds to 1.0000000000000002
+	This is more than 1 by 2.220446049250313e-16, which is 2.0 times u
+1 + 1.00000000001u rounds to 1.0000000000000002
+	This is more than 1 by 2.220446049250313e-16, which is 2.0 times u
+1 + 1.0u rounds to 1.0
+	This is more than 1 by 0.0, which is 0.0 times u
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;On the other side, the spacing is halved:&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;the next numbers below 1 are 1-u = </span><span class="si">$</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">u</span><span class="p">)</span><span class="s">, 1-2u = </span><span class="si">$</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">u</span><span class="p">)</span><span class="s"> and so on.&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">factor</span> <span class="k">in</span> <span class="p">[</span><span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.00000000001</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">one_minus_small</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">u</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;1 - </span><span class="si">$</span><span class="p">(</span><span class="n">factor</span><span class="p">)</span><span class="s">u rounds to </span><span class="si">$</span><span class="p">(</span><span class="n">one_minus_small</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">difference</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">one_minus_small</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">This is less than 1 by </span><span class="si">$</span><span class="p">(</span><span class="n">difference</span><span class="p">)</span><span class="s">, which is </span><span class="si">$</span><span class="p">(</span><span class="n">difference</span><span class="o">/</span><span class="n">u</span><span class="p">)</span><span class="s"> times u &quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>On the other side, the spacing is halved:
+the next numbers below 1 are 1-u = 0.9999999999999999, 1-2u = 0.9999999999999998 and so on.
+1 - 2.0u rounds to 0.9999999999999998
+	This is less than 1 by 2.220446049250313e-16, which is 2.0 times u 
+1 - 1.0u rounds to 0.9999999999999999
+	This is less than 1 by 1.1102230246251565e-16, which is 1.0 times u 
+1 - 0.500000000005u rounds to 0.9999999999999999
+	This is less than 1 by 1.1102230246251565e-16, which is 1.0 times u 
+1 - 0.5u rounds to 1.0
+	This is less than 1 by 0.0, which is 0.0 times u 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, look at the extremes of very small and very large magnitudes:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;The smallest normalized positive number is 2^(-1022)=</span><span class="si">$</span><span class="p">(</span><span class="mf">2.0</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">1022</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The largest mantissa is binary (1.1111...) with 53 ones: 2 - 2^(-52)=</span><span class="si">$</span><span class="p">(</span><span class="mi">2</span><span class="o">-</span><span class="mf">2.0</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">52</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The largest normalized number is (2 - 2^(-52))*2^1023=</span><span class="si">$</span><span class="p">((</span><span class="mi">2</span> <span class="o">-</span> <span class="mf">2.0</span><span class="o">^</span><span class="p">(</span><span class="o">-</span><span class="mi">52</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">2.0</span><span class="o">^</span><span class="mi">1023</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;If instead we round that mantissa up to 2 and try again, we get 2*2^1023=</span><span class="si">$</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="mf">2.0</span><span class="o">^</span><span class="mi">1023</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The smallest normalized positive number is 2^(-1022)=2.2250738585072014e-308
+The largest mantissa is binary (1.1111...) with 53 ones: 2 - 2^(-52)=1.9999999999999998
+The largest normalized number is (2 - 2^(-52))*2^1023=1.7976931348623157e308
+If instead we round that mantissa up to 2 and try again, we get 2*2^1023=Inf
+</pre></div>
+</div>
+</div>
+</div>
+<p>What happens if we compute positive numbers smaller than that smallest normalized positive number <span class="math notranslate nohighlight">\(2^{-1022}\)</span>?</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">S</span> <span class="k">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">51</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">53</span><span class="p">]</span>
+    <span class="n">exponent</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1022</span><span class="o">-</span><span class="n">S</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;2^(-1022-</span><span class="si">$</span><span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="s">) = 2^(</span><span class="si">$</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span><span class="s">) = </span><span class="si">$</span><span class="p">(</span><span class="mf">2.0</span><span class="o">^</span><span class="p">(</span><span class="n">exponent</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2^(-1022-0) = 2^(-1022) = 2.2250738585072014e-308
+2^(-1022-1) = 2^(-1023) = 1.1125369292536007e-308
+2^(-1022-2) = 2^(-1024) = 5.562684646268003e-309
+2^(-1022-51) = 2^(-1073) = 1.0e-323
+2^(-1022-52) = 2^(-1074) = 5.0e-324
+2^(-1022-53) = 2^(-1075) = 0.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>These extremely small values are called <em>denormalized numbers</em>.
+Numbers with exponent <span class="math notranslate nohighlight">\(2^{-1022-S}\)</span> have fractional part with <span class="math notranslate nohighlight">\(S\)</span> leading zeros, so only <span class="math notranslate nohighlight">\(p-S\)</span> significant bits.
+So when the shift <span class="math notranslate nohighlight">\(S\)</span> reaches <span class="math notranslate nohighlight">\(p=53\)</span>, there are no significant bits left, and the value is truly zero.</p>
+</section>
+</section>
+<section id="propagation-of-error-in-arithmetic">
+<h2>Propagation of error in arithmetic<a class="headerlink" href="#propagation-of-error-in-arithmetic" title="Permalink to this headline">#</a></h2>
+<p>The only errors in the results of Gaussian elimination come from errors in the initial data (<span class="math notranslate nohighlight">\(a_{ij}\)</span> and <span class="math notranslate nohighlight">\(b_i\)</span>) and from when the results of subsequent arithmetic operations are rounded to machine numbers.
+Here, we consider how errors from either source are propagated — and perhaps amplified — in subsequent arithmetic operations and rounding.</p>
+<p>In summary:</p>
+<ul class="simple">
+<li><p>When <em>multiplying</em> two numbers, the relative error in the sum is no worse than slightly more than the sum of the relative errors in the numbers multiplied. (the be pedantic, it is at most the sum of those relative plus their product, but that last piece is typically far smaller.)</p></li>
+<li><p>When <em>dividing</em> two numbers, the relative error in the quotient is again no worse than slightly more than the sum of the relative errors in the numbers divided.</p></li>
+<li><p>When <em>adding</em> two <strong>positive</strong> numbers, the relative error is no more that the larger of the relative errors in the numbers added, and the absolute error in the sum is no larger than the sum of the absolute errors.</p></li>
+<li><p>When <em>subtracting</em> two <strong>positive</strong> numbers, the absolute error is again no larger than the sum of the absolute errors in the numbers subtracted, <strong>but the relative error can get far worse!</strong></p></li>
+</ul>
+<p>Due to the differences between the last two cases, this discussion of error propagation will use “addition” to refer only to adding numbers of the same sign, and “subtraction” when subtracting numbers of the same sign.</p>
+<p>More generally, we can think of rewriting the operation in terms of a pair of numbers that are both positive, and assume WLOG that all input values are positive numbers.</p>
+<section id="notation-x-a-x-1-delta-x-for-errors-and-fl-x-for-rounding">
+<h3>Notation: <span class="math notranslate nohighlight">\(x_a = x(1 + \delta_x)\)</span> for errors and <span class="math notranslate nohighlight">\(fl(x)\)</span> for rounding<a class="headerlink" href="#notation-x-a-x-1-delta-x-for-errors-and-fl-x-for-rounding" title="Permalink to this headline">#</a></h3>
+<p>Two notations will be useful.</p>
+<p>Firstly, for any approximation <span class="math notranslate nohighlight">\(x_a\)</span> of a real value <span class="math notranslate nohighlight">\(x\)</span>, let
+<span class="math notranslate nohighlight">\(\displaystyle\delta_x = \frac{x_a - x}{x}\)</span>, so that <span class="math notranslate nohighlight">\(x_a = x(1 + \delta_x)\)</span>.</p>
+<p>Thus, <span class="math notranslate nohighlight">\(|\delta_x|\)</span> is the relative error, and <span class="math notranslate nohighlight">\(\delta_x\)</span> helps keep track of the sign of the error.</p>
+<p>Also, introduce the function <span class="math notranslate nohighlight">\(fl(x)\)</span> which does rounding to the nearest machine number.
+For the case of the approximation <span class="math notranslate nohighlight">\(x_a = fl(x)\)</span> to <span class="math notranslate nohighlight">\(x\)</span> given by rounding, the above results on machine numbers then give the bound <span class="math notranslate nohighlight">\(|\delta_x| \leq u = 2^{-p}\)</span>.</p>
+</section>
+<section id="propagation-of-error-in-products">
+<h3>Propagation of error in products<a class="headerlink" href="#propagation-of-error-in-products" title="Permalink to this headline">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> be exact quantities, and <span class="math notranslate nohighlight">\(x_a = x(1 + \delta_x)\)</span>, <span class="math notranslate nohighlight">\(y_a = y(1 + \delta_y)\)</span> be approximations.
+The approximate product <span class="math notranslate nohighlight">\((xy)_a = x_a y_a = x(1 + \delta_x) y(1 + \delta_y)\)</span> has error</p>
+<div class="math notranslate nohighlight">
+\[ x (1 + \delta_x) y (1 + \delta_y) - xy = xy(1 + \delta_x + \delta_y + \delta_x \delta_y), = xy(1 + \delta_{xy}) \]</div>
+<p>Thus the relative error in the product is</p>
+<div class="math notranslate nohighlight">
+\[ |\delta_{xy}| \leq |\delta_x| + |\delta_y| + |\delta_x| |\delta_y| \]</div>
+<p>For example if the initial errors are due only to rounding,
+<span class="math notranslate nohighlight">\(|\delta_x| \leq u - 2^{-p}\)</span> and similarly for <span class="math notranslate nohighlight">\(|\delta_y|\)</span>,
+so the relative error in <span class="math notranslate nohighlight">\(x_a y_a\)</span> is at most <span class="math notranslate nohighlight">\(2u + u^2 = 2^{1-p} + 2^{-2p}\)</span>.
+In this and most situations, that final “product of errors” term <span class="math notranslate nohighlight">\(\delta_x \delta_y\)</span> is far smaller than the first two, giving to a very good approximation</p>
+<div class="math notranslate nohighlight" id="equation-product-error-bound">
+<span class="eqno">(3.1)<a class="headerlink" href="#equation-product-error-bound" title="Permalink to this equation">#</a></span>\[ |\delta_{xy}| \leq |\delta_x| + |\delta_y| \]</div>
+<p>This is the above stated “sum of relative errors” result.</p>
+<p>When the “input errors” in <span class="math notranslate nohighlight">\(x_a\)</span> and <span class="math notranslate nohighlight">\(y_a\)</span> come just from rounding to machine numbers, so that each has <span class="math notranslate nohighlight">\(p\)</span> bits of precision, <span class="math notranslate nohighlight">\(|\delta_x|, |\delta_y| \leq 1/2^p\)</span> and the error bound for the product is <span class="math notranslate nohighlight">\(1/2^{p-1}\)</span>: at most one bit of precision is lost.</p>
+<p>See <a class="reference external" href="#exercise-1">Exercise 1</a>.</p>
+</section>
+<section id="propagation-or-error-in-sums-of-positive-numbers">
+<h3>Propagation or error in sums (of positive numbers)<a class="headerlink" href="#propagation-or-error-in-sums-of-positive-numbers" title="Permalink to this headline">#</a></h3>
+<p>With <span class="math notranslate nohighlight">\(x_a\)</span> and <span class="math notranslate nohighlight">\(y_a\)</span> as above (and positive), the approximate sum <span class="math notranslate nohighlight">\(x_a + y_a\)</span> has error</p>
+<div class="math notranslate nohighlight">
+\[ (x_a + y_a) - (x + y) = (x_a - x) + (y_a - y) \]</div>
+<p>so the absolute error is bounded by <span class="math notranslate nohighlight">\(|x_a - x| + |y_a - y|\)</span>; the sum of the absolute errors.</p>
+<p>For the relative errors, express this error as</p>
+<div class="math notranslate nohighlight">
+\[ (x_a + y_a) - (x + y) = ( x(1 + \delta_x) + y(1 + \delta_y)) = x \delta_x + y \delta_y \]</div>
+<p>Let <span class="math notranslate nohighlight">\(\delta\)</span> be the maximum or the relative errors, <span class="math notranslate nohighlight">\(\delta = \max(|\delta_x|, |\delta_y|)\)</span>;
+then the absolute error is at most <span class="math notranslate nohighlight">\((|x| + |y|) \delta = (x+y)\delta\)</span> and so the relative error is at most</p>
+<div class="math notranslate nohighlight" id="equation-sum-relative-error-bound">
+<span class="eqno">(3.2)<a class="headerlink" href="#equation-sum-relative-error-bound" title="Permalink to this equation">#</a></span>\[ \frac{(x + y) \delta}{|x+y|} = \delta = \max(|\delta_x|, |\delta_y|) \]</div>
+<p>That is, <em>the relative error in the sum is at most the sum of the relative errors</em>, again as advertised above.</p>
+<p>When the “input errors” in <span class="math notranslate nohighlight">\(x_a\)</span> and <span class="math notranslate nohighlight">\(y_a\)</span> come just from rounding to machine numbers, the error bound for the sum is no larger: no precision is lost!
+Thus, if you take any collection of non-negative numbers, round the to machine numbers so that each has relative error at must <span class="math notranslate nohighlight">\(u\)</span>, then the sum of these rounded values also has relative error at most <span class="math notranslate nohighlight">\(u\)</span>.</p>
+</section>
+<section id="propagation-or-error-in-differences-of-positive-numbers-loss-of-significance-loss-of-precision">
+<h3>Propagation or error in differences (of positive numbers): loss of significance/loss of precision<a class="headerlink" href="#propagation-or-error-in-differences-of-positive-numbers-loss-of-significance-loss-of-precision" title="Permalink to this headline">#</a></h3>
+<p>The above calculation for the absolute error works fine regardless of the signs of the numbers, so the absolute error of a difference is still bounded by the sum of the absolute errors:</p>
+<div class="math notranslate nohighlight">
+\[ |(x_a - y_a) - (x - y)| \leq |x_a - x| + |y_a - y| \]</div>
+<p>But for subtraction, the denominator in the relative error formulas can be far smaller.
+WLOG let <span class="math notranslate nohighlight">\(x &gt; y &gt; 0\)</span>.
+The relative error bound is</p>
+<div class="math notranslate nohighlight" id="equation-difference-relative-error-bound">
+<span class="eqno">(3.3)<a class="headerlink" href="#equation-difference-relative-error-bound" title="Permalink to this equation">#</a></span>\[ \frac{|(x_a - y_a) - (x - y)|}{|x - y|} \leq \frac{x \delta_x + y \delta_y}{x - y} \]</div>
+<p>Clearly if <span class="math notranslate nohighlight">\(x-y\)</span> is far smaller than <span class="math notranslate nohighlight">\(x\)</span> or <span class="math notranslate nohighlight">\(y\)</span>, this can be far larger than the “input” relative errors
+<span class="math notranslate nohighlight">\(|\delta_x|\)</span> and <span class="math notranslate nohighlight">\(|\delta_y|\)</span>.</p>
+<p>The extreme case is where the values <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> round to the same value, so that <span class="math notranslate nohighlight">\(x_a - y_a = 0\)</span>, and the relative error is 1: “100% error”, a case of <em>catastrophic cancellation.</em></p>
+<p>See <a class="reference external" href="#exercise-2">Exercise 2</a>.</p>
+</section>
+<section id="upper-and-lower-bounds-on-the-relative-error-in-subtraction">
+<h3>Upper and lower bounds on the relative error in subtraction<a class="headerlink" href="#upper-and-lower-bounds-on-the-relative-error-in-subtraction" title="Permalink to this headline">#</a></h3>
+<p>The problem is worst when <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> are close in relative terms, in that <span class="math notranslate nohighlight">\(y/x\)</span> is close to 1.
+In the case of the errors in <span class="math notranslate nohighlight">\(x_a\)</span> and <span class="math notranslate nohighlight">\(y_a\)</span> coming just from rounding to machine enumbers, we have:</p>
+<div class="proof theorem admonition" id="theorem-loss-of-precision">
+<p class="admonition-title"><span class="caption-number">Theorem 3.2 </span> (Loss of Precision)</p>
+<section class="theorem-content" id="proof-content">
+<p>Consider <span class="math notranslate nohighlight">\(x &gt; y &gt; 0\)</span> that are close in that they agree in at least <span class="math notranslate nohighlight">\(q\)</span> significant bits and at most <span class="math notranslate nohighlight">\(r\)</span> significant bits:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{2^r} &lt; 1 - \frac{y}{x} &lt; \frac{1}{2^q}.\]</div>
+<p>Then when rounded to machine numbers which are then subtracted, the relative error in that approximation of the difference is greater than that due to rounding by a factor of between <span class="math notranslate nohighlight">\(2^q\)</span> and <span class="math notranslate nohighlight">\(2^r\)</span>.</p>
+<p>That is, subtraction loses between <span class="math notranslate nohighlight">\(q\)</span> and <span class="math notranslate nohighlight">\(r\)</span> significant bits of precision.</p>
+</section>
+</div><p>See <a class="reference external" href="#exercise-3">Exercise 3</a>.</p>
+<div class="proof example admonition" id="errors-when-approximating-derivatives">
+<p class="admonition-title"><span class="caption-number">Example 3.5 </span> (Errors when approximating derivatives)</p>
+<section class="example-content" id="proof-content">
+<p>To deal with differential equations, we will need to approximate the derivative of function from just some values of the function itself.
+The simplest approach is suggested by the definition of the derivative</p>
+<div class="math notranslate nohighlight">
+\[Df(x) = \lim_{h \to 0}\frac{f(x+h) - f(x)}{h}\]</div>
+<p>by using</p>
+<div class="math notranslate nohighlight">
+\[Df(x) \approx D_h f(x) := \frac{f(x+h) - f(x)}{h}\]</div>
+<p>with a small value of <span class="math notranslate nohighlight">\(h\)</span> — but this inherently involves the difference of almost equal quantities, and so loss of significance.</p>
+<p>Taylor’s theorem give an error bound if we assume exact arithmetic — worse for larger <span class="math notranslate nohighlight">\(h\)</span>.
+Then the above results give a measure of rounding error effects — worse for smaller <span class="math notranslate nohighlight">\(h\)</span>.</p>
+<p>This leads to the need to balance these error sources, to find an optimal choice for <span class="math notranslate nohighlight">\(h\)</span> and the corresponding error bound.</p>
+<p>Denote the error in approximately calculating <span class="math notranslate nohighlight">\(D_h f(x)\)</span> with machine arithmetic as <span class="math notranslate nohighlight">\(\tilde{D}_h f(x)\)</span>.</p>
+<p>The error in this as an approximating of the exact derivative is</p>
+<div class="math notranslate nohighlight">
+\[E = \tilde{D}_h f(x) -  D f(x) = (\tilde{D}_h f(x) - D_h f(x)) + (D_h f(x) -  D f(x))\]</div>
+<p>which we will consider as the sum of two pieces, <span class="math notranslate nohighlight">\(E = E_A + E_D\)</span> where</p>
+<div class="math notranslate nohighlight">
+\[E_A = \tilde{D}_h f(x) -  D_h f(x)\]</div>
+<p>is the error due to machine <strong>A</strong>rithmetic in evaluation of the difference quotient <span class="math notranslate nohighlight">\(D_h f(x)\)</span>, and</p>
+<div class="math notranslate nohighlight">
+\[E_D = D_h f(x) -  D f(x)\]</div>
+<p>is the error in this difference quotient as an approximation of the exact derivative <span class="math notranslate nohighlight">\(D f(x), = f'(x)\)</span>.
+This error is sometimes called the <strong>discretization error</strong> because it arises whe we replace the derivative by a discrete algebraic calculation.</p>
+<p><strong>Bounding the Arithmetic error <span class="math notranslate nohighlight">\(E_A\)</span></strong></p>
+<p>The first source of error is rounding of <span class="math notranslate nohighlight">\(f(x)\)</span> to a machine number;
+as seen above, this gives
+<span class="math notranslate nohighlight">\(f(x) (1 + \delta_1)\)</span>, with <span class="math notranslate nohighlight">\(|\delta_1| \leq u\)</span>, so absolute error <span class="math notranslate nohighlight">\(|f(x) \delta_1| \leq |f(x)| u\)</span>.</p>
+<p>Similarly, <span class="math notranslate nohighlight">\(f(x+h)\)</span> is rounded to <span class="math notranslate nohighlight">\(f(x+h) (1 + \delta_2)\)</span>, absolute error at most <span class="math notranslate nohighlight">\(|f(x+h)| u\)</span>.</p>
+<p>Since we are interested in fairly small values of <span class="math notranslate nohighlight">\(h\)</span> (to keep <span class="math notranslate nohighlight">\(E_D\)</span> under control),
+we can assume that <span class="math notranslate nohighlight">\(|f(x+h)| \approx |f(x)|\)</span>, so this second absolute error is also very close to <span class="math notranslate nohighlight">\(|f(x)| u\)</span>.</p>
+<p>Then the absolute error in the difference in the numerator of <span class="math notranslate nohighlight">\(D_h f(x)\)</span> is at most
+<span class="math notranslate nohighlight">\(2 |f(x)| u\)</span> (or only a tiny bit greater).</p>
+<p>Next the division.
+We can assume that <span class="math notranslate nohighlight">\(h\)</span> is an exact machine number, for example by choosing <span class="math notranslate nohighlight">\(h\)</span> to be a power of two, so that division by <span class="math notranslate nohighlight">\(h\)</span> simply shifts the power of two in the exponent part of the machine number.
+This has no effect on on the relative error, but scales the absolute error by the factor <span class="math notranslate nohighlight">\(1/h\)</span> by which one is multiplying: the absolute error is now bounded by</p>
+<div class="math notranslate nohighlight">
+\[|E_A| \leq \frac{2 |f(x)| u}{h}\]</div>
+<p>This is a critical step: the difference has a small absolute error, which conceals a large relative error due to the difference being small; now the absolute error gets amplified greatly when <span class="math notranslate nohighlight">\(h\)</span> is small.</p>
+<p><strong>Bounding the Discretization error <span class="math notranslate nohighlight">\(E_D\)</span></strong></p>
+<p>As seen in <a class="reference internal" href="taylors-theorem.html"><span class="doc">Taylor’s Theorem and the Accuracy of Linearization</span></a> — for the basic case of linearization — we have</p>
+<div class="math notranslate nohighlight">
+\[f(x+h) - f(x) = Df(x) h + \frac{f''(c_x)}{2} h^2\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[E_D = \frac{f(x+h) - f(x)}{h} = \frac{f''(c_x)}{2} h\]</div>
+<p>and with <span class="math notranslate nohighlight">\(M_2 = \max | f'' |\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[|E_D| \leq \frac{M_2}{2} h\]</div>
+<p><strong>Bounding the total absolute error, and minimizing it</strong></p>
+<p>The above results combine to give an upper limit on how bad the total error can be:</p>
+<div class="math notranslate nohighlight">
+\[ |E| \leq |E_A| + |E_D| \leq \frac{2 |f(x)| u}{h} + \frac{M_2}{2} h \]</div>
+<p>As aniticipated, the errors go in opposite directions: decreasing <span class="math notranslate nohighlight">\(h\)</span> to reduce <span class="math notranslate nohighlight">\(E_D\)</span> makes <span class="math notranslate nohighlight">\(E_A\)</span> worse, and vice versa.
+Thus we can expect that there is a “goldilocks” value of <span class="math notranslate nohighlight">\(h\)</span> — neither too small nor too big — that gives the best overall bound on the total error.</p>
+<p>To do this, let’s clean up the notation:
+let</p>
+<div class="math notranslate nohighlight">
+\[A = 2 |f(x)| u, \quad D = \frac{M_2}{2},\]</div>
+<p>so that the error bound for a given value of <span class="math notranslate nohighlight">\(h\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[ E(h) = \frac{A}{h} + D h \]</div>
+<p>This can be minimized with a little calculus:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d E(h)}{d h} = -\frac{A}{h^2} + D\]</div>
+<p>which is zero only for the unique critical point</p>
+<div class="math notranslate nohighlight">
+\[h = h^* = \sqrt{\frac{A}{D}} = \sqrt{\frac{2 |f(x)| u}{{M_2}/{2}}} = 2 \sqrt{\frac{|f(x)|}{M_2}} \sqrt{u}, = K \sqrt{u}\]</div>
+<p>using the short-hand <span class="math notranslate nohighlight">\(\displaystyle K = 2 \sqrt{\frac{|f(x)|}{M_2}}\)</span>.</p>
+<p>This is easily verified to give the global mimimum of <span class="math notranslate nohighlight">\(E(h)\)</span>;
+thus, the best error bound we can get is for this value of <span class="math notranslate nohighlight">\(h\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[E \leq E^* := E(h^*) = \frac{2 |f(x)| u}{K \sqrt{u}} + \frac{M_2}{2} K \sqrt{u} = \left( \frac{2 |f(x)|}{K} + K \frac{M_2}{2} \right) \sqrt{u}\]</div>
+</section>
+</div></section>
+<section id="conclusions-from-this-example">
+<h3>Conclusions from this example<a class="headerlink" href="#conclusions-from-this-example" title="Permalink to this headline">#</a></h3>
+<p>In practical cases, we do not know the constant <span class="math notranslate nohighlight">\(K\)</span> or the coefficient of <span class="math notranslate nohighlight">\(\sqrt{u}\)</span> in parentheses — but that does not matter much!</p>
+<p>The most important — and somewhat disappointing — observation here is that both the optimal size of <span class="math notranslate nohighlight">\(h\)</span> and the resulting error bound is roughly proportional to the square root of the machine unit <span class="math notranslate nohighlight">\(u\)</span>.
+For example with <span class="math notranslate nohighlight">\(p\)</span> bits of precision, <span class="math notranslate nohighlight">\(u = 2^{-p}\)</span>, the best error is of the order of <span class="math notranslate nohighlight">\(2^{-p/2}\)</span>, or about <span class="math notranslate nohighlight">\(p/2\)</span> significant bits: at best we can hope for about half as many signnificant bits as our machine arithmetic gives.</p>
+<p>In decimal terms: with IEEE-64 arithmetic <span class="math notranslate nohighlight">\(u = 2^{-53} \approx 10^{-16}\)</span>, so giving about sixteen significant digits,
+and <span class="math notranslate nohighlight">\(\sqrt{u} \approx 10^{-8}\)</span>, so <span class="math notranslate nohighlight">\(\tilde{D}_h f(x)\)</span> can only be expected to give about half as many; eight significant digits.</p>
+<p>This is a first indication of why machine arithmetic sometimes needs to be so precise — more precise than any physical measurement by a factor of well over a thousand.</p>
+<p>It also shows that when we get to computing derivatives and solving differential equations, we will often need to do a better job of approximating derivatives!</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-1"></a></p>
+<section id="exercise-1">
+<h3>Exercise 1<a class="headerlink" href="#exercise-1" title="Permalink to this headline">#</a></h3>
+<p>Derive the rule for quotients corresponding to the result for products.</p>
+<p><a name="exercise-2"></a></p>
+</section>
+<section id="exercise-2">
+<h3>Exercise 2<a class="headerlink" href="#exercise-2" title="Permalink to this headline">#</a></h3>
+<p>Let us move slightly away from the worst case scenario where the difference is exactly zero to one where it is close to zero;
+this will illustrate the idea mentioned earlier that
+<em>whereever a zero value is a problem in exact arithmetic, a very small value can be a problem in approximate arithmetic.</em></p>
+<p>For <span class="math notranslate nohighlight">\(x = 8.024\)</span> and <span class="math notranslate nohighlight">\(y = 8.006\)</span>,</p>
+<ul class="simple">
+<li><p>Round  each to three significant figures, giving <span class="math notranslate nohighlight">\(x_a\)</span> and <span class="math notranslate nohighlight">\(y_a\)</span>.</p></li>
+<li><p>Compute the absolute errors in each of these approximations, and in their difference as an approximation of <span class="math notranslate nohighlight">\(x - y\)</span>.</p></li>
+<li><p>Compute the relative errors in each of these three approximations.</p></li>
+</ul>
+<p>Then look at rounding to only two significant digits!</p>
+<p><a name="exercise-3"></a></p>
+</section>
+<section id="exercise-3">
+<h3>Exercise 3<a class="headerlink" href="#exercise-3" title="Permalink to this headline">#</a></h3>
+<p>(a) Illustrate why computing the roots of the quadratic equation <span class="math notranslate nohighlight">\(ax^2 + bx + c = 0\)</span> with the standard formula</p>
+<div class="math notranslate nohighlight">
+\[x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}\]</div>
+<p>can sometimes give poor accuracy when evaluated using machine arithmetic such as IEEE-64 floating-point arithmetic.
+This is not alwys a problem, so identify specifically the situations when this could occur, in terms of a condition on the coefficents <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, and <span class="math notranslate nohighlight">\(c\)</span>.
+(It is sufficient to consider real value of the ocefficients.
+Also as an aside, there is no loss of precision problem when the roots are non-real,
+so you only need consider quadratics with real roots.)</p>
+<p>(b) Then describe a careful procedure for always getting accurate answers.
+State the procedure first with words and mathematical formulas, and then express it in pseudo-code.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="linear-equations-1-row-reduction.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3.1. </span>Row Reduction/Gaussian Elimination</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="linear-equations-2-pivoting.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.3. </span>Partial Pivoting</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

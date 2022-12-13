@@ -1,0 +1,994 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.8. Faster Methods for Solving \(Ax = b\) for Tridiagonal and Banded matrices, and Strict Diagonal Dominance &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond" href="eigenproblems.html" />
+    <link rel="prev" title="3.7. Iterative Methods for Simultaneous Linear Equations" href="linear-equations-6-iterative-methods.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tridiagonal-systems">
+   Tridiagonal systems
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#algorithms">
+   Algorithms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#generalizing-to-banded-matrices">
+   Generalizing to banded matrices
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#eliminating-redundant-calculation-in-the-above">
+     Eliminating redundant calculation in the above
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#strict-diagonal-dominance-helps-again">
+   Strict diagonal dominance helps again
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Faster Methods for Solving Ax = b for Tridiagonal and Banded matrices, and Strict Diagonal Dominance</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tridiagonal-systems">
+   Tridiagonal systems
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#algorithms">
+   Algorithms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#generalizing-to-banded-matrices">
+   Generalizing to banded matrices
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#eliminating-redundant-calculation-in-the-above">
+     Eliminating redundant calculation in the above
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#strict-diagonal-dominance-helps-again">
+   Strict diagonal dominance helps again
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="faster-methods-for-solving-ax-b-for-tridiagonal-and-banded-matrices-and-strict-diagonal-dominance">
+<h1><span class="section-number">3.8. </span>Faster Methods for Solving <span class="math notranslate nohighlight">\(Ax = b\)</span> for Tridiagonal and Banded matrices, and Strict Diagonal Dominance<a class="headerlink" href="#faster-methods-for-solving-ax-b-for-tridiagonal-and-banded-matrices-and-strict-diagonal-dominance" title="Permalink to this headline">#</a></h1>
+<p><strong>Reference:</strong></p>
+<p>Section 6.6 <em>Special Types of Matrices</em> in  <span id="id1">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>,
+the sub-sections on <em>Band Matrices</em> and <em>Tridiagonal Matrices</em>.</p>
+<section id="tridiagonal-systems">
+<h2>Tridiagonal systems<a class="headerlink" href="#tridiagonal-systems" title="Permalink to this headline">#</a></h2>
+<p>Differential equations often lead to the need to solve systems of equations <span class="math notranslate nohighlight">\(T x = b\)</span> where the matrix <span class="math notranslate nohighlight">\(T\)</span> is <strong>tri-diagonal</strong>:
+the only non-zero elements are on the main diagonal and the diagonals adjacent to it on either side, so that <span class="math notranslate nohighlight">\(T_{i,j} = 0\)</span> if <span class="math notranslate nohighlight">\(|i - j| &gt; 1\)</span>.
+That is, the system looks like:</p>
+<div class="proof definition admonition" id="definition-tridiagonal">
+<p class="admonition-title"><span class="caption-number">Definition 3.8 </span> (Tridiagonal matrix)</p>
+<section class="definition-content" id="proof-content">
+<p>A matrix <span class="math notranslate nohighlight">\(T\)</span> is <strong>tridiagonal</strong> if the only non-zero elements are on the main diagonal and the diagonals adjacent to it on either side, so that <span class="math notranslate nohighlight">\(T_{i,j} = 0\)</span> if <span class="math notranslate nohighlight">\(|i - j| &gt; 1\)</span>.
+That is, the system looks like:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+T x =
+\left[\begin{array}{cccccc}
+d_1 &amp; u_1 \\ l_1 &amp; d_2 &amp; u_2 &amp; \\ &amp; l_2 &amp; d_3 &amp; u_3\\&amp;&amp; \ddots &amp; \ddots &amp; \ddots\\&amp;&amp;&amp; l_{n-2} &amp; d_{n-1} &amp; u_{n-1}\\&amp;&amp;&amp;&amp; l_{n-1} &amp; d_{n}\end{array}\right]
+\left[\begin{array}{c}x_1\\x_2\\\vdots\\x_n \end{array}\right]
+= \left[\begin{array}{c}b_1\\b_2\\\vdots\\b_n\end{array}\right]
+\end{split}\]</div>
+<p>with all “missing” entries being zeros.
+The notation used here suggests one efficient way to store such a matrix: as three 1D arrays <span class="math notranslate nohighlight">\(d\)</span>, <span class="math notranslate nohighlight">\(l\)</span> and <span class="math notranslate nohighlight">\(u\)</span>.</p>
+</section>
+</div><p>(Such equations also arise in other important situations, such as <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html#spline-interpolation"><span class="std std-ref">Spline Interpolation</span></a>.)</p>
+<p>It can be verified that LU factorization preserves all the non-zero values, so that the Doolittle algorithm — if it succeeds without any division by zero — gives <span class="math notranslate nohighlight">\(T = L U\)</span> with the form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+L = \left[\begin{array}{cccccc}
+1 \\
+L_1 &amp; 1 \\
+&amp; L_2 &amp; 1 \\
+&amp;&amp; \ddots &amp; \ddots \\
+&amp;&amp;&amp; L_{n-2} &amp; 1 \\
+&amp;&amp;&amp;&amp; L_{n-1} &amp; 1
+\end{array}\right],
+\;
+U = \left[\begin{array}{cccccc}
+D_1 &amp; u_1 \\
+&amp; D_2 &amp; u_2 \\
+&amp;&amp; D_3 &amp; u_3 \\
+&amp;&amp;&amp; \ddots &amp; \ddots \\
+&amp;&amp;&amp;&amp; D_{n-1} &amp; u_{n-1} \\
+&amp;&amp;&amp;&amp;&amp; D_n
+\end{array}\right]
+\end{split}\]</div>
+<p>Note that the first non-zero element in each column is unchanged, as with a full matrix, but now it means that the upper diagonal elements <span class="math notranslate nohighlight">\(u_i\)</span> are unchanged.</p>
+<p>Again, one way to describe and store this information is with just the two new 1D arrays <span class="math notranslate nohighlight">\(L\)</span> and <span class="math notranslate nohighlight">\(D\)</span>, along with the unchanged array <span class="math notranslate nohighlight">\(u\)</span>.</p>
+</section>
+<section id="algorithms">
+<h2>Algorithms<a class="headerlink" href="#algorithms" title="Permalink to this headline">#</a></h2>
+<div class="proof algorithm admonition" id="lu-factorization">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.9 </span> (LU factorization)</p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(D_1 = d_1\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad L_{i-1} = l_{i-1}/D_{i-1}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad D_{i} = d_{i} - L_{i-1} u_{i-1}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code></p>
+</section>
+</div><div class="proof algorithm admonition" id="forward-substitution">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.10 </span> (Forward substitution)</p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(c_1 = b_1\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad c_{i} = b_{i} - L_{i-1} c_{i-1}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code></p>
+</section>
+</div><div class="proof algorithm admonition" id="backward-substitution-redux">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.11 </span> (Backward substitution)</p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(x_n = c_n/D_n\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">n-1</span> <span class="pre">down</span> <span class="pre">to</span> <span class="pre">1</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad x_{i} = (c_{i} - u_{i} x_{i+1})/D_i\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code></p>
+</section>
+</div></section>
+<section id="generalizing-to-banded-matrices">
+<h2>Generalizing to banded matrices<a class="headerlink" href="#generalizing-to-banded-matrices" title="Permalink to this headline">#</a></h2>
+<p>As we have seen, approximating derivatives to higher order of accuracy and approximating derivatives of order greater than two requires more than three nodes, but the locations needed are all close to the ones where the derivative is being approximated.
+For example, the simplest symmetric approximation of the fourth derivative <span class="math notranslate nohighlight">\(D^4 f(x)\)</span> used values from <span class="math notranslate nohighlight">\(f(x-2h)\)</span> to <span class="math notranslate nohighlight">\(f(x+2h)\)</span>.
+Then row <span class="math notranslate nohighlight">\(i\)</span> of the corresponding matrix has all its non-zero elements at locations <span class="math notranslate nohighlight">\((i,i-2)\)</span> to <span class="math notranslate nohighlight">\((i, i+2)\)</span>: the non-zero elements lie in the narrow “band” where <span class="math notranslate nohighlight">\(|i - j| \leq 2\)</span>, and thus on five “central” diagonals.</p>
+<p>This is a <strong>penta-digonal matrix</strong>, and an example of the larger class of <strong>banded matrices</strong>: ones in which all the non-zero elements have indices <span class="math notranslate nohighlight">\( -p \leq j - i \leq q\)</span> for <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\(q\)</span> smaller than <span class="math notranslate nohighlight">\(n\)</span> — usually far smaller; <span class="math notranslate nohighlight">\(p = q = 2\)</span> for a penta-digonal matrix.</p>
+<p>Let us recap the general Doolittle algorithm for computing an LU factorization:</p>
+<div class="proof algorithm admonition" id="dolittle-general">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.12 </span> (Doolittle algorithm for computing an LU factorization)</p>
+<section class="algorithm-content" id="proof-content">
+<p><em>The top row is unchanged:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(u_{1,j} = a_{1,j}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<em>The left column requires no sums:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,1} = a_{i,1}/u_{1,1}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<br>
+<em>The main loop:</em>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">k</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,j} = a_{k,j} - \sum_{s=1}^{k-1} l_{k,s}u_{s,j}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">k+1</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,k} = \left( a_{i,k} - \sum_{s=1}^{k-1} l_{i,s}u_{s,k} \right)/u_{k,k}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code></p>
+</section>
+</div><section id="eliminating-redundant-calculation-in-the-above">
+<h3>Eliminating redundant calculation in the above<a class="headerlink" href="#eliminating-redundant-calculation-in-the-above" title="Permalink to this headline">#</a></h3>
+<p>With a banded matrix, many of the entries at right are zero, particularly in the two sums, which is where most of the operations are.
+Thus we can rewrite, exploiting the fact that all elements with indices <span class="math notranslate nohighlight">\(j-i &lt; -p\)</span> or <span class="math notranslate nohighlight">\(j-i &gt; q\)</span> are zero.
+To start with, the top diagonal is not modified, as already noted for the tridiagonal case: <span class="math notranslate nohighlight">\(u_{k,k+q} = a_{k,k+q}\)</span> for <span class="math notranslate nohighlight">\(1 \leq k \leq n-q\)</span>.</p>
+<div class="proof algorithm admonition" id="lu-banded">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.13 </span> (LU factorization of a banded matrix)</p>
+<section class="algorithm-content" id="proof-content">
+<p><em>The top row is unchanged:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">1+q</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(u_{1,j} = a_{1,j}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<em>The top non-zero diagonal is unchanged:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">q</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,k+q} = a_{k,k+q}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<em>The left column requires no sums:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">1+p</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,1} = a_{i,1}/u_{1,1}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<em>The main loop:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">k</span> <span class="pre">to</span> <span class="pre">min(n,</span> <span class="pre">k+q-1)</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,j} = a_{k,j} - \displaystyle\sum_{s=max(1, k-p, j-q)}^{k-1} l_{k,s}u_{s,j}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">k+1</span> <span class="pre">to</span> <span class="pre">min(n,k+p-1)</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,k} = \left( a_{i,k} - \displaystyle\sum_{s=max(1,i-p,k-q)}^{k-1} l_{i,s}u_{s,k} \right)/u_{k,k}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code></p>
+</section>
+</div><p>It is common for a banded matrix to have equal band-width on either side, <span class="math notranslate nohighlight">\(p=q\)</span>, as with tridiagonal and pentadiagonal matrices.
+Then the algorithm is somewhat simpler:</p>
+<div class="proof algorithm admonition" id="lu-banded-symmetric">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.14 </span> (LU factorization of a banded matrix, <span class="math notranslate nohighlight">\(p=q\)</span>)</p>
+<section class="algorithm-content" id="proof-content">
+<p><em>The top row is unchanged:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">1+p</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(u_{1,j} = a_{1,j}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br><em>The top non-zero diagonal is unchanged:</em><br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">n</span> <span class="pre">-</span> <span class="pre">p</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,k+p} = a_{k,k+p}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<em>The left column requires no sums:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">1+p</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,1} = a_{i,1}/u_{1,1}\)</span>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<br>
+<em>The main loop:</em>
+<br>
+<code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span> <span class="pre">from</span> <span class="pre">2</span> <span class="pre">to</span> <span class="pre">n</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">k</span> <span class="pre">to</span> <span class="pre">min(n,</span> <span class="pre">k+p-1)</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,j} = a_{k,j} - \displaystyle\sum_{s=max(1, j-p)}^{k-1} l_{k,s}u_{s,j}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">i</span> <span class="pre">from</span> <span class="pre">k+1</span> <span class="pre">to</span> <span class="pre">min(n,k+p)</span></code>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,k} = \left( a_{i,k} - \displaystyle\sum_{s=max(1,i-p)}^{k-1} l_{i,s}u_{s,k} \right)/u_{k,k}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <code class="docutils literal notranslate"><span class="pre">end</span></code>
+<br>
+<code class="docutils literal notranslate"><span class="pre">end</span></code></p>
+</section>
+</div></section>
+</section>
+<section id="strict-diagonal-dominance-helps-again">
+<h2>Strict diagonal dominance helps again<a class="headerlink" href="#strict-diagonal-dominance-helps-again" title="Permalink to this headline">#</a></h2>
+<p>These algorithms for banded matrices do no pivoting, and that is highly desirable, because pivoting creates non-zero elements outside the “band” and so can force one back to the general algorithm.
+Fortunately, we have seen one case where this is fine: the matrix being either row-wise or column-wise strictly diagonally dominant.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="linear-equations-6-iterative-methods.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3.7. </span>Iterative Methods for Simultaneous Linear Equations</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="eigenproblems.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.9. </span>Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

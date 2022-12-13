@@ -1,0 +1,938 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2.5. Measures of Error and Order of Convergence &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.6. The Convergence Rate of Newton’s Method" href="newtons-method-convergence-rate.html" />
+    <link rel="prev" title="2.4. Taylor’s Theorem and the Accuracy of Linearization" href="taylors-theorem.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/error-measures-convergence-rates.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/error-measures-convergence-rates.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-measures">
+   Error measures
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#backward-error-and-forward-error">
+     Backward error (and forward error)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#order-of-convergence-of-a-sequence-of-approximations">
+   Order of convergence of a sequence of approximations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#big-o-and-little-o-notation">
+   Big-O and little-o notation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#little-o-notation-for-negligibly-small-terms">
+     Little-o notation, for “negligibly small terms”
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Measures of Error and Order of Convergence</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-measures">
+   Error measures
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#backward-error-and-forward-error">
+     Backward error (and forward error)
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#order-of-convergence-of-a-sequence-of-approximations">
+   Order of convergence of a sequence of approximations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#big-o-and-little-o-notation">
+   Big-O and little-o notation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#little-o-notation-for-negligibly-small-terms">
+     Little-o notation, for “negligibly small terms”
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="measures-of-error-and-order-of-convergence">
+<h1><span class="section-number">2.5. </span>Measures of Error and Order of Convergence<a class="headerlink" href="#measures-of-error-and-order-of-convergence" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 1.3.1 <em>Forward and backward error</em> of <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>, on <em>measures of error</em>;</p></li>
+<li><p>Section 2.4 <em>Error Analysis for Iterative Methods</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>, on <em>order of convergence.</em></p></li>
+</ul>
+<p>These notes cover a number of small topics:</p>
+<ul class="simple">
+<li><p>Measures of error: absolute, relative, forward, backward, etc.</p></li>
+<li><p>Measuring the rate of convergence of a sequence of approximations.</p></li>
+<li><p>Big-O and little-o notation for describing how small a quantity (usually an error) is.</p></li>
+</ul>
+<section id="error-measures">
+<h2>Error measures<a class="headerlink" href="#error-measures" title="Permalink to this headline">#</a></h2>
+<p>Several of these have been mentioned before, but they are worth gathering here.</p>
+<p>Consider a quantity <span class="math notranslate nohighlight">\(\tilde{x}\)</span> considered as an approximation of an exact value <span class="math notranslate nohighlight">\(x\)</span>.
+(This can be a number or a vector.)</p>
+<div class="proof definition admonition" id="error-redux">
+<p class="admonition-title"><span class="caption-number">Definition 2.6 </span> (Error)</p>
+<section class="definition-content" id="proof-content">
+<p>The <strong>error</strong> in <span class="math notranslate nohighlight">\(\tilde{x}\)</span> is <span class="math notranslate nohighlight">\(\tilde{x} - x\)</span> (or  <span class="math notranslate nohighlight">\(x - \tilde{x}\)</span>;
+different sources use both versions and either is fine so long as you are <strong>consistent</strong>.)</p>
+</section>
+</div><div class="proof definition admonition" id="absolute-error">
+<p class="admonition-title"><span class="caption-number">Definition 2.7 </span> (Absolute Error)</p>
+<section class="definition-content" id="proof-content">
+<p>The <strong>absolute error</strong> is the absolute value of the error: <span class="math notranslate nohighlight">\(|\tilde{x} - x|\)</span>.
+For vector quantities this means the norm <span class="math notranslate nohighlight">\(\| \tilde{x} - x \|\)</span>,
+and it can be any norm, so long as we again choose one and use it consistently.
+Two favorites are the <em>Euclidean norm</em> <span class="math notranslate nohighlight">\(\| x \| = \sqrt{\sum |x_i|}\)</span>, denoted <span class="math notranslate nohighlight">\(\| x \|_2\)</span>,
+and the <em>maximum norm</em> (also mysteriously known at the <em>infinity norm</em>):</p>
+<div class="math notranslate nohighlight">
+\[\| x \|_\text{max} = \| x \|_\infty = \max_i |x_i|.\]</div>
+</section>
+</div><p>For real-valued quantities, the absolute error is related to the number of <strong>correct decimal places</strong>:
+<span class="math notranslate nohighlight">\(p\)</span> decimal places of accuracy corresponds roughly to absolute error no more than <span class="math notranslate nohighlight">\(0.5 \times 10^{-p}\)</span>.</p>
+<div class="proof definition admonition" id="relative-error">
+<p class="admonition-title"><span class="caption-number">Definition 2.8 </span> (Relative Error)</p>
+<section class="definition-content" id="proof-content">
+<p>The <strong>relative error</strong> is the ratio of the absolute error to the size of the exact quantity:
+<span class="math notranslate nohighlight">\(\displaystyle\frac{\| \tilde{x} - x \|}{\|x\|}\)</span> (again possibly with vector norms).</p>
+</section>
+</div><p>This is often more relevant than absolute error for inherently positive quantities,
+but is obviously unwise where <span class="math notranslate nohighlight">\(x = 0\)</span> is a possibility.
+For real-valued quantities, this is related to the number of <strong>significant digits</strong>:
+accuracy to <span class="math notranslate nohighlight">\(p\)</span> significant digits corresponds roughly to relative error no more than <span class="math notranslate nohighlight">\(0.5 \times 10^{-p}\)</span>.</p>
+<p>When working with computer arithmetic, <span class="math notranslate nohighlight">\(p\)</span> significant <strong>bits</strong> corresponds to relative error no more than <span class="math notranslate nohighlight">\(2^{-(p+1)}\)</span>.</p>
+<section id="backward-error-and-forward-error">
+<h3>Backward error (and forward error)<a class="headerlink" href="#backward-error-and-forward-error" title="Permalink to this headline">#</a></h3>
+<p>An obvious problem is that we usually do not know the exact solution <span class="math notranslate nohighlight">\(x\)</span>, so cannot evaluate any of these; instead we typically seek <strong>upper bounds</strong> on the absolute or relative error.
+Thus, when talking of approximate solutions to an equation <span class="math notranslate nohighlight">\(f(x) = 0\)</span> the concept of</p>
+<p><strong>backward error</strong> <a class="reference internal" href="newtons-method.html#backward-error">Definition 2.5</a>
+OR
+<a class="reference internal" href="newtons-method.html#backward-error">backward error</a>
+OR
+<a class="reference internal" href="newtons-method.html#backward-error">Definition 2.5</a></p>
+<p>introduced in section <a class="reference internal" href="newtons-method.html"><span class="doc">Newton’s Method for Solving Equations</span></a> can be very useful,
+for example as a step in getting bounds on the size of the error; to recap</p>
+<div class="proof definition admonition" id="backward-error-redux">
+<p class="admonition-title"><span class="caption-number">Definition 2.9 </span> (Backward Error)</p>
+<section class="definition-content" id="proof-content">
+<p>The <strong>backward error</strong> in <span class="math notranslate nohighlight">\(\tilde{x}\)</span> as an approxiate solution to the equation <span class="math notranslate nohighlight">\(f(x) = 0\)</span> is <span class="math notranslate nohighlight">\(f(\tilde{x})\)</span>;
+the amount by which function <span class="math notranslate nohighlight">\(f\)</span> would have to be changed in order for <span class="math notranslate nohighlight">\(\tilde{x}\)</span> to be an exact root.</p>
+</section>
+</div><p>For the case of solving simultaneous linear equations in matrix-vector form <span class="math notranslate nohighlight">\(A x = b\)</span>,
+this is <span class="math notranslate nohighlight">\(b - A \tilde{x}\)</span>, also known as the <strong>residual</strong>.</p>
+<div class="proof definition admonition" id="absolute-backward-error">
+<p class="admonition-title"><span class="caption-number">Definition 2.10 </span> (Absolute Backward Error)</p>
+<section class="definition-content" id="proof-content">
+<p>The absolute backward error is — as you might have guessed — the absolute value of the backward error: <span class="math notranslate nohighlight">\(|f(\tilde{x})|\)</span>.
+This is sometimes also called simply the backward error. (The usual disclaimer about vector quantities applies.)</p>
+</section>
+</div><p>For the case of solving simultaneous linear equations in matrix-vector form <span class="math notranslate nohighlight">\(A x = b\)</span>,
+this is <span class="math notranslate nohighlight">\(\| b - A \tilde{x} \|\)</span>,
+also known as the <strong>residual norm</strong>.</p>
+<div class="proof remark admonition" id="remark-5">
+<p class="admonition-title"><span class="caption-number">Remark 2.10 </span></p>
+<section class="remark-content" id="proof-content">
+<ul class="simple">
+<li><p>One obvious advantage of the backward error concept is that you can actually evaluate it without knowing the exact solution <span class="math notranslate nohighlight">\(x\)</span>.</p></li>
+<li><p>Also, one significance of backward error is that if the values of <span class="math notranslate nohighlight">\(f(x)\)</span> are only known to be accurate within an absolute error of <span class="math notranslate nohighlight">\(E\)</span> then any approximation with absolute backward error less than <span class="math notranslate nohighlight">\(E\)</span> could in fact be exact, so there is no point in seeking greater accuracy.</p></li>
+<li><p>The names <em>forward error</em> and <em>absolute forward error</em> are sometimes used as synonyms for <em>error</em> etc. as defined above, when they need to be distinguished from backward errors.</p></li>
+</ul>
+</section>
+</div></section>
+</section>
+<section id="order-of-convergence-of-a-sequence-of-approximations">
+<h2>Order of convergence of a sequence of approximations<a class="headerlink" href="#order-of-convergence-of-a-sequence-of-approximations" title="Permalink to this headline">#</a></h2>
+<div class="proof definition admonition" id="linear-convergence">
+<p class="admonition-title"><span class="caption-number">Definition 2.11 </span></p>
+<section class="definition-content" id="proof-content">
+<p>We have seen that for the sequence of approximations <span class="math notranslate nohighlight">\(x_k\)</span> to a quantity <span class="math notranslate nohighlight">\(x\)</span> given by the fixed point iteration
+<span class="math notranslate nohighlight">\(x_{k+1} = g(x_k)\)</span>, the absolute errors <span class="math notranslate nohighlight">\(E_k := |x_k - x|\)</span> typically have</p>
+<div class="math notranslate nohighlight">
+\[\frac{E_{k+1}}{E_k} \to C = |g'(x)|.\]</div>
+<p>so that eventually the errors diminsh in a roughly geometric fashion: <span class="math notranslate nohighlight">\(E_k \approx K C^k\)</span>.
+This is called <strong>linear convergence</strong>.</p>
+</section>
+</div><p><strong>Aside:</strong> Why “linear” rather than “geometric”?
+Because there is an approximately linear relationship between consecutive error values,</p>
+<div class="math notranslate nohighlight">
+\[E_{n+1} \approx C E_n.\]</div>
+<p>This is a very common behavior for iterative numerical methods, but we will also see that a few methods do even better; for example, when Newton’s method converges to a simple root <span class="math notranslate nohighlight">\(r\)</span> of <span class="math notranslate nohighlight">\(f\)</span> (one with <span class="math notranslate nohighlight">\(f'(r) \neq 0\)</span>)</p>
+<div class="math notranslate nohighlight">
+\[E_{k+1} \approx C E_k^2\]</div>
+<p>This is called <strong>quadratic convergence</strong>.
+More generally:</p>
+<div class="proof definition admonition" id="convergence-of-order-p">
+<p class="admonition-title"><span class="caption-number">Definition 2.12 </span> (convergence of order <span class="math notranslate nohighlight">\(p\)</span>)</p>
+<section class="definition-content" id="proof-content">
+<p>This is when</p>
+<div class="math notranslate nohighlight">
+\[E_{k+1} \approx C E_k^p, \text{ or more precisely, } \lim_{k \to \infty} \frac{E_{k+1}}{E_k^p} \text{ is finite.}\]</div>
+</section>
+</div><p>We have already observed experimentally the intermediate result that “<span class="math notranslate nohighlight">\(C = 0\)</span>” for Newton’s method in this case; that is,</p>
+<div class="math notranslate nohighlight" id="equation-super-linear">
+<span class="eqno">(2.7)<a class="headerlink" href="#equation-super-linear" title="Permalink to this equation">#</a></span>\[\frac{E_{k+1}}{E_k} \to 0.\]</div>
+<div class="proof definition admonition" id="super-linear">
+<p class="admonition-title"><span class="caption-number">Definition 2.13 </span> (super-linear convergence)</p>
+<section class="definition-content" id="proof-content">
+<p>When the successive errors behave as in Equation <a class="reference internal" href="#equation-super-linear">(2.7)</a> the convergence is <strong>super-linear</strong>.
+This includes any situation with order of convergence <span class="math notranslate nohighlight">\(p &gt; 1\)</span>.</p>
+</section>
+</div><p>For most practical purposes, if you have established super-linear convergence,
+you can be happy, and not worry much about refinements like the particular order <span class="math notranslate nohighlight">\(p\)</span>.</p>
+</section>
+<section id="big-o-and-little-o-notation">
+<h2>Big-O and little-o notation<a class="headerlink" href="#big-o-and-little-o-notation" title="Permalink to this headline">#</a></h2>
+<p>Consider the error formula for approximation of a function <span class="math notranslate nohighlight">\(f\)</span> with the Taylor polynomial of degree <span class="math notranslate nohighlight">\(n\)</span>, center <span class="math notranslate nohighlight">\(a\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+| f(a+h) - T_n(h) | \leq \frac{M_{n+1}}{(n+1)!} |h|^{n+1}
+\text{ where } M_{n+1} = \max |f^{(n+1)}(x)|.
+\]</div>
+<p>Since the coefficient of <span class="math notranslate nohighlight">\(h^{n+1}\)</span> is typicaly not known in practice, it is wise to focus on the power law part,
+and for this the “big-O” and little-o” notation is convenient.</p>
+<p>If a function <span class="math notranslate nohighlight">\(E(h)\)</span> goes to zero at least as fast as <span class="math notranslate nohighlight">\(h^p\)</span>, we say that it is <em>of order <span class="math notranslate nohighlight">\(h^p\)</span></em>, written <span class="math notranslate nohighlight">\(O(h^p)\)</span>.</p>
+<p>More precisely, <span class="math notranslate nohighlight">\(E(h)\)</span> is no bigger than a multiple of <span class="math notranslate nohighlight">\(h^p\)</span> for <span class="math notranslate nohighlight">\(h\)</span> small enough;
+that is, there is a constant <span class="math notranslate nohighlight">\(C\)</span> such that for some positive number <span class="math notranslate nohighlight">\(\delta\)</span></p>
+<div class="math notranslate nohighlight">
+\[\frac{|E(h)|}{|h|^p} \leq C \text{ for } |h| &lt; \delta.\]</div>
+<p>Another way to say this is in terms of the <em>lim-sup</em>, if you have seen that jargon:</p>
+<div class="math notranslate nohighlight">
+\[\limsup_{h \to 0} \frac{|E(h)|}{|h|^p} \text{ is finite.}\]</div>
+<p>This can be used to rephrase the above Taylor’s theorem error bound as</p>
+<div class="math notranslate nohighlight">
+\[f(x) - T_n(x) = O(|x-a|^{n+1})\]</div>
+<p>or</p>
+<div class="math notranslate nohighlight">
+\[f(a+h) - T_n(h) = O(h^{n+1}),\]</div>
+<p>and for the case of the linearization,</p>
+<div class="math notranslate nohighlight">
+\[
+f(a+h) - L(x) = f(a+h) - (f(a) + f'(a) h) = O(h^2).
+\]</div>
+<section id="little-o-notation-for-negligibly-small-terms">
+<h3>Little-o notation, for “negligibly small terms”<a class="headerlink" href="#little-o-notation-for-negligibly-small-terms" title="Permalink to this headline">#</a></h3>
+<p>Sometimes it is enough to say that some error term is small enough to be neglected, at least when <span class="math notranslate nohighlight">\(h\)</span> is close enough to zero.
+For example, with a Taylor series we might be able to neglect the powers of <span class="math notranslate nohighlight">\(x-a\)</span> or of <span class="math notranslate nohighlight">\(h\)</span> higher than <span class="math notranslate nohighlight">\(p\)</span>.</p>
+<p>We will thus say that a quantity <span class="math notranslate nohighlight">\(E(h)\)</span> is <em>small of order <span class="math notranslate nohighlight">\(h^p\)</span></em>, written <span class="math notranslate nohighlight">\(o(h^p)\)</span>
+when</p>
+<div class="math notranslate nohighlight">
+\[\lim_{h \to 0} \frac{|E(h)|}{|h|^p} = 0.\]</div>
+<p>Note the addition of the word <strong>small</strong> compared to the above description of the big-O case!</p>
+<p>With this, the Taylor’s theorem error bound can be stated as</p>
+<div class="math notranslate nohighlight">
+\[f(x) - T_n(x) = o(|x-a|^n),\]</div>
+<p>or</p>
+<div class="math notranslate nohighlight">
+\[f(a+h) - T_n(h) = o(h^n),\]</div>
+<p>and for the case of the linearization,</p>
+<div class="math notranslate nohighlight">
+\[f(a+h) - L(x) = f(a+h) - (f(a) + f'(a) h) = o(h).\]</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            kernelName: "python3",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="taylors-theorem.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">2.4. </span>Taylor’s Theorem and the Accuracy of Linearization</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="newtons-method-convergence-rate.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">2.6. </span>The Convergence Rate of Newton’s Method</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

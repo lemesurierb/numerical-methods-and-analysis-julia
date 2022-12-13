@@ -1,0 +1,1162 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2.1. Root Finding by Interval Halving (Bisection) &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)" href="fixed-point-iteration.html" />
+    <link rel="prev" title="2. Root-finding" href="root-finding.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/root-finding-by-interval-halving.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/root-finding-by-interval-halving.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-first-algorithm-for-the-bisection-method">
+   A first algorithm for the bisection method
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pseudo-code-for-describing-algorithms">
+     Pseudo-code for describing algorithms
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-bounds-and-a-more-refined-algorithm">
+   Error bounds, and a more refined algorithm
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-tolerances-and-stopping-conditions">
+   Error tolerances and stopping conditions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-a">
+     Exercise A
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-b">
+     Exercise B
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Root Finding by Interval Halving (Bisection)</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-first-algorithm-for-the-bisection-method">
+   A first algorithm for the bisection method
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pseudo-code-for-describing-algorithms">
+     Pseudo-code for describing algorithms
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-bounds-and-a-more-refined-algorithm">
+   Error bounds, and a more refined algorithm
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-tolerances-and-stopping-conditions">
+   Error tolerances and stopping conditions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-a">
+     Exercise A
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-b">
+     Exercise B
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="root-finding-by-interval-halving-bisection">
+<h1><span class="section-number">2.1. </span>Root Finding by Interval Halving (Bisection)<a class="headerlink" href="#root-finding-by-interval-halving-bisection" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 1.1 <em>The Bisection Method</em> in <em>Numerical Analysis</em> by Sauer <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span></p></li>
+<li><p>Section 2.1 <em>The Bisection Method</em> in <em>Numerical Analysis</em> by Burden, Faires and Burden <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span></p></li>
+</ul>
+<p>(See the <a class="reference internal" href="bibliography.html"><span class="doc std std-doc">Bibliography</span></a>.)</p>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>One of the most basic tasks in numerical computing is finding the roots (or “zeros”) of a function — solving the equation <span class="math notranslate nohighlight">\(f(x) = 0\)</span> where <span class="math notranslate nohighlight">\(f:\mathbb{R} \to \mathbb{R}\)</span> is a continuous function from and to the real numbers.
+As with many topics in this course, there are multiple methods that work, and we will often start with the simplest and then seek improvement in several directions:</p>
+<ul class="simple">
+<li><p><strong>reliability</strong> or <em>robustness</em> — how good it is at avoiding problems in hard cases, such as division by zero.</p></li>
+<li><p><em>accuracy</em> and guarantees about accuracy like estimates of how large the error can be — since in most cases, the result cannot be computed exactly.</p></li>
+<li><p><em>speed</em> or <em>cost</em> — often measured by minimizing the amount of arithmetic involved, or the number of times that a function must be evaluated.</p></li>
+</ul>
+<p>We use the package PyPlot; see the notes on <a class="reference external" href="julia-language-notes#plottingwithpyplot">plotting graphs</a> and on
+<a class="reference external" href="julia-language-notes#modules">using package and modules</a> in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof example admonition" id="bisection-x-cosx">
+<p class="admonition-title"><span class="caption-number">Example 2.1 </span> (Solve <span class="math notranslate nohighlight">\(x = \cos x\)</span>)</p>
+<section class="example-content" id="proof-content">
+<p>This is a simple equation for which there is no exact formula for a solution,
+but we can easily ensure that there is a solution, and moreover, a unique one.
+It is convenient to put the equation into “zero-finding” form <span class="math notranslate nohighlight">\(f(x) = 0\)</span>, by defining</p>
+<div class="math notranslate nohighlight">
+\[f(x) := x - \cos x.\]</div>
+<p>Also, note that <span class="math notranslate nohighlight">\(|\cos x| \leq 1\)</span>, so a solution to the original equation must have <span class="math notranslate nohighlight">\(|x| \leq 1\)</span>.
+So we will start graphing the function on the interval
+<span class="math notranslate nohighlight">\([a, b] = [-1, 1]\)</span>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="julia-function-short-form">
+<p class="admonition-title"><span class="caption-number">Remark 2.1 </span> (On Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>For notes on this compact version of Julia function syntax, see <a class="reference external" href="julia-language-notes#functions1">Functions, part 1</a> in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="julia-range">
+<p class="admonition-title"><span class="caption-number">Remark 2.2 </span> (On Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>See the notes on the function <a class="reference external" href="julia-language-notes#range">range</a> used below in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;g&quot;</span><span class="p">);</span>  <span class="c"># Mark the x-axis in green</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>  <span class="c"># Add a graph paper background</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/root-finding-by-interval-halving_9_0.png" src="../_images/root-finding-by-interval-halving_9_0.png" />
+</div>
+</div>
+<p>This shows that the zero lies between 0.5 and 0.75, so zoom in:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">0.75</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/root-finding-by-interval-halving_11_0.png" src="../_images/root-finding-by-interval-halving_11_0.png" />
+</div>
+</div>
+<p>And we could repeat, geting an approximation of any desired accuracy.</p>
+<p>However this has two weaknesses: it is very inefficient (the function is evaluated about fifty times at each step in order to draw the graph), and it requires lots of human intervention.</p>
+<p>To get a procedure that can be efficiently implemented in Julia (or another programming language of your choice),
+we extract one key idea here: finding an interval in which the function changes sign, and then repeatedly find a smaller such interval within it.
+The simplest way to do this is to repeatedly divide an interval known to contain the root in half and check which half has the sign change in it.</p>
+<p>Graphically, let us start again with interval <span class="math notranslate nohighlight">\([a, b] = [-1, 1]\)</span>, but this time focus on three points of interest: the two ends and the midpoint, where the interval will be bisected:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;a=</span><span class="si">$a</span><span class="s">, b=</span><span class="si">$b</span><span class="s">, c=</span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a=-1.0, b=1.0, c=0.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="julia-println">
+<p class="admonition-title"><span class="caption-number">Remark 2.3 </span> (On Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>If you are unfamiliar with <code class="docutils literal notranslate"><span class="pre">println</span></code> see the notes on <a class="reference external" href="julia-language-notes#displayingvalues">Displaying values</a> in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">acb</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="n">c</span> <span class="n">b</span><span class="p">]</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">acb</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">acb</span><span class="p">),</span> <span class="s">&quot;b*&quot;</span><span class="p">)</span>
+<span class="c"># And just as a visual aid:</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;b-.&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/root-finding-by-interval-halving_15_0.png" src="../_images/root-finding-by-interval-halving_15_0.png" />
+</div>
+</div>
+<p><span class="math notranslate nohighlight">\(f(a)\)</span> and <span class="math notranslate nohighlight">\(f(c)\)</span> have the same sign, while <span class="math notranslate nohighlight">\(f(c)\)</span> and <span class="math notranslate nohighlight">\(f(b)\)</span> have opposite signs, so the root is in <span class="math notranslate nohighlight">\([c, b]\)</span>;
+update the a, b, c values and plot again:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">c</span>  <span class="c"># new left end is old center</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">b</span>  <span class="c"># redundant, as the right end is unchanged</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;a=</span><span class="si">$a</span><span class="s">, b=</span><span class="si">$b</span><span class="s">, c=</span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a=0.0, b=1.0, c=0.5
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">acb</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="n">c</span> <span class="n">b</span><span class="p">]</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">acb</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">acb</span><span class="p">),</span> <span class="s">&quot;b*&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;b-.&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/root-finding-by-interval-halving_18_0.png" src="../_images/root-finding-by-interval-halving_18_0.png" />
+</div>
+</div>
+<p>Again <span class="math notranslate nohighlight">\(f(c)\)</span> and <span class="math notranslate nohighlight">\(f(b)\)</span> have opposite signs, so the root is in <span class="math notranslate nohighlight">\([c, b]\)</span>, and …</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">c</span>  <span class="c"># new left end is old center again</span>
+<span class="c"># skipping the redundant &quot;b = b&quot; this time</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;a=</span><span class="si">$a</span><span class="s">, b=</span><span class="si">$b</span><span class="s">, c=</span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a=0.5, b=1.0, c=0.75
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">acb</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="n">c</span> <span class="n">b</span><span class="p">]</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">acb</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">acb</span><span class="p">),</span> <span class="s">&quot;b*&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;b-.&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/root-finding-by-interval-halving_21_0.png" src="../_images/root-finding-by-interval-halving_21_0.png" />
+</div>
+</div>
+<p>This time <span class="math notranslate nohighlight">\(f(a)\)</span> and <span class="math notranslate nohighlight">\(f(c)\)</span> have opposite sign, so the root is at left, in <span class="math notranslate nohighlight">\([a, c]\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># this time, the value of a does not need to be updated ...</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">c</span>  <span class="c"># ... and the new right end is the former center</span>
+<span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;a=</span><span class="si">$a</span><span class="s">, b=</span><span class="si">$b</span><span class="s">, c=</span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a=0.5, b=0.75, c=0.625
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">acb</span> <span class="o">=</span> <span class="p">[</span><span class="n">a</span> <span class="n">c</span> <span class="n">b</span><span class="p">]</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">acb</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">acb</span><span class="p">),</span> <span class="s">&quot;b*&quot;</span><span class="p">)</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;b-.&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/root-finding-by-interval-halving_24_0.png" src="../_images/root-finding-by-interval-halving_24_0.png" />
+</div>
+</div>
+</section>
+<section id="a-first-algorithm-for-the-bisection-method">
+<h2>A first algorithm for the bisection method<a class="headerlink" href="#a-first-algorithm-for-the-bisection-method" title="Permalink to this headline">#</a></h2>
+<p>Now it is time to dispense with the graphs, and describe the procedure in mathematical terms:</p>
+<ul class="simple">
+<li><p>if <span class="math notranslate nohighlight">\(f(a)\)</span> and <span class="math notranslate nohighlight">\(f(c)\)</span> have opposite signs, the root is in interval <span class="math notranslate nohighlight">\([a, c]\)</span>, which becomes the new version of interval <span class="math notranslate nohighlight">\([a, b]\)</span>.</p></li>
+<li><p>otherwise, <span class="math notranslate nohighlight">\(f(c)\)</span> and <span class="math notranslate nohighlight">\(f(b)\)</span> have opposite signs, so the root is in interval <span class="math notranslate nohighlight">\([c, b]\)</span></p></li>
+</ul>
+<section id="pseudo-code-for-describing-algorithms">
+<h3>Pseudo-code for describing algorithms<a class="headerlink" href="#pseudo-code-for-describing-algorithms" title="Permalink to this headline">#</a></h3>
+<p>As a useful bridge from the mathematical desciption of an algorithm with words and formulas to actual executable code,
+these notes will often describe algorithms in <em>pseudo-code</em> —
+a mix of words and mathematical formulas with notation that somewhat resembles code in a language like Julia.</p>
+<p>This is also preferable to going straight to code in a particular programming language (such as Julia) because it makes it easier if, later, you wish to implement algorithms in a different language.</p>
+<p>Note well one feature of the pseudo-code used here:
+<strong>assignment</strong> is denoted with a left arrow:</p>
+<p><span class="math notranslate nohighlight">\(x \leftarrow a\)</span></p>
+<p>is the instruction to cause the value of variable <code class="docutils literal notranslate"><span class="pre">x</span></code> to become the current value of a.</p>
+<p>This is to distinguish from</p>
+<p><span class="math notranslate nohighlight">\(x = a\)</span></p>
+<p>which is a <strong>comparison</strong>: the true-or-false assertion that the two quantities <em>already</em> have the same value.</p>
+<p>Unfortunately however, Julia (like most programming languages) does not use this notation:
+instead assignment is done with <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">a</span></code> so that asserting equality needs a differnt notation:
+this is done with <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">==</span> <span class="pre">a</span></code>; note well that double equal sign!</p>
+<p>With that notational issue out of the way,
+the key step in the bisection strategy is the update of the interval:</p>
+<div class="proof algorithm admonition" id="bisection-step">
+<p class="admonition-title"><span class="caption-number">Algorithm 2.1 </span> (one step of bisection)</p>
+<section class="algorithm-content" id="proof-content">
+<p><br><span class="math notranslate nohighlight">\(\displaystyle c \leftarrow \frac{a + b}{2}\)</span>
+<br>if <span class="math notranslate nohighlight">\(f(a) f(c) &lt; 0\)</span> then
+<br><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(b \leftarrow c\)</span>
+<br>else
+<br><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(a \leftarrow c\)</span>
+<br>end</p>
+</section>
+</div><p>This needs to be repeated a finite number of times, and the simplest way is to specify the number of iterations.
+(We will consider more refined methods soon.)</p>
+<div class="proof algorithm admonition" id="bisection-for">
+<p class="admonition-title"><span class="caption-number">Algorithm 2.2 </span> (bisection, first version)</p>
+<section class="algorithm-content" id="proof-content">
+<ul class="simple">
+<li><p>Get an initial interval <span class="math notranslate nohighlight">\([a, b]\)</span> with a sign-change: <span class="math notranslate nohighlight">\(f(a) f(b) &lt; 0\)</span>.</p></li>
+<li><p>Choose <span class="math notranslate nohighlight">\(N\)</span>, the number of iterations.</p></li>
+<li><p>for i from 1 to N
+<br><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(\displaystyle c \leftarrow \frac{a + b}{2}\)</span>
+<br><span class="math notranslate nohighlight">\(\quad\)</span> if <span class="math notranslate nohighlight">\(f(a) f(c) &lt; 0\)</span> then
+<br><span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(b \leftarrow c\)</span>
+<br><span class="math notranslate nohighlight">\(\quad\)</span> else:
+<br><span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(a \leftarrow c\)</span>
+<br><span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>end</p></li>
+<li><p>The approximate root is the final value of <span class="math notranslate nohighlight">\(c\)</span>.</p></li>
+</ul>
+</section>
+</div><p>A Julia version of the iteration is not a lot different:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for i in 1:N
+    c = (a+b)/2
+    if f(a) * f(c) &lt; 0
+        b = c
+    else
+        a = c
+    end
+end
+</pre></div>
+</div>
+<div class="proof remark admonition" id="julia-iteration-conditionals">
+<p class="admonition-title"><span class="caption-number">Remark 2.4 </span> (On Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>See the notes on <a class="reference external" href="julia-language-notes#iteration">Iteration</a> and <a class="reference external" href="julia-language-notes##condititionals">Conditionals</a> on the syntax seen here for first time.</p>
+</section>
+</div><p>See <a class="reference external" href="#exercise-a">Exercise A</a>.</p>
+</section>
+</section>
+<section id="error-bounds-and-a-more-refined-algorithm">
+<h2>Error bounds, and a more refined algorithm<a class="headerlink" href="#error-bounds-and-a-more-refined-algorithm" title="Permalink to this headline">#</a></h2>
+<p>The above method of iteration for a fixed number of times is simple, but usually not what is wanted in practice.
+Instead, a better goal is to get an approximation with a guaranteed maximum possible error:
+a result consisting of an approximation <span class="math notranslate nohighlight">\(\tilde{r}\)</span> to the exact root <span class="math notranslate nohighlight">\(r\)</span> and also a bound <span class="math notranslate nohighlight">\(E_{max}\)</span> on the maximum possible error; a guarantee that <span class="math notranslate nohighlight">\(|r - \tilde{r}| \leq E_{max}\)</span>.
+To put it another way, a guarantee that the root <span class="math notranslate nohighlight">\(r\)</span> lies in the interval <span class="math notranslate nohighlight">\([\tilde{r} - E_{max}, \tilde{r} + E_{max}]\)</span>.</p>
+<p>In the above example, each iteration gives a new interval <span class="math notranslate nohighlight">\([a, b]\)</span> guaranteed to contain the root,
+and its midpoint <span class="math notranslate nohighlight">\(c = (a+b)/2\)</span> is with a distance <span class="math notranslate nohighlight">\((b-a)/2\)</span> of any point in that interval, so at each iteration, we can have:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\tilde{r}\)</span> is the current value of <span class="math notranslate nohighlight">\(c = (a+b)/2\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(E_{max} = (b-a)/2\)</span></p></li>
+</ul>
+</section>
+<section id="error-tolerances-and-stopping-conditions">
+<h2>Error tolerances and stopping conditions<a class="headerlink" href="#error-tolerances-and-stopping-conditions" title="Permalink to this headline">#</a></h2>
+<p>The above algorthm can <em>passively</em> state an error bound, but it is better to be able to solve to a desired degree of accuracy;
+for example, if we want a result “accurate to three decimal places”, we can specify <span class="math notranslate nohighlight">\(E_{max} \leq 0.5 \times 10^{-3}\)</span>.</p>
+<p>So our next goal is to <em>actively</em> set an accuracy target or <em>error tolerance</em> <span class="math notranslate nohighlight">\(E_{tol}\)</span> and keep iterating until it is met.
+This can be achieved with a <code class="docutils literal notranslate"><span class="pre">while</span></code> loop; here is a suitable algorithm:</p>
+<div class="proof algorithm admonition" id="bisection-while">
+<p class="admonition-title"><span class="caption-number">Algorithm 2.3 </span> (bisection with error tolerance)</p>
+<section class="algorithm-content" id="proof-content">
+<ul class="simple">
+<li><p>Input function <span class="math notranslate nohighlight">\(f\)</span>, interval endpoints <span class="math notranslate nohighlight">\(a\)</span> and <span class="math notranslate nohighlight">\(b\)</span>, and an error tolerance <span class="math notranslate nohighlight">\(E_{tol}\)</span></p></li>
+<li><p>Evaluate <span class="math notranslate nohighlight">\(E_{max} = (b-a)/2\)</span></p></li>
+<li><p>while <span class="math notranslate nohighlight">\(E_{max} &gt; E_{tol}\)</span>:
+<br><span class="math notranslate nohighlight">\(\quad c \leftarrow (a+b)/2\)</span>
+<br><span class="math notranslate nohighlight">\(\quad\)</span> if <span class="math notranslate nohighlight">\(f(a) f(c) &lt; 0\)</span> then
+<br><span class="math notranslate nohighlight">\(\quad\quad b \leftarrow c\)</span>
+<br><span class="math notranslate nohighlight">\(\quad\)</span> else
+<br><span class="math notranslate nohighlight">\(\quad\quad a \leftarrow c\)</span>
+<br><span class="math notranslate nohighlight">\(\quad\)</span> end
+<br><span class="math notranslate nohighlight">\(\quad E_{max} \leftarrow (b-a)/2\)</span>
+<br>end</p></li>
+<li><p>Output <span class="math notranslate nohighlight">\(\tilde{r} = c\)</span> as the approximate root and <span class="math notranslate nohighlight">\(E_{max}\)</span> as a bound on its absolute error.</p></li>
+</ul>
+</section>
+</div></section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-a"></a></p>
+<section id="exercise-a">
+<h3>Exercise A<a class="headerlink" href="#exercise-a" title="Permalink to this headline">#</a></h3>
+<p>Create a Julia function <code class="docutils literal notranslate"><span class="pre">bisection1</span></code> which implements the first algorithm for bisection above,
+which performs a fixed number <span class="math notranslate nohighlight">\(N\)</span> of iterations;
+the usage should be:
+<code class="docutils literal notranslate"><span class="pre">root</span> <span class="pre">=</span> <span class="pre">bisection1(f,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">N)</span></code></p>
+<p>Test it with the above example:
+<span class="math notranslate nohighlight">\(f(x) = x - \cos x = 0\)</span>, <span class="math notranslate nohighlight">\([a, b] = [-1, 1]\)</span></p>
+<p>Julia newcomers: see the notes introducing <a class="reference external" href="julia-language-notes#functions1">Julia Functions</a>.</p>
+<p><a name="exercise-b"></a></p>
+</section>
+<section id="exercise-b">
+<h3>Exercise B<a class="headerlink" href="#exercise-b" title="Permalink to this headline">#</a></h3>
+<p>Create a Julia function implementing this better algorithm, with usage
+<code class="docutils literal notranslate"><span class="pre">root</span> <span class="pre">=</span> <span class="pre">bisection2(f,</span> <span class="pre">a,</span> <span class="pre">b,</span> <span class="pre">E_tol)</span></code></p>
+<p>Test it with the above example: <span class="math notranslate nohighlight">\(f(x) = x - \cos x\)</span>, <span class="math notranslate nohighlight">\([a, b] = [-1, 1]\)</span>,
+this time accurate to within <span class="math notranslate nohighlight">\(10^{-4}\)</span>.</p>
+<p>Use the fact that there is a solution in the interval <span class="math notranslate nohighlight">\((-1, 1)\)</span>.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="root-finding.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">2. </span>Root-finding</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="fixed-point-iteration.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">2.2. </span>Solving Equations by Fixed Point Iteration (of Contraction Mappings)</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

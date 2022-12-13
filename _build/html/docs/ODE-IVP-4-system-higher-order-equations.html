@@ -1,0 +1,1566 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>7.5. Systems of ODEs and Higher Order ODEs &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7.6. Error Control and Variable Step Sizes" href="ODE-IVP-5-error-control.html" />
+    <link rel="prev" title="7.4. A Global Error Bound for One Step Methods" href="ODE-IVP-3-error-results-one-step-methods.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/ODE-IVP-4-system-higher-order-equations.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/ODE-IVP-4-system-higher-order-equations.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#converting-a-second-order-ode-to-a-first-order-system">
+   Converting a second order ODE to a first order system
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#test-cases">
+   Test Cases
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-damped-mass-spring-system">
+   Solving the Damped Mass-Spring System
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#first-solve-without-damping-so-the-solutions-have-sinusoidal-solutions">
+     First solve without damping, so the solutions have sinusoidal solutions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#next-solve-with-damping">
+     Next solve with damping
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-classical-runge-kutta-method-extended-to-systems-of-equations">
+   The “Classical” Runge-Kutta Method, Extended to Systems of Equations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-freely-rotating-pendulum-equation">
+   Solving the Freely Rotating Pendulum Equation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#appendix-the-explicit-trapezoid-and-midpoint-methods-for-systems">
+   Appendix: the Explicit Trapezoid and Midpoint Methods for systems
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Systems of ODEs and Higher Order ODEs</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#converting-a-second-order-ode-to-a-first-order-system">
+   Converting a second order ODE to a first order system
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#test-cases">
+   Test Cases
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-damped-mass-spring-system">
+   Solving the Damped Mass-Spring System
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#first-solve-without-damping-so-the-solutions-have-sinusoidal-solutions">
+     First solve without damping, so the solutions have sinusoidal solutions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#next-solve-with-damping">
+     Next solve with damping
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-classical-runge-kutta-method-extended-to-systems-of-equations">
+   The “Classical” Runge-Kutta Method, Extended to Systems of Equations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#solving-the-freely-rotating-pendulum-equation">
+   Solving the Freely Rotating Pendulum Equation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#appendix-the-explicit-trapezoid-and-midpoint-methods-for-systems">
+   Appendix: the Explicit Trapezoid and Midpoint Methods for systems
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="systems-of-odes-and-higher-order-odes">
+<h1><span class="section-number">7.5. </span>Systems of ODEs and Higher Order ODEs<a class="headerlink" href="#systems-of-odes-and-higher-order-odes" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 6.3 <em>Systems of Ordinary Differential Equations</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>, to Sub-section 6.3.1 <em>Higher order equations</em>.</p></li>
+<li><p>Section 5.9 <em>Higher Order Equations and Systems of Differential Equations</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+</ul>
+<p>The short version of this section is that the numerical methods and algorithms developed so for for the initial value problem</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+\frac{d u}{d t} &amp;= f(t, u(t)), \quad a \leq t \leq b
+\\
+u(a) &amp;= u_0
+\end{split}
+\end{split}\]</div>
+<p>all also work for system of first order ODEs by simply letting <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(f\)</span> be vector-valued,
+and for that, the Python code requires only one small change.</p>
+<p>Also, higher order ODE’s (and systems of them) can be converted into systems of first order ODEs.</p>
+<section id="converting-a-second-order-ode-to-a-first-order-system">
+<h2>Converting a second order ODE to a first order system<a class="headerlink" href="#converting-a-second-order-ode-to-a-first-order-system" title="Permalink to this headline">#</a></h2>
+<p>To convert</p>
+<div class="math notranslate nohighlight">
+\[ y'' = f(t, y, y') \]</div>
+<p>with initial conditions</p>
+<div class="math notranslate nohighlight">
+\[ y(a) = y_0, \; y'(a) = v_0 \]</div>
+<p>to a first order system, introduction the two functions</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+u_1(t) &amp;= y(t)
+\\
+u_2(t) &amp;= \frac{d y}{d t}, = u_1'(t)
+\end{split}
+\end{split}\]</div>
+<p>Then</p>
+<div class="math notranslate nohighlight">
+\[ y'' = u_1' = f(t, u_0, u_1) \]</div>
+<p>and combining with the definition of <span class="math notranslate nohighlight">\(u_1\)</span> gives the system</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+u_0' &amp;= u_1
+\\
+u_1' &amp;= f(t, u_0, u_1)
+\\
+&amp;\text{with initial conditions}
+\\
+u_0(a) &amp;= y_0
+\\
+u_1(a) &amp;= v_0
+\end{split}
+\end{split}\]</div>
+<p>Next this can be put into vector form.
+Defining the vector-valued functions</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+\tilde{u}(t) &amp;= \langle u_1(t), u_2(t) \rangle
+\\
+\tilde{f}(t, \tilde{u}(t)) &amp;= \left\langle u_1(t), f(t, u_2(t), u_2(t)) \right\rangle
+\end{split}
+\end{split}\]</div>
+<p>and initial data vector</p>
+<div class="math notranslate nohighlight">
+\[\tilde{u}_0 = \langle u_{0,1}, u_{0,2} \rangle = \langle y_0, v_0 \rangle\]</div>
+<p>puts the equation into the form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+\frac{d \tilde{u}}{d t} &amp;= \tilde{f}(t, \tilde{u}(t)), \quad a \leq t \leq b
+\\
+\tilde{u}(a) &amp;= \tilde{u}_0
+\end{split}
+\end{split}\]</div>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+\frac{d \tilde{u}}{d t} &amp;= \tilde{f}(t, \tilde{u}(t)), \quad a \leq t \leq b
+\\
+\tilde{u}(a) &amp;= \tilde{u}_0
+\end{split}
+\end{split}\]</div>
+</section>
+<section id="test-cases">
+<h2>Test Cases<a class="headerlink" href="#test-cases" title="Permalink to this headline">#</a></h2>
+<p>In this and subsequent sections, numerical methods for higher order equations and systems will be compared using several equations seen in
+<a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-examples"><span class="std std-ref">the first section of this chapter</span></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-damped-mass-spring">Example 7.5</a> <span class="math notranslate nohighlight">\(\displaystyle M \frac{d^2 u}{d t^2} = -K u - D \frac{d u}{d t}\)</span> (a Mass-Spring System).</p></li>
+<li><p><a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-freely-rotating-pendulum">Example 7.6</a> <span class="math notranslate nohighlight">\(M L \theta'' = -M g\sin\theta - D L \theta'\)</span> (The Freely Rotating Pendulum).</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+<span class="n">include</span><span class="p">(</span><span class="s">&quot;NumericalMethods.jl&quot;</span><span class="p">)</span>
+<span class="k">using</span> <span class="o">.</span><span class="n">NumericalMethods</span><span class="o">:</span> <span class="n">approx4</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The Euler’s method code from before does not quite work, but only slight modification is needed;
+that “scalar” version</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>    
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>becomes</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># TO DO: one could use multiple dispatch to keep the name &quot;eulermethod&quot;.</span>
+    <span class="c"># The conversion for the system version is mainly &quot;U[i] -&gt; U[i,:]&quot;</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c"># The following three lines and the one in the for loop below change for the system version</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>  <span class="c"># Only for system version</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>  <span class="c"># For the system version</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Note.</strong> Here and below, these notes follow the convention of using lowercase letters for exact solutions; uppercase for numerical approximations.</p>
+</section>
+<section id="solving-the-damped-mass-spring-system">
+<h2>Solving the Damped Mass-Spring System<a class="headerlink" href="#solving-the-damped-mass-spring-system" title="Permalink to this headline">#</a></h2>
+<p>(<a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-damped-mass-spring">Example 7.5</a>)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_mass_spring</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">D</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">E_mass_spring</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">Dy</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">K</span> <span class="o">*</span> <span class="n">y</span><span class="o">^</span><span class="mi">2</span> <span class="o">+</span> <span class="n">M</span> <span class="o">*</span> <span class="n">Dy</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">y_mass_spring</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">y_0</span><span class="p">,</span> <span class="n">v_0</span><span class="p">)</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="n">discriminant</span> <span class="o">=</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span>
+    <span class="k">if</span> <span class="n">discriminant</span> <span class="o">&lt;</span> <span class="mi">0</span>  <span class="c"># underdamped</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span> <span class="o">-</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">y_0</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_0</span> <span class="o">+</span> <span class="n">y_0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">))</span><span class="o">/</span><span class="n">omega</span>
+        <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span> <span class="n">A</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">)))</span>
+    <span class="k">elseif</span> <span class="n">discriminant</span> <span class="o">&gt;</span> <span class="mi">0</span>  <span class="c"># overdamped</span>
+        <span class="n">Delta</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">discriminant</span><span class="p">)</span>
+        <span class="n">lambda_plus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">D</span> <span class="o">+</span> <span class="n">Delta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">lambda_minus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">D</span> <span class="o">-</span> <span class="n">Delta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="p">(</span><span class="n">v_0</span> <span class="o">-</span> <span class="n">lambda_minus</span> <span class="o">*</span> <span class="n">y_0</span><span class="p">)</span><span class="o">/</span><span class="n">Delta</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">y_0</span> <span class="o">-</span> <span class="n">A</span>
+        <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda_plus</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda_minus</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span>
+    <span class="k">else</span>
+        <span class="n">lambda</span> <span class="o">=</span> <span class="o">-</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">y_0</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">v_0</span> <span class="o">-</span> <span class="n">A</span> <span class="o">*</span> <span class="n">lambda</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">damping</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">D</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Undamped&quot;</span><span class="p">)</span>
+    <span class="k">else</span>
+        <span class="n">discriminant</span> <span class="o">=</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span>
+        <span class="k">if</span> <span class="n">discriminant</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Underdamped&quot;</span><span class="p">)</span>
+        <span class="k">elseif</span> <span class="n">discriminant</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Overdamped&quot;</span><span class="p">)</span>
+        <span class="k">else</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Critically damped&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The above functions are available in module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code>;
+they will be used in later sections.</p>
+<section id="first-solve-without-damping-so-the-solutions-have-sinusoidal-solutions">
+<h3>First solve without damping, so the solutions have sinusoidal solutions<a class="headerlink" href="#first-solve-without-damping-so-the-solutions-have-sinusoidal-solutions" title="Permalink to this headline">#</a></h3>
+<p>Note: the orbits go clockwise for undamped (and underdamped) systems.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">D</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">y_0</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">Dy_0</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="p">[</span><span class="n">y_0</span><span class="p">,</span> <span class="n">Dy_0</span><span class="p">]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for K/M=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by Euler&#39;s method with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Phase plane diagram; for D=0 the exact solutions are ellipses (circles if M = k)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>  <span class="c"># Make axes equal length; orbits should be circular or &quot;circular spirals&quot; </span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbit&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">DY</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;dy/dt&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_20_0.png" src="../_images/ODE-IVP-4-system-higher-order-equations_20_0.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_20_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_20_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_20_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_20_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">E_0</span> <span class="o">=</span> <span class="n">E_mass_spring</span><span class="p">(</span><span class="n">y_0</span><span class="p">,</span> <span class="n">Dy_0</span><span class="p">)</span>
+<span class="n">E</span> <span class="o">=</span> <span class="n">E_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">DY</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Energy variation&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">E</span> <span class="o">.-</span> <span class="n">E_0</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_21_0.png" src="../_images/ODE-IVP-4-system-higher-order-equations_21_0.png" />
+</div>
+</div>
+</section>
+<section id="next-solve-with-damping">
+<h3>Next solve with damping<a class="headerlink" href="#next-solve-with-damping" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c"># Underdamped: decaying oscillations</span>
+<span class="c">#D = 2 # Critically damped</span>
+<span class="c">#D = 2.1 # Overdamped: exponential decay</span>
+
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">500</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">damping</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for K/M=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by Euler&#39;s method with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Phase plane diagram; for D=0 the exact solutions are ellipses (circles if M = K)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>  <span class="c"># Make axes equal length; orbits should be circular or &quot;circular spirals&quot; </span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbit&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">DY</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;dy/dt&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underdamped
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_23_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_23_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_23_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_23_2.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_23_3.png" src="../_images/ODE-IVP-4-system-higher-order-equations_23_3.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="the-classical-runge-kutta-method-extended-to-systems-of-equations">
+<h2>The “Classical” Runge-Kutta Method, Extended to Systems of Equations<a class="headerlink" href="#the-classical-runge-kutta-method-extended-to-systems-of-equations" title="Permalink to this headline">#</a></h2>
+<p>As above, the previous “scalar” function for this method needs just three lines of code modified.</p>
+<p>Before:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rungekutta</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the (classical) Runge-Kutta Method to solve</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_3</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_4</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_3</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_3</span> <span class="o">+</span> <span class="n">K_4</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>After:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the (classical) Runge-Kutta Method to solve</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+    <span class="c"># The conversion for the system version is mainly &quot;u[i] -&gt; u[i,:]&quot;</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_3</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_4</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_3</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_3</span> <span class="o">+</span> <span class="n">K_4</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">D</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for k/M=</span><span class="si">$</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by Runge-Kutta with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Phase plane diagram; for D=0 the exact solutions are ellipses (circles if M = k)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>  <span class="c"># Make axes equal length; orbits should be circular or &quot;circular spirals&quot; </span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbit&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">DY</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;dy/dt&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_29_0.png" src="../_images/ODE-IVP-4-system-higher-order-equations_29_0.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_29_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_29_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_29_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_29_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c"># Underdamped: decaying oscillations</span>
+<span class="c">#D = 2 # Critically damped</span>
+<span class="c">#D = 2.1 # Overdamped: exponential decay</span>
+
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">damping</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for k/M=</span><span class="si">$</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by Runge-Kutta with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underdamped
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_30_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_30_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_30_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_30_2.png" />
+</div>
+</div>
+</section>
+<section id="solving-the-freely-rotating-pendulum-equation">
+<h2>Solving the Freely Rotating Pendulum Equation<a class="headerlink" href="#solving-the-freely-rotating-pendulum-equation" title="Permalink to this headline">#</a></h2>
+<p>(<a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-freely-rotating-pendulum">Example 7.6</a>)</p>
+<p>For now, this is just briefly explored as a cautionary tail of what can happen when slight changes in the system lead to qualitatively very different solution behavior.
+So we will look at a few examples for the conservative case <span class="math notranslate nohighlight">\(D=0\)</span>, close to the separatrix solutions noted above.</p>
+<p>Parameters can all be scaled away to <span class="math notranslate nohighlight">\(M = L = g = 1\)</span> so the critical energy is <span class="math notranslate nohighlight">\(Mg = 1\)</span>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_pendulum</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="p">(</span><span class="n">g</span><span class="o">/</span><span class="n">L</span><span class="p">)</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="n">g</span> <span class="o">=</span> <span class="n">L</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="n">E_0</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c"># Separatrix</span>
+<span class="c">#E_0 = 0.999</span>
+<span class="c">#E_0 = 1.001</span>
+
+<span class="n">theta_0</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">omega_0</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">(</span><span class="n">E_0</span> <span class="o">+</span> <span class="n">M</span><span class="o">*</span><span class="n">g</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_0</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="n">L</span><span class="p">));</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="p">[</span><span class="n">theta_0</span><span class="p">,</span> <span class="n">omega_0</span><span class="p">]</span>
+
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="c">#periods = 8  # periods of the linear approximation, &quot;sin(theta) = theta&quot;</span>
+<span class="c">#b = 2pi * sqrt(L/g) * periods</span>
+
+<span class="n">b</span> <span class="o">=</span> <span class="mf">80.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">20.</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c">#stepsperperiod = 1_000</span>
+<span class="c">#n = Int(stepsperperiod * periods)</span>
+<span class="c">#h = (b-a)/n</span>
+
+<span class="n">stepsperunittime</span> <span class="o">=</span> <span class="mi">10_000</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">stepsperunittime</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">round</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod_system</span><span class="p">(</span><span class="n">f_pendulum</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;By Euler&#39;s method with E = </span><span class="si">$E_0</span><span class="s">, step size h = </span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">(</span><span class="n">h</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">theta</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;theta&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">heta/\pi&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Phase plane diagram</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbit&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">heta/\pi&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;\omega = d</span><span class="se">\t</span><span class="s">heta/dt&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">omega</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">omega</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Error in the (conserved) energy E</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega</span><span class="o">.^</span><span class="mi">2</span> <span class="o">-</span> <span class="n">M</span><span class="o">*</span><span class="n">g</span><span class="o">*</span><span class="n">cos</span><span class="o">.</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="n">E_error</span> <span class="o">=</span> <span class="n">E</span> <span class="o">.-</span> <span class="n">E_0</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in E(t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">E_error</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;theta&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="c">#ylabel(L&quot;\theta/\pi&quot;)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_34_0.png" src="../_images/ODE-IVP-4-system-higher-order-equations_34_0.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_34_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_34_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_34_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_34_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c">#stepsperperiod = 10_000</span>
+<span class="c">#n = Int(stepsperperiod * periods)</span>
+<span class="c">#h = (b-a)/n</span>
+
+<span class="n">stepsperunittime</span> <span class="o">=</span> <span class="mi">25</span>
+<span class="n">stepsperunittime</span> <span class="o">=</span> <span class="mi">10_000</span>
+<span class="n">h</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">stepsperunittime</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">round</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="p">))</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f_pendulum</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">omega</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;By the Runge-Kutta method with E = </span><span class="si">$E_0</span><span class="s">, step size h = </span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">(</span><span class="n">h</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">theta</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;theta&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">heta/\pi&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Phase plane diagram</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbit&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">omega</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">heta/\pi&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;\omega = d</span><span class="se">\t</span><span class="s">heta/dt&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">omega</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">theta</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">/</span><span class="nb">pi</span><span class="p">,</span> <span class="n">omega</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="c"># Error in the (conserved) energy E</span>
+<span class="n">E</span> <span class="o">=</span> <span class="p">(</span><span class="n">M</span><span class="o">*</span><span class="n">L</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">omega</span><span class="o">.^</span><span class="mi">2</span> <span class="o">-</span> <span class="n">M</span><span class="o">*</span><span class="n">g</span><span class="o">*</span><span class="n">cos</span><span class="o">.</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<span class="n">E_error</span> <span class="o">=</span> <span class="n">E</span> <span class="o">.-</span> <span class="n">E_0</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in E(t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">E_error</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;theta&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="c">#ylabel(L&quot;\theta/\pi&quot;)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_35_0.png" src="../_images/ODE-IVP-4-system-higher-order-equations_35_0.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_35_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_35_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_35_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_35_2.png" />
+</div>
+</div>
+</section>
+<section id="appendix-the-explicit-trapezoid-and-midpoint-methods-for-systems">
+<h2>Appendix: the Explicit Trapezoid and Midpoint Methods for systems<a class="headerlink" href="#appendix-the-explicit-trapezoid-and-midpoint-methods-for-systems" title="Permalink to this headline">#</a></h2>
+<p>Yet again, the previous functions for these methods need just three lines of code modified.</p>
+<p>The demos are just for the non-dissipative case, where the solution is known to be <span class="math notranslate nohighlight">\(y = \cos t\)</span>, <span class="math notranslate nohighlight">\(dt/dt = -\sin t\)</span>.</p>
+<p>For a fairer comparison of “accuracy vs computational effort” to the Runge-Kutta method,
+twice as many time steps are used so that the same number of function evaluations are used for these three methods.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">explicittrapezoid_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the Explict Trapezoid Method (a.k.a Improved Euler) to solve the system</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0 </span>
+    <span class="c"># The conversion for the system version is mainly &quot;u[i] -&gt; u[i,:]&quot;</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="n">K_2</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c"># Underdamped: decaying oscillations</span>
+<span class="c">#D = 2 # Critically damped</span>
+<span class="c">#D = 2.1 # Overdamped: exponential decay</span>
+
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="n">damping</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">explicittrapezoid_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">damping</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for k/M=</span><span class="si">$</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by explicit trapezoid with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underdamped
+Underdamped
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_38_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_38_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_38_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_38_2.png" />
+</div>
+</div>
+<p>At first glance this is doing well, keeping the orbits circular.
+However, note the discrepancy between the start and end points:
+these should be the same, as they are (visually) with the Runge-Kutta method.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">explicitmidpoint_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the Explict Midpoint Method (a.k.a Modified Euler) to solve the system</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0 </span>
+    <span class="c"># The conversion for the system version is mainly &quot;u[i] -&gt; u[i,:]&quot;</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="n">K_2</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c"># Underdamped: decaying oscillations</span>
+<span class="c">#D = 2 # Critically damped</span>
+<span class="c">#D = 2.1 # Overdamped: exponential decay</span>
+
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">50</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="n">damping</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">explicitmidpoint_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">damping</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for k/M=</span><span class="si">$</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by explicit midpoint with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Underdamped
+Underdamped
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_41_1.png" src="../_images/ODE-IVP-4-system-higher-order-equations_41_1.png" />
+<img alt="../_images/ODE-IVP-4-system-higher-order-equations_41_2.png" src="../_images/ODE-IVP-4-system-higher-order-equations_41_2.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="ODE-IVP-3-error-results-one-step-methods.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">7.4. </span>A Global Error Bound for One Step Methods</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="ODE-IVP-5-error-control.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7.6. </span>Error Control and Variable Step Sizes</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

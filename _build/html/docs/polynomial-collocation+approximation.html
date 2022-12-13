@@ -1,0 +1,1171 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.2. Error Formulas for Polynomial Collocation" href="polynomial-collocation-error-formulas.html" />
+    <link rel="prev" title="4. Polynomial Collocation and Approximation" href="collocation-approximation.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/polynomial-collocation+approximation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/polynomial-collocation+approximation.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#functions-for-computing-the-coefficients-and-evaluating-the-polynomials">
+   Functions for computing the coefficients and evaluating the polynomials
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Polynomial Collocation (Interpolation/Extrapolation) and Approximation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#functions-for-computing-the-coefficients-and-evaluating-the-polynomials">
+   Functions for computing the coefficients and evaluating the polynomials
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="polynomial-collocation-interpolation-extrapolation-and-approximation">
+<h1><span class="section-number">4.1. </span>Polynomial Collocation (Interpolation/Extrapolation) and Approximation<a class="headerlink" href="#polynomial-collocation-interpolation-extrapolation-and-approximation" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 3.1 <em>Data and Interpolating Functions</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 3.1 <em>Interpolation and the Lagrange Polynomial</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Section 4.1 in <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>Numerical methods for dealing with functions require describing them, at least approximately, using a finite list of numbers, and the most basic approach is to approximate by a polynomial.
+(Other important choices are rational functions and “trigonometric polynomials”: sums of multiples of sines and cosines.)
+Such polynomials can then be used to aproximate derivatives and integrals.</p>
+<p>The simplest idea for approximating <span class="math notranslate nohighlight">\(f(x)\)</span> on domain <span class="math notranslate nohighlight">\([a, b]\)</span> is to start with a finite collection of <strong>node</strong> values <span class="math notranslate nohighlight">\(x_i \in [a, b]\)</span>, <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span> and then seek a polynomial <span class="math notranslate nohighlight">\(p\)</span> which <strong>collocates</strong> with <span class="math notranslate nohighlight">\(f\)</span> at those values: <span class="math notranslate nohighlight">\(p(x_i) = f(x_i)\)</span> for <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span>.
+Actually, we can put the function aside for now, and simply seek a polynomial that passes through a list of points <span class="math notranslate nohighlight">\((x_i, y_i)\)</span>; later we will achieve collocation with <span class="math notranslate nohighlight">\(f\)</span> by choosing <span class="math notranslate nohighlight">\(y_i = f(x_i)\)</span>.</p>
+<p>In fact there are infinitely many such polynomials: given one, add to it any polynomial with zeros at all of the <span class="math notranslate nohighlight">\(n+1\)</span> notes.
+So to make the problem well-posed, we seek the collocating polynomial of <em>lowest degree</em>.</p>
+<div class="proof theorem admonition" id="theorem-collocation">
+<p class="admonition-title"><span class="caption-number">Theorem 4.1 </span> (Existence and uniqueness of a collocating polynomial)</p>
+<section class="theorem-content" id="proof-content">
+<p>Given <span class="math notranslate nohighlight">\(n+1\)</span> distinct values <span class="math notranslate nohighlight">\(x_i\)</span>, <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span>, and corresponding <span class="math notranslate nohighlight">\(y\)</span>-values <span class="math notranslate nohighlight">\(y_i\)</span>,
+there is a unique polynomial <span class="math notranslate nohighlight">\(P\)</span> of degree at most <span class="math notranslate nohighlight">\(n\)</span> with <span class="math notranslate nohighlight">\(P(x_i) = y_i\)</span> for <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span>.</p>
+<p>(<em>Note:</em> although the degree is typically <span class="math notranslate nohighlight">\(n\)</span>, it can be less; as an extreme example, if all <span class="math notranslate nohighlight">\(y_i\)</span> are equal to <span class="math notranslate nohighlight">\(c\)</span>, then <span class="math notranslate nohighlight">\(P(x)\)</span> is that constant <span class="math notranslate nohighlight">\(c\)</span>.)</p>
+</section>
+</div><p>Historically there are several methods for finding <span class="math notranslate nohighlight">\(P_n\)</span> and proving its uniqueness, in particular, the <em>divided difference</em> method introduced by Newton and the <em>Lagrange polynomial</em> method.
+However for our purposes, and for most modern needs, a different method is easiest, and it also introduces a strategy that will be of repeated use later in this course: the <strong>Method of Undertermined Coefficients</strong> or <strong>MUC</strong>.</p>
+<p>In general, this method starts by assuming that the function wanted is a sum of unknown multiples of a collection of known functions.
+Here, <span class="math notranslate nohighlight">\(P(x) =  c_0 + c_1 x + \cdots + c_{n-1} x^{n-1} + c_n x^n = \sum_{j=0}^n c_j x^j\)</span>.
+<br>
+(<em>Note:</em> any of the <span class="math notranslate nohighlight">\(c_i\)</span> could be zero, including <span class="math notranslate nohighlight">\(c_n\)</span>, in which case the degree is less than <span class="math notranslate nohighlight">\(n\)</span>.)
+<br>
+The unknown factors (<span class="math notranslate nohighlight">\(c_0 \cdots c_n\)</span>) are the <em>undetermined coefficients.</em></p>
+<p>Next one states the problem as a system of equations for these undetermined coefficients, and solves them.
+<br>
+Here, we have <span class="math notranslate nohighlight">\(n+1\)</span> conditions to be met:</p>
+<div class="math notranslate nohighlight">
+\[P(x_i) = \sum_{j=0}^n c_j x_i^j = y_i, \quad 0 \leq i \leq n\]</div>
+<p>This is a system if <span class="math notranslate nohighlight">\(n+1\)</span> simultaneous linear equations in <span class="math notranslate nohighlight">\(n+1\)</span> unknowns, so the question of existence and uniqueness is exactly the question of whether the corresponding matrix is singular,
+and so is equivalent to the case of all <span class="math notranslate nohighlight">\(y_i = 0\)</span> having <em>only</em> the solution with all
+<span class="math notranslate nohighlight">\(c_i = 0\)</span>.</p>
+<p>Back in terms of polynomials, this is the claim that the only polynomial of degree at most <span class="math notranslate nohighlight">\(n\)</span> with zeros <span class="math notranslate nohighlight">\(x_0 \dots x_n\)</span>.
+And this is true, because any non-trivial polynomial with those <span class="math notranslate nohighlight">\(n+1\)</span> distinct roots is of degree at least <span class="math notranslate nohighlight">\(n+1\)</span>, so the only “degree n” polynomial fitting this data is <span class="math notranslate nohighlight">\(P(x) \equiv 0\)</span>.
+The theorem is proven.</p>
+<p>The proof of this theorem is completely constructive, and it gives the only numerical method we need.</p>
+<p>Briefly, the algorithm is this (indexing from 0 !)</p>
+<ul class="simple">
+<li><p>Create the <span class="math notranslate nohighlight">\(n+1 \times n+1\)</span> matrix <span class="math notranslate nohighlight">\(V\)</span> with elements</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[v_{i,j} = x_i^j,\; 0 \leq i \leq n, \, 0 \leq j \leq n\]</div>
+<p>and the <span class="math notranslate nohighlight">\(n+1\)</span>-element column vector <span class="math notranslate nohighlight">\(y\)</span> with elements <span class="math notranslate nohighlight">\(y_i\)</span> as above.</p>
+<ul class="simple">
+<li><p>Solve <span class="math notranslate nohighlight">\(V c = y\)</span> for the vector of coefficients <span class="math notranslate nohighlight">\(c_j\)</span> as above.</p></li>
+</ul>
+<p>I use the name <span class="math notranslate nohighlight">\(V\)</span> because this is called the <strong>Vandermonde Matrix.</strong></p>
+<p>Enable graph plotting; PyPlot is an interface to the Python package <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code></p>
+<p>If this does not work in a downloaded notebook, see the instructions in the introduction.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># A helper function, short-hand for rounding</span>
+<span class="k">import</span> <span class="n">Base</span><span class="o">:</span> <span class="n">round</span>
+<span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="o">=</span> <span class="n">Base</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof example admonition" id="interpolation-example-1">
+<p class="admonition-title"><span class="caption-number">Example 4.1 </span> (Exact fit)</p>
+<section class="example-content" id="proof-content">
+<p>As usual, I concoct a first example with known correct answer, by using a polynomial as <span class="math notranslate nohighlight">\(f\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ f(x) = 4 + 7x -2x^2 - 5x^3 + 2x^4 \]</div>
+<p>using the nodes <span class="math notranslate nohighlight">\(x_0 = 1\)</span>, <span class="math notranslate nohighlight">\(x_1 = 2\)</span>, <span class="math notranslate nohighlight">\(x_2= 0\)</span>, <span class="math notranslate nohighlight">\(x_3 = 3.3\)</span> and <span class="math notranslate nohighlight">\(x_4 = 4\)</span>  (They do not need to be in order.)</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">7</span><span class="n">x</span> <span class="o">-</span><span class="mi">2</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">5</span><span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">+</span> <span class="mi">2</span><span class="n">x</span><span class="o">^</span><span class="mi">4</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="multiplication-by-juxtaposition-in-julia">
+<p class="admonition-title"><span class="caption-number">Remark 4.1 </span> (A Julia shorthand for products)</p>
+<section class="remark-content" id="proof-content">
+<p>Note the convenient short-hand of writing products by juxtapositon, without <code class="docutils literal notranslate"><span class="pre">*</span></code>.
+This works when the first factor is a literal number, not a variable name.</p>
+<p>To avoid ambiguity with the use of dots for <em>vectorization</em> introduced below,
+avoid ending a floating point number with a period when it it an integer;
+for example you can use</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>f(x) = 4 + 7x ...
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>f(x) = 4 + 7.0x ...
+</pre></div>
+</div>
+<p>but not</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>f(x) = 4 + 7.x + ...
+</pre></div>
+</div>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">xnodes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">3.3</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]</span>  <span class="c"># They do not need to be in order</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The x nodes &#39;x_i&#39; are </span><span class="si">$</span><span class="p">(</span><span class="n">xnodes</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">ynodes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">xnodes</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The y values at the nodes are </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">ynodes</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>  <span class="c"># Rounded for nicer display</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The x nodes &#39;x_i&#39; are [1.0, 2.0, 0.0, 3.3, 4.0]
+The y values at the nodes are [6.0, 2.0, 4.0, 62.8192, 192.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="julia-vectorization">
+<p class="admonition-title"><span class="caption-number">Remark 4.2 </span> (Vectorizing a Julia function)</p>
+<section class="remark-content" id="proof-content">
+<p>Appending the “point” to the function name (so it is <code class="docutils literal notranslate"><span class="pre">f.(...)</span></code> instead of <code class="docutils literal notranslate"><span class="pre">f(...)</span></code>) does <strong>vectorization</strong>:
+the function <code class="docutils literal notranslate"><span class="pre">f</span></code> is applied “pointwise”, to each element of the input array <code class="docutils literal notranslate"><span class="pre">x_nodes</span></code> in turn,
+with the results returned in an aray of the same size and shape.</p>
+<p>If there are several arguments, all are vectorized.</p>
+<p>See <a class="reference internal" href="julia-language-notes.html#vectorization-of-functions"><span class="std std-ref">Vectorization of Functions</span></a> in the <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+<p>We will see this again soon.</p>
+</section>
+</div><p>The Vandermonde matrix:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">nnodes</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">xnodes</span><span class="p">)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">nnodes</span><span class="o">-</span><span class="mi">1</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">nnodes</span><span class="p">,</span> <span class="n">nnodes</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">xnodes</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">^</span><span class="n">j</span>  <span class="c"># Shift the array indices up by one, since Julia counts from 1, not 0.</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Solve, using our functions seen in earlier sections and gathered in <a class="reference internal" href="NumericalMethods.html"><span class="doc">Module NumericalMethods</span></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">include</span><span class="p">(</span><span class="s">&quot;NumericalMethods.jl&quot;</span><span class="p">)</span>
+<span class="k">using</span> <span class="o">.</span><span class="n">NumericalMethods</span><span class="o">:</span> <span class="n">solvelinearsystem</span><span class="p">,</span> <span class="n">printmatrix</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">c_A</span> <span class="o">=</span> <span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">ynodes</span><span class="p">)</span>
+<span class="c"># It helps the visual presentation to round off;</span>
+<span class="n">c_A</span> <span class="o">=</span> <span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">c_A</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The coefficients of P are </span><span class="si">$c_A</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The coefficients of P are [4.0, 7.0, -2.0, -5.0, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>These are correct!</p>
+<p>To compare the computed values P[i] to what they shoudl be (y_nodes[i])
+we use the convenient tool <code class="docutils literal notranslate"><span class="pre">zip</span></code> for looping over two or more “parallel” lists of values:
+<code class="docutils literal notranslate"><span class="pre">zip(x,y)</span></code> effectively produces a list of pairs <code class="docutils literal notranslate"><span class="pre">[(x[1],</span> <span class="pre">y[1]),</span> <span class="pre">(x[2],</span> <span class="pre">y[2])</span> <span class="pre">...)</span></code> up till one or both arrays runs out of elements,
+and it also works for three or more lists.</p>
+<p>We can also check the resulting values of the polynomial:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">P</span> <span class="o">=</span> <span class="n">c_A</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">.+</span> <span class="n">c_A</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">xnodes</span> <span class="o">+</span> <span class="n">c_A</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">xnodes</span><span class="o">.^</span><span class="mi">2</span> <span class="o">+</span> <span class="n">c_A</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span><span class="o">*</span><span class="n">xnodes</span><span class="o">.^</span><span class="mi">3</span> <span class="o">+</span> <span class="n">c_A</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">*</span><span class="n">xnodes</span><span class="o">.^</span><span class="mi">4</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="vectorization-broadcasting-in-julia">
+<p class="admonition-title"><span class="caption-number">Remark 4.3 </span> (Vectorizing operators and broadcasting values in Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>The period prefix in the exponential notation <code class="docutils literal notranslate"><span class="pre">.^</span></code> and the sum notation <code class="docutils literal notranslate"><span class="pre">.+</span></code> is <strong>vectorization</strong> and <strong>broadcasting</strong>:</p>
+<ul class="simple">
+<li><p><strong>vectorization</strong>: <code class="docutils literal notranslate"><span class="pre">a.^b</span></code> means that if one of <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are arrays (or both are arrays, of the same shape and size) then the exponentiation is applied to each element in turn, producing an array of the same size and shape;</p></li>
+<li><p><strong>brodcasting</strong> of the addition: that first addition is “number plus array”;
+the notation <code class="docutils literal notranslate"><span class="pre">.+</span></code> indicates that this be done by promoting the number to an array matching the other addend.</p></li>
+</ul>
+<p>Vectorization can also be applied to other binary operations such as multiplication and division.</p>
+<p>See the notes on
+<a class="reference internal" href="julia-language-notes.html#vectorization-and-broadcasting"><span class="std std-ref">Arithmetic operations on arrays: vectorization and broadcasting</span></a>
+in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+</section>
+</div><p>Now we can check the <span class="math notranslate nohighlight">\(y\)</span> values</p>
+<div class="proof remark admonition" id="zip-in-julia">
+<p class="admonition-title"><span class="caption-number">Remark 4.4 </span> (Zipping arrays together in Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>The function <code class="docutils literal notranslate"><span class="pre">zip</span></code> takes two or more arrays (preferably of the same size and shape) and turns them into an array with each element a tuple of values, one from the corresponding position in each input array.</p>
+<p>For example, with 1D arrays <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> of length n, <code class="docutils literal notranslate"><span class="pre">zip(x,</span> <span class="pre">y)</span></code> is <code class="docutils literal notranslate"><span class="pre">[</span> <span class="pre">(</span> <span class="pre">x[1],</span> <span class="pre">y[1]</span> <span class="pre">),</span> <span class="pre">(</span> <span class="pre">x[2],</span> <span class="pre">y[2]</span> <span class="pre">)</span>&#160; <span class="pre">...</span> <span class="pre">(</span> <span class="pre">x[n],</span> <span class="pre">y[n]</span> <span class="pre">)</span> <span class="pre">]</span></code></p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">P_i</span><span class="p">)</span> <span class="k">in</span> <span class="n">zip</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">ynodes</span><span class="p">,</span> <span class="n">P</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;P(</span><span class="si">$x</span><span class="s">) should be </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span><span class="s">; it is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">P_i</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(1.0) should be 6.0; it is 6.0
+P(2.0) should be 2.0; it is 2.0
+P(0.0) should be 4.0; it is 4.0
+P(3.3) should be 62.8192; it is 62.8192
+P(4.0) should be 192.0; it is 192.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="functions-for-computing-the-coefficients-and-evaluating-the-polynomials">
+<span id="polyfit-polyval"></span><h2>Functions for computing the coefficients and evaluating the polynomials<a class="headerlink" href="#functions-for-computing-the-coefficients-and-evaluating-the-polynomials" title="Permalink to this headline">#</a></h2>
+<p>We will use this procedure several times, so it time to put it into a functions.
+The names <code class="docutils literal notranslate"><span class="pre">polyfit</span></code> and <code class="docutils literal notranslate"><span class="pre">polyval</span></code> come from very similar functions that are standard in Python and Matlab.</p>
+<p>We also add a pretty printer for polynomials, and import the pretty printer <code class="docutils literal notranslate"><span class="pre">printmatrix</span></code> for matrices.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="c"># Compute the coeffients c_i of the polynomial of lowest degree that collocates the points (x[i], y[i]).</span>
+    <span class="c"># These are returned in an array c of the same length as x and y, even if the degree is less than the normal length(x)-1,</span>
+    <span class="c"># in which case the array has some trailing zeroes.</span>
+    <span class="c"># The polynomial is thus p(x) = c[1] + c[2]x + ... c[n+1] x^n where n=length(x)-1, the nominal degree.</span>
+
+    <span class="n">nnodes</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">nnodes</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">nnodes</span><span class="p">,</span> <span class="n">nnodes</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span>
+             <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">^</span><span class="n">j</span>  <span class="c"># Shift the array indices up by one, since Julia counts from 1, not 0.</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">polyval</span><span class="p">(</span><span class="n">x</span><span class="p">;</span> <span class="n">coeffs</span><span class="p">)</span>  <span class="c"># coeffs has to be a keyword argument in order that only x gets vectorized</span>
+    <span class="c"># Evaluate the polynomial with coefficients in c (as given by polyfit, for example).</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">powers</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="mi">0</span><span class="o">:</span><span class="n">n</span><span class="p">)</span>  <span class="c"># function collect turns the &quot;AbstractRange&quot; 0:n into an array of numbers.</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">coeffs</span> <span class="o">.*</span> <span class="n">x</span><span class="o">.^</span><span class="n">powers</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">y</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">displaypolynomial</span><span class="p">(</span><span class="n">c</span><span class="p">;</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+    <span class="c"># Note that the function &quot;print&quot; does not end by going to a new line as `println` does;</span>
+    <span class="c"># this is useful when you want to create a line of output piece-by-piece, as done here.</span>
+
+    <span class="n">c</span> <span class="o">=</span> <span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">sigdigits</span><span class="p">)</span> <span class="c"># Clean up by rounding to sigdigits significant digits; yes, that&#39;s vectorization again.</span>
+    <span class="n">degree</span><span class="o">=</span><span class="n">length</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;P_</span><span class="si">$</span><span class="p">(</span><span class="n">degree</span><span class="p">)</span><span class="s">(x) = &quot;</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="n">c_1</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">c_1</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">print</span><span class="p">(</span><span class="s">&quot; + </span><span class="si">$</span><span class="p">(</span><span class="n">c_1</span><span class="p">)</span><span class="s">x&quot;</span><span class="p">)</span>
+        <span class="k">elseif</span> <span class="n">coeff</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">print</span><span class="p">(</span><span class="s">&quot; - </span><span class="si">$</span><span class="p">(</span><span class="o">-</span><span class="n">c_1</span><span class="p">)</span><span class="s"> x&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">1</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">degree</span>
+            <span class="n">c_j</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">c_j</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="n">print</span><span class="p">(</span><span class="s">&quot; + </span><span class="si">$</span><span class="p">(</span><span class="n">c_j</span><span class="p">)</span><span class="s">x^</span><span class="si">$j</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="k">elseif</span> <span class="n">c_j</span> <span class="o">&lt;</span> <span class="mi">0</span>
+                <span class="n">print</span><span class="p">(</span><span class="s">&quot; - </span><span class="si">$</span><span class="p">(</span><span class="o">-</span><span class="n">c_j</span><span class="p">)</span><span class="s">x^</span><span class="si">$j</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="k">end</span>
+            <span class="c"># Note: if c_j=0, there is nothing to say.</span>
+         <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">println</span><span class="p">()</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof example admonition" id="interpolation-example-2">
+<p class="admonition-title"><span class="caption-number">Example 4.2 </span> (<span class="math notranslate nohighlight">\(f(x)\)</span> not a polynomial of degree <span class="math notranslate nohighlight">\(\leq n\)</span>)</p>
+<section class="example-content" id="proof-content">
+<p>Make an exact fit impossible by using the same function but using only four nodes and reducing the degree of the interpolating <span class="math notranslate nohighlight">\(P\)</span> to three:
+<span class="math notranslate nohighlight">\(x_0 = 1\)</span>, <span class="math notranslate nohighlight">\(x_1 = 2\)</span>, <span class="math notranslate nohighlight">\(x_2 = 3\)</span> and <span class="math notranslate nohighlight">\(x_3 = 4\)</span></p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">xnodes</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">];</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The x nodes &#39;x_i&#39; are </span><span class="si">$xnodes</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">ynodes</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">xnodes</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The y values at the nodes are </span><span class="si">$ynodes</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">c_B</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">ynodes</span><span class="p">);</span>
+<span class="n">displaypolynomial</span><span class="p">(</span><span class="n">c_B</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The x nodes &#39;x_i&#39; are [1.0, 2.0, 3.0, 4.0]
+The y values at the nodes are [6.0, 2.0, 34.0, 192.0]
+P_3(x) = -44.0 + 107.0x - 72.0x^2 + 15.0x^3
+</pre></div>
+</div>
+</div>
+</div>
+<p>There are several ways to assess the accuracy of this fit; we start graphically, and later consider the maximum and root-mean-square (RMS) errors.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">xplot</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">4.1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="c"># for graphing: go a bit beyond the nodes</span>
+<span class="n">fplot</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">xplot</span><span class="p">);</span>
+<span class="n">Pplot</span> <span class="o">=</span> <span class="n">polyval</span><span class="o">.</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">coeffs</span><span class="o">=</span><span class="n">c_B</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">fplot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;f(x)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">ynodes</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;nodes&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">Pplot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;y = </span><span class="si">$P_3</span><span class="s">(x)$&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation+approximation_35_0.png" src="../_images/polynomial-collocation+approximation_35_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">Perror</span> <span class="o">=</span> <span class="n">fplot</span> <span class="o">-</span> <span class="n">Pplot</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;Error in </span><span class="si">$P_3</span><span class="s">(x)$&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">Perror</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">zero</span><span class="p">(</span><span class="n">xnodes</span><span class="p">),</span> <span class="s">&quot;*&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation+approximation_36_0.png" src="../_images/polynomial-collocation+approximation_36_0.png" />
+</div>
+</div>
+<div class="proof example admonition" id="interpolation-example-3">
+<p class="admonition-title"><span class="caption-number">Example 4.3 </span> (<span class="math notranslate nohighlight">\(f(x)\)</span> not a polynomial at all)</p>
+<section class="example-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(f(x) = e^x\)</span> with five nodes, equally spaced from <span class="math notranslate nohighlight">\(-1\)</span> to <span class="math notranslate nohighlight">\(1\)</span></p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">a_g</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+<span class="n">b_g</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">degree</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">n_nodes</span> <span class="o">=</span> <span class="n">degree</span> <span class="o">+</span> <span class="mi">1</span>
+
+<span class="n">xnodes</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a_g</span><span class="p">,</span> <span class="n">b_g</span><span class="p">,</span> <span class="n">n_nodes</span><span class="p">)</span>
+<span class="n">gnodes</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="p">(</span><span class="n">xnodes</span><span class="p">)</span>
+<span class="n">c_C</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">gnodes</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;node x values </span><span class="si">$xnodes</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;node y values </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">gnodes</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">displaypolynomial</span><span class="p">(</span><span class="n">c_C</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>node x values -1.0:0.5:1.0
+node y values [0.3679, 0.6065, 1.0, 1.649, 2.718]
+P_4(x) = 1.0 + 0.9979x + 0.4996x^2 + 0.1773x^3 + 0.04344x^4
+</pre></div>
+</div>
+</div>
+</div>
+<p>For comparison, the degree 4 Taylor polynomial for <span class="math notranslate nohighlight">\(e^x\)</span> with center 0 is (to the same 6 significant digits)</p>
+<div class="math notranslate nohighlight">
+\[ 1 + x + 0.5 x^2 + 0.1667 x^3 + 0.04167 x^4\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">xplot</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a_g</span> <span class="o">-</span> <span class="mf">0.2</span><span class="p">,</span> <span class="n">b_g</span> <span class="o">+</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>  <span class="c"># Go a bit beyond the nodes in each direction</span>
+<span class="n">gplot</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="p">(</span><span class="n">xplot</span><span class="p">)</span>
+<span class="n">Pplot_g</span> <span class="o">=</span> <span class="n">polyval</span><span class="o">.</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">coeffs</span><span class="o">=</span><span class="n">c_C</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">gplot</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;y = g(x) = e^x&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">gnodes</span><span class="p">,</span> <span class="s">&quot;*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;nodes&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">Pplot_g</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y = P(x)&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation+approximation_42_0.png" src="../_images/polynomial-collocation+approximation_42_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">Perror_g</span> <span class="o">=</span> <span class="n">gplot</span> <span class="o">-</span> <span class="n">Pplot_g</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">degree</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;Error in </span><span class="si">$P_4</span><span class="s">(x)$ for </span><span class="si">$g</span><span class="s">(x) = e^x$&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xplot</span><span class="p">,</span> <span class="n">Perror_g</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">zero</span><span class="p">(</span><span class="n">xnodes</span><span class="p">),</span> <span class="s">&quot;*&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation+approximation_43_0.png" src="../_images/polynomial-collocation+approximation_43_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="collocation-approximation.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">4. </span>Polynomial Collocation and Approximation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="polynomial-collocation-error-formulas.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">4.2. </span>Error Formulas for Polynomial Collocation</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

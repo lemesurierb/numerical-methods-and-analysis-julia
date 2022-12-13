@@ -1,0 +1,2652 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>9.2. Notes on the Julia Language &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="9.3. Module NumericalMethods" href="NumericalMethods.html" />
+    <link rel="prev" title="9.1. Installing Julia and some useful add-ons" href="installing-julia-and-packages.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/julia-language-notes.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/julia-language-notes.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#characters-and-strings">
+   Characters and strings
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#string-concatenation-and-duplication">
+     String concatenation and duplication
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#displaying-values-println-print-and-just-saying-the-name">
+   Displaying values:
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     println
+    </span>
+   </code>
+   ,
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     print
+    </span>
+   </code>
+   and just saying the name
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#displaying-the-values-of-variables-and-expressions">
+   Displaying the values of variables and expressions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#boolean-values-true-false">
+   Boolean values (true-false)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#comparisons">
+   Comparisons
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#numbers">
+   Numbers
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#complex-numbers">
+     Complex numbers
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#arithemetic-operators">
+   Arithemetic operators
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#arrays">
+   Arrays
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#array-indexing-and-slicing">
+     Array indexing and slicing
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#function-range">
+     Function
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       range
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tuples">
+   Tuples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#arithmetic-operations-on-arrays-vectorization-and-broadcasting">
+   Arithmetic operations on arrays: vectorization and broadcasting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#condititional-statements">
+   Condititional statements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#iteration-with-for-while-break-and-continue">
+   Iteration with
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     for
+    </span>
+   </code>
+   ,
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     while
+    </span>
+   </code>
+   ,
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     break
+    </span>
+   </code>
+   and
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     continue
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-modules-and-packages-and-some-graph-plotting">
+   Using modules and packages, and some graph plotting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#functions-part-i">
+   Functions, part I
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#one-liners">
+     One liners
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#functions-defined-by-a-block-of-code">
+     Functions defined by a block of code
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-keyword-return">
+     The keyword
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       return
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#vectorization-of-functions">
+   Vectorization of Functions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plotting-graphs-a-bit-more-about-pyplot">
+   Plotting graphs: a bit more about PyPlot
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#l-strings-for-inserting-latex-mathematical-markup">
+     L-Strings for inserting LaTeX mathematical markup
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Notes on the Julia Language</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#characters-and-strings">
+   Characters and strings
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#string-concatenation-and-duplication">
+     String concatenation and duplication
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#displaying-values-println-print-and-just-saying-the-name">
+   Displaying values:
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     println
+    </span>
+   </code>
+   ,
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     print
+    </span>
+   </code>
+   and just saying the name
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#displaying-the-values-of-variables-and-expressions">
+   Displaying the values of variables and expressions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#boolean-values-true-false">
+   Boolean values (true-false)
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#comparisons">
+   Comparisons
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#numbers">
+   Numbers
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#complex-numbers">
+     Complex numbers
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#arithemetic-operators">
+   Arithemetic operators
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#arrays">
+   Arrays
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#array-indexing-and-slicing">
+     Array indexing and slicing
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#function-range">
+     Function
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       range
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#tuples">
+   Tuples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#arithmetic-operations-on-arrays-vectorization-and-broadcasting">
+   Arithmetic operations on arrays: vectorization and broadcasting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#condititional-statements">
+   Condititional statements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#iteration-with-for-while-break-and-continue">
+   Iteration with
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     for
+    </span>
+   </code>
+   ,
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     while
+    </span>
+   </code>
+   ,
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     break
+    </span>
+   </code>
+   and
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     continue
+    </span>
+   </code>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#using-modules-and-packages-and-some-graph-plotting">
+   Using modules and packages, and some graph plotting
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#functions-part-i">
+   Functions, part I
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#one-liners">
+     One liners
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#functions-defined-by-a-block-of-code">
+     Functions defined by a block of code
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-keyword-return">
+     The keyword
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       return
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#vectorization-of-functions">
+   Vectorization of Functions
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#plotting-graphs-a-bit-more-about-pyplot">
+   Plotting graphs: a bit more about PyPlot
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#l-strings-for-inserting-latex-mathematical-markup">
+     L-Strings for inserting LaTeX mathematical markup
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="notes-on-the-julia-language">
+<h1><span class="section-number">9.2. </span>Notes on the Julia Language<a class="headerlink" href="#notes-on-the-julia-language" title="Permalink to this headline">#</a></h1>
+<p><strong>Revised September 23, 2022</strong></p>
+<p>These notes are not intended to teach the Julia language from scratch, or comprehensively;
+instead they are addressed to readers who already know somewhat similar tools like Matlab or “Python Scientific” (Python + Numpy + Matplotlib),
+and they focus on the parts of Julia actually used in this book.</p>
+<p>A very short version of the story is that what works in Matlab often also work in Julia;
+one design principle is offering familiarity for Matlab users by having the Matlab syntax work (at least as one option)
+except where that would get in the way of moderization.
+Though some syntax comes from Python and some from C.
+And one bit is from Perl.</p>
+<p>An intermediate version is this summary of
+<a class="reference external" href="https://docs.julialang.org/en/v1/manual/noteworthy-differences/">Julia’s noteworthy differences from other languages</a>,
+with comparisons to Matlab and Python (and also to R and C/C++).</p>
+<p>For the full story, see resources like <a class="reference external" href="https://docs.julialang.org/en/v1/">the official Julia documentation</a>.
+(Don’t read it all at once: the PDF version is over 1500 pages.)</p>
+<p><a name="charactersstrings"></a></p>
+<section id="characters-and-strings">
+<h2>Characters and strings<a class="headerlink" href="#characters-and-strings" title="Permalink to this headline">#</a></h2>
+<p>The character set is Unicode via UTF-8, so Greek letters and much more are usable.</p>
+<p>I generally advise against going beyond plain old ASCII characters, but see the functions
+<a class="reference external" href="NumericalMethods#plu">plu</a>
+and
+<a class="reference external" href="NumericalMethods#forwardsubstitution">forwardsubstitution</a>
+in the collection <a class="reference internal" href="NumericalMethods.html"><span class="doc">Module NumericalMethods</span></a>
+where Unicode is used to illustrate the possibility of following mathematical notation more closely.</p>
+<p>The usual style is that the names of variable and functions use only (Roman alphabet) letter, digits, and possibly underscores to separate words in names that are descriptive phrases.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;π/2 = &quot;</span><span class="p">,</span> <span class="nb">π</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>π/2 = 1.5707963267948966
+</pre></div>
+</div>
+</div>
+</div>
+<p>(That function <code class="docutils literal notranslate"><span class="pre">println</span></code> will be explained below in <a class="reference external" href="#displayingvalues">Displaying values</a>.)</p>
+<p>So not only is <span class="math notranslate nohighlight">\(\pi\)</span> is the character set; it is the name of predefined constant.
+(which can also be referred to as <code class="docutils literal notranslate"><span class="pre">pi</span></code>)</p>
+<p>Typing such characters is done using LaTeX notation and tabbing:
+for <span class="math notranslate nohighlight">\(\pi\)</span>, type the three character sequence <code class="docutils literal notranslate"><span class="pre">\pi</span></code> and then press TAB.</p>
+<p>The above characters are in single right quotes (to be pedantic, apostrophes),
+whereas strings of characters must be surrounded, more properly, by double quote characters:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&quot;This is a string&quot;
+&#39;This is a syntax error&#39;
+</pre></div>
+</div>
+<p>This one comes from C, I think.</p>
+<p><em>Aside:</em> here is a quirky use of Unicode built in to Julia:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="o">√</span><span class="mi">4</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="concatenationduplication"></a></p>
+<section id="string-concatenation-and-duplication">
+<h3>String concatenation and duplication<a class="headerlink" href="#string-concatenation-and-duplication" title="Permalink to this headline">#</a></h3>
+<p>To concatenate two strings, “multiply” them with <code class="docutils literal notranslate"><span class="pre">*</span></code>. (Versus “adding” them as in Python.)</p>
+<p>Also, consistent with that, making multiple copies of a string is done by “exponentiation”, with <code class="docutils literal notranslate"><span class="pre">^</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">greeting</span> <span class="o">=</span> <span class="s">&quot;Hello&quot;</span>
+<span class="n">audience</span> <span class="o">=</span> <span class="s">&quot;world&quot;</span>
+<span class="n">sentence</span> <span class="o">=</span> <span class="n">greeting</span> <span class="o">*</span> <span class="sc">&#39; &#39;</span> <span class="o">*</span> <span class="n">audience</span> <span class="o">*</span> <span class="sc">&#39;.&#39;</span>
+<span class="n">println</span><span class="p">(</span><span class="n">sentence</span><span class="p">)</span>
+<span class="n">println</span><span class="p">((</span><span class="n">greeting</span><span class="o">*</span><span class="sc">&#39; &#39;</span><span class="p">)</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Hello world.
+Hello Hello Hello 
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that single characters can also be concatenated into strings, and exponentiated:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">gamma</span> <span class="o">=</span> <span class="sc">&#39;g&#39;</span> <span class="o">*</span> <span class="sc">&#39;a&#39;</span> <span class="o">*</span> <span class="sc">&#39;m&#39;</span><span class="o">^</span><span class="mi">2</span> <span class="o">*</span> <span class="sc">&#39;a&#39;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&quot;gamma&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="displayingvalues"></a></p>
+</section>
+</section>
+<section id="displaying-values-println-print-and-just-saying-the-name">
+<h2>Displaying values: <code class="docutils literal notranslate"><span class="pre">println</span></code>, <code class="docutils literal notranslate"><span class="pre">print</span></code> and just saying the name<a class="headerlink" href="#displaying-values-println-print-and-just-saying-the-name" title="Permalink to this headline">#</a></h2>
+<p>We have seen above two basic ways of getting output displayed on the screen:</p>
+<ul class="simple">
+<li><p>the function <code class="docutils literal notranslate"><span class="pre">println</span></code></p></li>
+<li><p>putting an expression on the last line of a cell (or typing it into the interactive Julia command line),
+which causes that expression to be evaluated and the result displayed.
+This is as in both Matlab and Python, and with the same method for supressing output: ending that line with a semi-colon.</p></li>
+</ul>
+<p>The basic usage of function <code class="docutils literal notranslate"><span class="pre">println</span></code> is as for the synonymous function in Matlab and <code class="docutils literal notranslate"><span class="pre">print</span></code> in Python:
+input is a sequence of strings whose values are ouptut on a line, after which output moves to a newline.</p>
+<p>There is also a variant <code class="docutils literal notranslate"><span class="pre">print</span></code> which does not go to a new line at the end; useful for assembling a line of output piece-by-piece:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;The&quot;</span><span class="p">,</span><span class="s">&quot; end.&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;That&#39;s&quot;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot; all&quot;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot; folks&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The end.
+
+That&#39;s all folks!
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note that in each case, the spaces must be explicitly specified.
+Also, the sequence of strings can be empty: get just a blank line with <code class="docutils literal notranslate"><span class="pre">println()</span></code>.</p>
+<p><a name="displayingvaluesofexpressions"></a></p>
+</section>
+<section id="displaying-the-values-of-variables-and-expressions">
+<h2>Displaying the values of variables and expressions<a class="headerlink" href="#displaying-the-values-of-variables-and-expressions" title="Permalink to this headline">#</a></h2>
+<p>As already seen above, there are several ways of display the value of a variable, or more generally of an expression.</p>
+<p>One is to put such expressions in the sequence of arguments to <code class="docutils literal notranslate"><span class="pre">println</span></code> (so I lied slightly about the arguments being strings):</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;a = &quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="s">&quot; and its cube is &quot;</span><span class="p">,</span> <span class="n">a</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a = 2 and its cube is 8
+</pre></div>
+</div>
+</div>
+</div>
+<p>Another is to use ‘$’ interpolation, adopted from the Perl language:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;a = </span><span class="si">$a</span><span class="s"> and its cube is </span><span class="si">$</span><span class="p">(</span><span class="n">a</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a = 2 and its cube is 8
+</pre></div>
+</div>
+</div>
+</div>
+<p>When the expression whose value to interpolate is just a variable name, it is enough to prefix that name by ‘<span class="math notranslate nohighlight">\('.
+However more involved expressions must be parenthesised, as with `\)</span>(a^3)`.</p>
+<p>Fun fact: the string in the last example is an expression whose value is the string displayed,
+so its value can also be displayed by simply having it as the last (and semicolon-free) line of a cell:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="s">&quot;a = </span><span class="si">$a</span><span class="s"> and its cube is </span><span class="si">$</span><span class="p">(</span><span class="n">a</span><span class="o">^</span><span class="mi">3</span><span class="p">)</span><span class="s">&quot;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&quot;a = 2 and its cube is 8&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<p>This is useful to know since it reveals a nice “orthogonality of features”:
+interpolation is not a special feature of function <code class="docutils literal notranslate"><span class="pre">println</span></code> but something that can be used in other situations;
+probably the most common use in this book will be putting annotations on graphs.</p>
+<p>Sometimes it is illuminating to use the “last line automatic display” feature rather than <code class="docutils literal notranslate"><span class="pre">print</span></code> because it reveals some information about the type of a quantity rather than just its value.
+This book uses that often when discussing Julia language features rather than when actually doing numerical computing;
+see for example the notes on <a class="reference external" href="#arrays">arrays</a> below.</p>
+<p>On the other hand, many expressions give output values that you might not expect, like the definitions of <a class="reference external" href="#functions1">functions</a> and  function <code class="docutils literal notranslate"><span class="pre">plot</span></code> in the notes on <a class="reference external" href="#modules">modules</a> below;
+thus you might want to end many cells with a semi-colon to supress unneeded output.
+An end-of-line semi-colon never hurts, even where redundant, so you may type like a C programmer if you wish.</p>
+<p>Semicolons can also be used to combine statements on a single line.
+This is often considered as poor style, but I sometimes find that it improves readability with several short and closely related statements:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="n">b</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;a=&quot;</span><span class="p">,</span><span class="n">a</span><span class="p">,</span><span class="s">&quot;, b=&quot;</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>a=1, b=3
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="boolean"></a></p>
+</section>
+<section id="boolean-values-true-false">
+<h2>Boolean values (true-false)<a class="headerlink" href="#boolean-values-true-false" title="Permalink to this headline">#</a></h2>
+<p>These are <code class="docutils literal notranslate"><span class="pre">true</span></code> and <code class="docutils literal notranslate"><span class="pre">false</span></code> and nothing else:</p>
+<ul class="simple">
+<li><p>not capitalized as they are in Python</p></li>
+<li><p>not “1” and “0” or “nonzero” vs “zero” or any other laziness.</p></li>
+</ul>
+<p>The logical operators are much as in C: “&amp;&amp;”, “||”, “&amp;”, “|”, and “!” for negation.</p>
+<p>Be careful with that last one; logical negation is not “~” as in Matlab.</p>
+<p>The doubled forms “&amp;&amp;” and “||” use lazy or “short-circuiting” evaluation:
+if the value the left-hand term determines the truth value of the whole, then the second term is not evaluated.
+For example, the following avoids division by zero:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>if q != 0 &amp;&amp; -1 &lt; p/q &lt; 1
+    println(&quot;$p/$q is a proper fraction&quot;)
+else
+    println(&quot;$p/$q is not a proper fraction&quot;)
+end
+</pre></div>
+</div>
+<p><a name="comparisons"></a></p>
+</section>
+<section id="comparisons">
+<h2>Comparisons<a class="headerlink" href="#comparisons" title="Permalink to this headline">#</a></h2>
+<p>The usual comparisons of numbers and tests for equality exist,</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>&lt; &lt;= == &gt;= !=
+</pre></div>
+</div>
+<p>with a couple of extra twists.</p>
+<p>the first is the comparisons can be chained, as seen above:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-1 &lt; p/q &lt; 1
+</pre></div>
+</div>
+<p>is equivalant to</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>-1 &lt; p/q &amp;&amp; p/q &lt; 1
+</pre></div>
+</div>
+<p>but both more readable and more efficient, because the middle term is only evaluated once.
+Like <code class="docutils literal notranslate"><span class="pre">&amp;&amp;</span></code>, this is short-circuiting.</p>
+<p>(This one comes from Python, the only other language I know of with this feature.)</p>
+<p>This can even be done in cases where usual mathematical style forbids, with reversing of the direction of the inequalities:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span> <span class="o">&lt;</span> <span class="mi">4</span> <span class="o">&gt;</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>true
+</pre></div>
+</div>
+</div>
+</div>
+<p>The second extra is the function <code class="docutils literal notranslate"><span class="pre">isequal(a,</span> <span class="pre">b)</span></code>.
+This is mostly the same as <code class="docutils literal notranslate"><span class="pre">==</span></code> but with some special handling for the special values <code class="docutils literal notranslate"><span class="pre">-0.0</span></code> and <code class="docutils literal notranslate"><span class="pre">NaN</span></code> of IEEE floating point numbers:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nb">NaN</span> <span class="o">==</span> <span class="nb">NaN</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>false
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">isequal</span><span class="p">(</span><span class="nb">NaN</span><span class="p">,</span> <span class="nb">NaN</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>true
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="o">-</span><span class="mf">0.0</span> <span class="o">==</span> <span class="mf">0.0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>true
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">isequal</span><span class="p">(</span><span class="o">-</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>false
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="numbers"></a></p>
+</section>
+<section id="numbers">
+<h2>Numbers<a class="headerlink" href="#numbers" title="Permalink to this headline">#</a></h2>
+<p>As just mentioned, the default floating point numbers and arithmetic are IEEE Float64, and the default integers are Int64;
+others are available (like Int32 and unsigned integers) but they will not be mentioned again in this book.</p>
+<p>Thus the main novelty here is a notation:
+the underscore can be used within numbers to improve readabilty, as commas are (and periods in some countries.)
+They can be put wherever you like:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">two_thousand_million</span> <span class="o">=</span> <span class="mi">2_000_000000</span>  <span class="c"># British English</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;two_thousand_million is &quot;</span><span class="p">,</span><span class="n">two_thousand_million</span><span class="p">)</span>
+<span class="n">crore</span> <span class="o">=</span> <span class="mi">1_00_00_000</span>  <span class="c"># This is where Indian style puts the commas</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;In the Indian number naming system, one crore is </span><span class="si">$crore</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">almostpi</span> <span class="o">=</span> <span class="mf">3.1415_9265</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;pi is approximately </span><span class="si">$almostpi</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>two_thousand_million is 2000000000
+In the Indian number naming system, one crore is 10000000
+pi is approximately 3.14159265
+</pre></div>
+</div>
+</div>
+</div>
+<p>A point on recommended style: although floating point numbers can be typed with the decimal point at the beginning or the end,
+as with <code class="docutils literal notranslate"><span class="pre">2.</span></code> and <code class="docutils literal notranslate"><span class="pre">.5</span></code>,
+it is recommended style to always have digits around the decimal point, as with <code class="docutils literal notranslate"><span class="pre">2.0</span></code> and <code class="docutils literal notranslate"><span class="pre">0.5</span></code>.</p>
+<p>One reason is that the period ‘.’ is used with many other meanings, so this style helps to avoid ambiguities;
+see below about <a class="reference external" href="#arithemeticonarrays">vectorization</a>.</p>
+<p><a name="complexnumbers"></a></p>
+<section id="complex-numbers">
+<h3>Complex numbers<a class="headerlink" href="#complex-numbers" title="Permalink to this headline">#</a></h3>
+<p>Julia uses <code class="docutils literal notranslate"><span class="pre">im</span></code> for the square root of -1 rather than <code class="docutils literal notranslate"><span class="pre">i</span></code> or <code class="docutils literal notranslate"><span class="pre">j</span></code>, and <code class="docutils literal notranslate"><span class="pre">im</span></code> cannot be used as the name of a variable.</p>
+<p>In general, the complex number <span class="math notranslate nohighlight">\(a + b i\)</span> is expressed as <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">bim</span></code> where ‘b’ is a literal number,
+not the name of a variable.
+Then <code class="docutils literal notranslate"><span class="pre">im</span></code> is immediately juxtaposed with that number, no intervening space allowed).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">4</span><span class="nb">im</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;z = &quot;</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;Its absolute value is &quot;</span><span class="p">,</span> <span class="n">abs</span><span class="p">(</span><span class="n">z</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>z = 3 + 4im
+Its absolute value is 5.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>As you might expect, imaginary numbers can be written without the real part <span class="math notranslate nohighlight">\(a\)</span>, as <code class="docutils literal notranslate"><span class="pre">bim</span></code> and when <span class="math notranslate nohighlight">\(b=1\)</span>, it can be ommited</p>
+<p>However, the imaginary part <code class="docutils literal notranslate"><span class="pre">b</span></code> is always needed, even when <span class="math notranslate nohighlight">\(b = 0\)</span>, to announce that the nuber is to br treated a complex.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="mi">2</span><span class="nb">im</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 + 2im
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="nb">im</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>im
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="nb">im</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>-1 + 0im
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="nb">im</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - 1im
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="o">-</span><span class="nb">im</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0 - 1im
+</pre></div>
+</div>
+</div>
+</div>
+<p>However, the imaginary part <code class="docutils literal notranslate"><span class="pre">b</span></code> is always needed, even when <span class="math notranslate nohighlight">\(b = 0\)</span>, to announce that the number is to be treated a complex.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="nb">im</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0.0 + 1.0im
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">DomainError</span> <span class="k">with</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">:</span>
+<span class="n">sqrt</span> <span class="n">will</span> <span class="n">only</span> <span class="k">return</span> <span class="n">a</span> <span class="nb">complex</span> <span class="n">result</span> <span class="k">if</span> <span class="n">called</span> <span class="k">with</span> <span class="n">a</span> <span class="nb">complex</span> <span class="n">argument</span><span class="o">.</span> <span class="n">Try</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">Complex</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span>
+
+<span class="ne">Stacktrace</span>:
+ <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">throw_complex_domainerror</span><span class="p">(</span><span class="n">f</span><span class="p">::</span><span class="n">Symbol</span><span class="p">,</span> <span class="n">x</span><span class="p">::</span><span class="n">Float64</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span><span class="o">.</span><span class="n">Math</span> <span class="o">./</span><span class="n">math</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">33</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="n">sqrt</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">math</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">591</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">::</span><span class="n">Int64</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span><span class="o">.</span><span class="n">Math</span> <span class="o">./</span><span class="n">math</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1372</span>
+ <span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">scope</span>
+   <span class="o">@</span> <span class="n">In</span><span class="p">[</span><span class="mi">158</span><span class="p">]:</span><span class="mi">1</span>
+ <span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="nb">eval</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">boot</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">368</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="n">include_string</span><span class="p">(</span><span class="n">mapexpr</span><span class="p">::</span><span class="n">typeof</span><span class="p">(</span><span class="n">REPL</span><span class="o">.</span><span class="n">softscope</span><span class="p">),</span> <span class="n">mod</span><span class="p">::</span><span class="n">Module</span><span class="p">,</span> <span class="n">code</span><span class="p">::</span><span class="n">String</span><span class="p">,</span> <span class="n">filename</span><span class="p">::</span><span class="n">String</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span> <span class="o">./</span><span class="n">loading</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1428</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The name <code class="docutils literal notranslate"><span class="pre">im</span></code> is reserved for this role; it cannot be used as a variable name:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="nb">im</span> <span class="o">=</span> <span class="mi">100</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="n">cannot</span> <span class="n">assign</span> <span class="n">a</span> <span class="n">value</span> <span class="n">to</span> <span class="n">variable</span> <span class="n">Base</span><span class="o">.</span><span class="n">im</span> <span class="kn">from</span> <span class="nn">module</span> <span class="n">Main</span>
+
+<span class="ne">Stacktrace</span>:
+ <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">scope</span>
+   <span class="o">@</span> <span class="n">In</span><span class="p">[</span><span class="mi">159</span><span class="p">]:</span><span class="mi">1</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="nb">eval</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">boot</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">368</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">include_string</span><span class="p">(</span><span class="n">mapexpr</span><span class="p">::</span><span class="n">typeof</span><span class="p">(</span><span class="n">REPL</span><span class="o">.</span><span class="n">softscope</span><span class="p">),</span> <span class="n">mod</span><span class="p">::</span><span class="n">Module</span><span class="p">,</span> <span class="n">code</span><span class="p">::</span><span class="n">String</span><span class="p">,</span> <span class="n">filename</span><span class="p">::</span><span class="n">String</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span> <span class="o">./</span><span class="n">loading</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1428</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="arithemeticoperators"></a></p>
+</section>
+</section>
+<section id="arithemetic-operators">
+<h2>Arithemetic operators<a class="headerlink" href="#arithemetic-operators" title="Permalink to this headline">#</a></h2>
+<p>With arithmetic on numbers, the main items to note are</p>
+<ol class="simple">
+<li><p>exponentiation</p></li>
+<li><p>division with integers, and</p></li>
+<li><p>multiplication by juxtoposition</p></li>
+</ol>
+<ul class="simple">
+<li><p>Exponentiation <span class="math notranslate nohighlight">\(a^b\)</span> is given by <code class="docutils literal notranslate"><span class="pre">a^b</span></code> (as in Matlab and different from Python’s <code class="docutils literal notranslate"><span class="pre">a**b</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p/q</span></code> with <code class="docutils literal notranslate"><span class="pre">p</span></code> and <code class="docutils literal notranslate"><span class="pre">q</span></code> both integers promotes to floating point arithmetic.</p></li>
+<li><p>To do integer division with integer result, use <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">÷</span> <span class="pre">q</span></code> (or <code class="docutils literal notranslate"><span class="pre">div(p,q)</span></code> to avoid that Unicode: all operators also have function forms).</p></li>
+<li><p>The remainder is given by <code class="docutils literal notranslate"><span class="pre">p%q</span></code>, or <code class="docutils literal notranslate"><span class="pre">rem(p,q)</span></code>. Thus <code class="docutils literal notranslate"><span class="pre">(p</span> <span class="pre">÷</span> <span class="pre">q)*</span> <span class="pre">q</span> <span class="pre">+</span> <span class="pre">p%q</span> <span class="pre">=</span> <span class="pre">p</span></code></p></li>
+<li><p>There is also “backward division”: <code class="docutils literal notranslate"><span class="pre">q\p</span></code> is the same as <code class="docutils literal notranslate"><span class="pre">p/q</span></code>; see below.</p></li>
+<li><p>The product of a literal number by a variable or function value can be indicated by juxtoposition, no ‘*’ needed:</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="mi">2</span><span class="nb">π</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="mi">4</span><span class="n">tan</span><span class="p">(</span><span class="nb">pi</span><span class="o">/</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>6.283185307179586
+3.9999999999999996
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="arrays">
+<span id="julia-language-arrays"></span><h2>Arrays<a class="headerlink" href="#arrays" title="Permalink to this headline">#</a></h2>
+<p>Julia has numerical arrays bult in, and the basic construction notation is much as in Matlab, with semicolons separating rows.
+However, not everything is a matrix of real numbers:</p>
+<ul class="simple">
+<li><p>Integer values are supported.</p></li>
+<li><p>There is a distinction between matrices and vectors, with the latter being equivalent to single column matrices.</p></li>
+<li><p>Single row matrices are still considered as matrices.</p></li>
+</ul>
+<p>This all follows common mathematical conventions, and so does multiplication.</p>
+<p>Vectors (1-index arrays) are created with bracketed, comma separated lists;
+note the column vector presentation.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3-element Vector{Int64}:
+ 1
+ 2
+ 3
+</pre></div>
+</div>
+</div>
+</div>
+<p>Matrices are created with rows separated by semicolons and elements with a row separated only by spaces:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.0</span> <span class="mf">2.0</span> <span class="mf">3.0</span> <span class="p">;</span> <span class="mf">4.0</span> <span class="mf">5.0</span> <span class="mf">6.0</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×3 Matrix{Float64}:
+ 1.0  2.0  3.0
+ 4.0  5.0  6.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note the difference from vector <code class="docutils literal notranslate"><span class="pre">v</span></code> above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1×3 Matrix{Int64}:
+ 1  2  3
+</pre></div>
+</div>
+</div>
+</div>
+<p>On the other hand, a vector can be created as a one-column matrix:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v_as_matrix</span> <span class="o">=</span> <span class="p">[</span> <span class="mi">1</span> <span class="p">;</span> <span class="mi">2</span> <span class="p">;</span> <span class="mi">3</span> <span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3-element Vector{Int64}:
+ 1
+ 2
+ 3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">==</span> <span class="n">v_as_matrix</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>true
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">==</span> <span class="n">u</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>false
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">u</span> <span class="o">*</span> <span class="n">v</span>  <span class="c"># like u-transpose times v; the inner product</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1-element Vector{Int64}:
+ 14
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">outer</span> <span class="o">=</span> <span class="n">v</span> <span class="o">*</span> <span class="n">u</span>  <span class="c"># The outer product</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3×3 Matrix{Int64}:
+ 1  2  3
+ 2  4  6
+ 3  6  9
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v</span> <span class="o">*</span> <span class="n">v</span>  <span class="c"># vector times vector, a mismatch</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="ne">MethodError</span>: no method matching *(::Vector{Int64}, ::Vector{Int64})
+<span class="n">Closest</span> <span class="n">candidates</span> <span class="n">are</span><span class="p">:</span>
+  <span class="o">*</span><span class="p">(::</span><span class="n">Any</span><span class="p">,</span> <span class="p">::</span><span class="n">Any</span><span class="p">,</span> <span class="p">::</span><span class="n">Any</span><span class="p">,</span> <span class="p">::</span><span class="n">Any</span><span class="o">...</span><span class="p">)</span> <span class="n">at</span> <span class="n">operators</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">591</span>
+  <span class="o">*</span><span class="p">(::</span><span class="n">StridedMatrix</span><span class="p">{</span><span class="n">T</span><span class="p">},</span> <span class="p">::</span><span class="n">StridedVector</span><span class="p">{</span><span class="n">S</span><span class="p">})</span> <span class="n">where</span> <span class="p">{</span><span class="n">T</span><span class="o">&lt;</span><span class="p">:</span><span class="n">Union</span><span class="p">{</span><span class="n">Float32</span><span class="p">,</span> <span class="n">Float64</span><span class="p">,</span> <span class="n">ComplexF32</span><span class="p">,</span> <span class="n">ComplexF64</span><span class="p">},</span> <span class="n">S</span><span class="o">&lt;</span><span class="p">:</span><span class="n">Real</span><span class="p">}</span> <span class="n">at</span> <span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">Julia</span><span class="o">-</span><span class="mf">1.8</span><span class="o">.</span><span class="n">app</span><span class="o">/</span><span class="n">Contents</span><span class="o">/</span><span class="n">Resources</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">stdlib</span><span class="o">/</span><span class="n">v1</span><span class="mf">.8</span><span class="o">/</span><span class="n">LinearAlgebra</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">matmul</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">49</span>
+  <span class="o">*</span><span class="p">(::</span><span class="n">StridedVecOrMat</span><span class="p">,</span> <span class="p">::</span><span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">Adjoint</span><span class="p">{</span><span class="o">&lt;</span><span class="p">:</span><span class="n">Any</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">:</span><span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">LQPackedQ</span><span class="p">})</span> <span class="n">at</span> <span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">Julia</span><span class="o">-</span><span class="mf">1.8</span><span class="o">.</span><span class="n">app</span><span class="o">/</span><span class="n">Contents</span><span class="o">/</span><span class="n">Resources</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">stdlib</span><span class="o">/</span><span class="n">v1</span><span class="mf">.8</span><span class="o">/</span><span class="n">LinearAlgebra</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">lq</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">269</span>
+  <span class="o">...</span>
+
+<span class="ne">Stacktrace</span>:
+ <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">scope</span>
+   <span class="o">@</span> <span class="n">In</span><span class="p">[</span><span class="mi">169</span><span class="p">]:</span><span class="mi">1</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="nb">eval</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">boot</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">368</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">include_string</span><span class="p">(</span><span class="n">mapexpr</span><span class="p">::</span><span class="n">typeof</span><span class="p">(</span><span class="n">REPL</span><span class="o">.</span><span class="n">softscope</span><span class="p">),</span> <span class="n">mod</span><span class="p">::</span><span class="n">Module</span><span class="p">,</span> <span class="n">code</span><span class="p">::</span><span class="n">String</span><span class="p">,</span> <span class="n">filename</span><span class="p">::</span><span class="n">String</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span> <span class="o">./</span><span class="n">loading</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1428</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>A row matrix can be converted to a vector with function <code class="docutils literal notranslate"><span class="pre">collect</span></code>, which we will see again below.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">collect</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3-element Vector{Int64}:
+ 1
+ 2
+ 3
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="arrayindexingslicing"></a></p>
+<section id="array-indexing-and-slicing">
+<h3>Array indexing and slicing<a class="headerlink" href="#array-indexing-and-slicing" title="Permalink to this headline">#</a></h3>
+<p>Indices run from 1 (like Matlab, unlike Python), <strong>but</strong> indices are indicated with brackets
+(like Python, unlike Matlab — which uses parentheses for too many things!)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>6.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Be careful with single indexing a higher dimensional array.</strong></p>
+<p>This treats the elements of the array as if laid out in a singe row (“flattened”), rather than selecting a row as in Python.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1.0, 4.0, 2.0, 5.0, 3.0, 6.0)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Also note the order: the columns are joined end-to-end, not the rows:
+Julia follows Matlab (and Fortran) in storing arrays in <strong>column-major order</strong>,
+as opposed to the <strong>row-major order</strong> of Python (and C ,and Java, and in general in languages that count fom zero.)</p>
+<p>One can also index expressions directly</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">v</span><span class="o">*</span><span class="n">u</span><span class="p">)[</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>4
+</pre></div>
+</div>
+</div>
+</div>
+<p>Indexing part of an array can be done with <strong>slicing</strong> which works mostly as in Matlab.</p>
+<p>The basic form is <code class="docutils literal notranslate"><span class="pre">first:last</span></code>, selecting indices from <code class="docutils literal notranslate"><span class="pre">first</span></code> to <code class="docutils literal notranslate"><span class="pre">last</span></code> <em>inclusive</em> (like Matlab, unlike Python)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">v</span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2-element Vector{Int64}:
+ 2
+ 3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×2 Matrix{Float64}:
+ 2.0  3.0
+ 5.0  6.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>The final index value can be indicated by <code class="docutils literal notranslate"><span class="pre">end</span></code>, and index arithmetic can be done on this:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;The last entry in v is &quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;, the penultimate is &quot;</span><span class="p">,</span> <span class="n">v</span><span class="p">[</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The last two columns of A are&quot;</span><span class="p">)</span>
+<span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span> <span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The last entry in v is 3, the penultimate is 2
+The last two columns of A are
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×2 Matrix{Float64}:
+ 2.0  3.0
+ 5.0  6.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>When the slice on an index is all values, one can use <code class="docutils literal notranslate"><span class="pre">:</span></code> instead of <code class="docutils literal notranslate"><span class="pre">1:end</span></code>.
+So the previous example could also be done as</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="o">:</span><span class="p">,</span> <span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×2 Matrix{Float64}:
+ 2.0  3.0
+ 5.0  6.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>One can also specify an arbitrary collection of indices by giving a bracketed list (a one index array) of indices.</p>
+<p>For example, The “corners” of the outer product <code class="docutils literal notranslate"><span class="pre">u</span> <span class="pre">*</span> <span class="pre">v</span></code>, flipped vertically, are</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">outer</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×2 Matrix{Int64}:
+ 3  9
+ 1  3
+</pre></div>
+</div>
+</div>
+</div>
+<p>and we can permute rows like this</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">outer</span><span class="p">[[</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">],</span><span class="o">:</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3×3 Matrix{Int64}:
+ 3  6  9
+ 1  2  3
+ 2  4  6
+</pre></div>
+</div>
+</div>
+</div>
+<p>A tricky point: slicing to a single row matrix vs slicing to a vector.</p>
+<p>For some matrix-vector caclulations is is necessary to ensure that an object is a “1 by n” row matrix rather than an n-vector (which is an “n by 1” column matrix) but unfortunately, <strong>slicing out a single row of matrix returns a vector:</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>  <span class="c"># gives a vector, a.k.a. a 1 column matrix</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3-element Vector{Float64}:
+ 1.0
+ 2.0
+ 3.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>To keep the slice as a row, indicating the row as <code class="docutils literal notranslate"><span class="pre">[i]</span></code> rather than just <code class="docutils literal notranslate"><span class="pre">i</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span><span class="o">:</span><span class="p">]</span>  <span class="c"># gives a 1 row matrix</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1×3 Matrix{Float64}:
+ 1.0  2.0  3.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>So this works as an outer product</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">A</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span><span class="o">:</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>3×3 Matrix{Float64}:
+ 3.0   6.0   9.0
+ 4.0   8.0  12.0
+ 5.0  10.0  15.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>but this fails as a “vector times vector””</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span> <span class="o">*</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="ne">MethodError</span>: no method matching *(::Vector{Int64}, ::Vector{Float64})
+<span class="n">Closest</span> <span class="n">candidates</span> <span class="n">are</span><span class="p">:</span>
+  <span class="o">*</span><span class="p">(::</span><span class="n">Any</span><span class="p">,</span> <span class="p">::</span><span class="n">Any</span><span class="p">,</span> <span class="p">::</span><span class="n">Any</span><span class="p">,</span> <span class="p">::</span><span class="n">Any</span><span class="o">...</span><span class="p">)</span> <span class="n">at</span> <span class="n">operators</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">591</span>
+  <span class="o">*</span><span class="p">(::</span><span class="n">StridedMatrix</span><span class="p">{</span><span class="n">T</span><span class="p">},</span> <span class="p">::</span><span class="n">StridedVector</span><span class="p">{</span><span class="n">S</span><span class="p">})</span> <span class="n">where</span> <span class="p">{</span><span class="n">T</span><span class="o">&lt;</span><span class="p">:</span><span class="n">Union</span><span class="p">{</span><span class="n">Float32</span><span class="p">,</span> <span class="n">Float64</span><span class="p">,</span> <span class="n">ComplexF32</span><span class="p">,</span> <span class="n">ComplexF64</span><span class="p">},</span> <span class="n">S</span><span class="o">&lt;</span><span class="p">:</span><span class="n">Real</span><span class="p">}</span> <span class="n">at</span> <span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">Julia</span><span class="o">-</span><span class="mf">1.8</span><span class="o">.</span><span class="n">app</span><span class="o">/</span><span class="n">Contents</span><span class="o">/</span><span class="n">Resources</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">stdlib</span><span class="o">/</span><span class="n">v1</span><span class="mf">.8</span><span class="o">/</span><span class="n">LinearAlgebra</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">matmul</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">49</span>
+  <span class="o">*</span><span class="p">(::</span><span class="n">StridedVecOrMat</span><span class="p">,</span> <span class="p">::</span><span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">Adjoint</span><span class="p">{</span><span class="o">&lt;</span><span class="p">:</span><span class="n">Any</span><span class="p">,</span> <span class="o">&lt;</span><span class="p">:</span><span class="n">LinearAlgebra</span><span class="o">.</span><span class="n">LQPackedQ</span><span class="p">})</span> <span class="n">at</span> <span class="o">/</span><span class="n">Applications</span><span class="o">/</span><span class="n">Julia</span><span class="o">-</span><span class="mf">1.8</span><span class="o">.</span><span class="n">app</span><span class="o">/</span><span class="n">Contents</span><span class="o">/</span><span class="n">Resources</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">share</span><span class="o">/</span><span class="n">julia</span><span class="o">/</span><span class="n">stdlib</span><span class="o">/</span><span class="n">v1</span><span class="mf">.8</span><span class="o">/</span><span class="n">LinearAlgebra</span><span class="o">/</span><span class="n">src</span><span class="o">/</span><span class="n">lq</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">269</span>
+  <span class="o">...</span>
+
+<span class="ne">Stacktrace</span>:
+ <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">scope</span>
+   <span class="o">@</span> <span class="n">In</span><span class="p">[</span><span class="mi">184</span><span class="p">]:</span><span class="mi">1</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="nb">eval</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">boot</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">368</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">include_string</span><span class="p">(</span><span class="n">mapexpr</span><span class="p">::</span><span class="n">typeof</span><span class="p">(</span><span class="n">REPL</span><span class="o">.</span><span class="n">softscope</span><span class="p">),</span> <span class="n">mod</span><span class="p">::</span><span class="n">Module</span><span class="p">,</span> <span class="n">code</span><span class="p">::</span><span class="n">String</span><span class="p">,</span> <span class="n">filename</span><span class="p">::</span><span class="n">String</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span> <span class="o">./</span><span class="n">loading</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1428</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Slicing can also select equally spaced values with syntax <code class="docutils literal notranslate"><span class="pre">first:step:last</span></code></p>
+<p><strong>Warning to Python users:</strong> the order is different (Python uses <code class="docutils literal notranslate"><span class="pre">first:last:step</span></code>)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×2 Matrix{Float64}:
+ 1.0  3.0
+ 4.0  6.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>In particular, this allows counting backwards, with step of -1:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="k">end</span><span class="o">:-</span><span class="mi">1</span><span class="o">:</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×3 Matrix{Float64}:
+ 3.0  2.0  1.0
+ 6.0  5.0  4.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>One big difference from Matlab or Python is some “orthogonality”:
+rather than just being a notation used in this context of array indexing,
+this colon notation is a function (named <code class="docutils literal notranslate"><span class="pre">:</span></code>) whose value is a data type called a <strong>range</strong> that can be used in a variety of contexts, and assigned to variables.</p>
+<p>One other usage will be seen soon in the notes on <a class="reference external" href="#iteration">iteration</a>.
+Meanwhile:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">oddcolumnsorrows</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1:2:3
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">print</span><span class="p">(</span><span class="s">&quot;The odd numbered rows of A are&quot;</span><span class="p">)</span>
+<span class="n">A</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="n">oddcolumnsorrows</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The odd numbered rows of A are
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×2 Matrix{Float64}:
+ 1.0  3.0
+ 4.0  6.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">print</span><span class="p">(</span><span class="s">&quot;The odd numbered rows of the outer product &#39;v u&#39; are&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">v</span><span class="o">*</span><span class="n">u</span><span class="p">)[</span><span class="n">oddcolumnsorrows</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The odd numbered rows of the outer product &#39;v u&#39; are
+</pre></div>
+</div>
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>2×3 Matrix{Int64}:
+ 1  2  3
+ 3  6  9
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="range"></a></p>
+</section>
+<section id="function-range">
+<h3>Function <code class="docutils literal notranslate"><span class="pre">range</span></code><a class="headerlink" href="#function-range" title="Permalink to this headline">#</a></h3>
+<p>Closely related to this slice syntax is the function <code class="docutils literal notranslate"><span class="pre">range</span></code>, which produces a range value as above, and has several flavors:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">range(start,</span> <span class="pre">stop)</span></code> returns <code class="docutils literal notranslate"><span class="pre">start:stop</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">range(start,</span> <span class="pre">stop,</span> <span class="pre">length)</span></code> returns a range running from <code class="docutils literal notranslate"><span class="pre">start</span></code> to <code class="docutils literal notranslate"><span class="pre">stop</span></code> with <code class="docutils literal notranslate"><span class="pre">length</span></code> values — like <code class="docutils literal notranslate"><span class="pre">linspace</span></code> in both Matlab and Python.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">range(start,</span> <span class="pre">stop,</span> <span class="pre">step=stepsize)</span></code> returns <code class="docutils literal notranslate"><span class="pre">start:stepsize:stop</span></code>. But note that this flexibility requires specifying what the third parameter means by using its name: it is a <strong>keyword parameter</strong>.</p></li>
+<li><p>More generally, there are four parameters <code class="docutils literal notranslate"><span class="pre">start</span></code>, <code class="docutils literal notranslate"><span class="pre">stop</span></code>, <code class="docutils literal notranslate"><span class="pre">length</span></code> and <code class="docutils literal notranslate"><span class="pre">step</span></code> and you can specify any three (which determines the fourth). However, all other combinations require specifying some or all of them by name, as keyword parameters.</p></li>
+</ul>
+<p>Keyword parameters will be discussed in the section <a class="reference external" href="#functions2">Functions, Part 2</a> once that is written.</p>
+<p>Meanwhile, some examples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1:11
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0:0.1:2.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0:0.1:2.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">range</span><span class="p">(</span><span class="n">step</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">stop</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>  <span class="c"># A weird but legal way to do it</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1.0:0.1:2.0
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="tuples"></a></p>
+</section>
+</section>
+<section id="tuples">
+<h2>Tuples<a class="headerlink" href="#tuples" title="Permalink to this headline">#</a></h2>
+<p>Julia also has tuples, much as in Python.</p>
+<p>These resemble one index arrays, excpr that</p>
+<ul class="simple">
+<li><p>The elements can be anythingm and do not need to be of the same type.</p></li>
+<li><p>They are <strong>immutable</strong>: leemts can be accessed by indexing, <em>but cannnot be changed</em>.</p></li>
+</ul>
+<p>Tuples are created as a comma-separated lists, optionally parenthesized:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">tuple123</span> <span class="o">=</span> <span class="p">(</span><span class="sc">&#39;1&#39;</span><span class="p">,</span> <span class="s">&quot;two&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(&#39;1&#39;, &quot;two&quot;, 3)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">or</span> <span class="n">equivalently</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="ne">syntax</span>: extra token &quot;equivalently&quot; after end of expression
+
+<span class="ne">Stacktrace</span>:
+ <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">scope</span>
+   <span class="o">@</span> <span class="n">In</span><span class="p">[</span><span class="mi">195</span><span class="p">]:</span><span class="mi">1</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="nb">eval</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">boot</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">368</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">include_string</span><span class="p">(</span><span class="n">mapexpr</span><span class="p">::</span><span class="n">typeof</span><span class="p">(</span><span class="n">REPL</span><span class="o">.</span><span class="n">softscope</span><span class="p">),</span> <span class="n">mod</span><span class="p">::</span><span class="n">Module</span><span class="p">,</span> <span class="n">code</span><span class="p">::</span><span class="n">String</span><span class="p">,</span> <span class="n">filename</span><span class="p">::</span><span class="n">String</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span> <span class="o">./</span><span class="n">loading</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1428</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">tuple123</span> <span class="o">=</span> <span class="sc">&#39;1&#39;</span><span class="p">,</span> <span class="s">&quot;two&quot;</span><span class="p">,</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(&#39;1&#39;, &quot;two&quot;, 3)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">tuple123</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&quot;two&quot;
+</pre></div>
+</div>
+</div>
+</div>
+<p>but this is not allowed:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">tuple123</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="ne">MethodError</span>: no method matching setindex!(::Tuple{Char, String, Int64}, ::Int64, ::Int64)
+
+<span class="ne">Stacktrace</span>:
+ <span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">top</span><span class="o">-</span><span class="n">level</span> <span class="n">scope</span>
+   <span class="o">@</span> <span class="n">In</span><span class="p">[</span><span class="mi">198</span><span class="p">]:</span><span class="mi">1</span>
+ <span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="nb">eval</span>
+   <span class="o">@</span> <span class="o">./</span><span class="n">boot</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">368</span> <span class="p">[</span><span class="n">inlined</span><span class="p">]</span>
+ <span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="n">include_string</span><span class="p">(</span><span class="n">mapexpr</span><span class="p">::</span><span class="n">typeof</span><span class="p">(</span><span class="n">REPL</span><span class="o">.</span><span class="n">softscope</span><span class="p">),</span> <span class="n">mod</span><span class="p">::</span><span class="n">Module</span><span class="p">,</span> <span class="n">code</span><span class="p">::</span><span class="n">String</span><span class="p">,</span> <span class="n">filename</span><span class="p">::</span><span class="n">String</span><span class="p">)</span>
+   <span class="o">@</span> <span class="n">Base</span> <span class="o">./</span><span class="n">loading</span><span class="o">.</span><span class="n">jl</span><span class="p">:</span><span class="mi">1428</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>One very common use of tuples is in functions that return more than one quantity, such as
+<a class="reference external" href="NumericalMethods.html#rowreduction"><code class="docutils literal notranslate"><span class="pre">rowreduction</span></code></a> in <a class="reference internal" href="NumericalMethods.html"><span class="doc">Module NumericalMethods</span></a> which returns its results with</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>return (U, c)
+</pre></div>
+</div>
+<p>Strictly a single quantity is returned, but it is a tuple.</p>
+</section>
+<section id="arithmetic-operations-on-arrays-vectorization-and-broadcasting">
+<span id="vectorization-and-broadcasting"></span><h2>Arithmetic operations on arrays: vectorization and broadcasting<a class="headerlink" href="#arithmetic-operations-on-arrays-vectorization-and-broadcasting" title="Permalink to this headline">#</a></h2>
+<ul class="simple">
+<li><p>With arrays, addition and subtraction and multiplicato or division by numbers work as one would expect with vector matrices and such.</p></li>
+<li><p>Multiplication of arrays as with <code class="docutils literal notranslate"><span class="pre">A*b</span></code> does matrix-matrix or matrix-vector product (again as with Matlab).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">A/b</span></code> and <code class="docutils literal notranslate"><span class="pre">A\b</span></code> are also matrix and vector friendly; in particular <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">A\b</span></code> means <span class="math notranslate nohighlight">\(x = A^{-1}b\)</span> and so solves <span class="math notranslate nohighlight">\(A x = b\)</span>.</p></li>
+<li><p>Also copied from Matlab is the “dot” or “pointwise” versions of operators, but this goes beyond what Matlab does. In the following I use lower case lettters for numbers, upper case for arrays, and illustrate only for 1D arrays though it works in higher dimensions too.</p></li>
+<li><p>The first case is <a name="vectorization"><strong>vectorization</strong></a>, creating implicit loops over one or more indices:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">A</span> <span class="pre">.*</span> <span class="pre">B</span></code> computes the product point-wise product, so <code class="docutils literal notranslate"><span class="pre">C[i]</span> <span class="pre">=</span> <span class="pre">A[i]*B[i]</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">a.^B</span></code> gives <code class="docutils literal notranslate"><span class="pre">C[i]</span> <span class="pre">=</span> <span class="pre">a^B[i]</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">A.^b</span></code> gives <code class="docutils literal notranslate"><span class="pre">C[i]</span> <span class="pre">=</span> <span class="pre">A[i]^b</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">A.^B</span></code> gives <code class="docutils literal notranslate"><span class="pre">C[i]</span> <span class="pre">=</span> <span class="pre">A[i]^B[i]</span></code></p></li>
+</ul>
+</li>
+<li><p>The second concept is <a name="broadcasting"><strong>broadcasting</strong></a> where a number is promoted to an appropriate array with that number in each element.</p></li>
+<li><p>For example <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">+</span> <span class="pre">B</span></code> is an error, but <code class="docutils literal notranslate"><span class="pre">a</span> <span class="pre">.+</span> <span class="pre">B</span></code> gives array <code class="docutils literal notranslate"><span class="pre">C</span></code> with <code class="docutils literal notranslate"><span class="pre">C[i]</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">+</span> <span class="pre">B[i]</span></code>.</p></li>
+</ul>
+<p><a name="condititionals"></a></p>
+</section>
+<section id="condititional-statements">
+<h2>Condititional statements<a class="headerlink" href="#condititional-statements" title="Permalink to this headline">#</a></h2>
+<p>One example probably says it all:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="mf">11.0</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>11.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x is positive&quot;</span><span class="p">)</span>
+<span class="k">elseif</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x is negative&quot;</span><span class="p">)</span>
+<span class="k">else</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x is zero&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x is positive
+</pre></div>
+</div>
+</div>
+</div>
+<p>In other words, “as in Matlab”, again.</p>
+<p>Note also the use of the Matlab style of using <code class="docutils literal notranslate"><span class="pre">end</span></code> to end blocks of code,
+which will of course also be seen with loops, function definition and so on.
+Indentation is optional but “four spaces per level (no tabs)” is the usual style.</p>
+<p>Also note the <code class="docutils literal notranslate"><span class="pre">println</span></code>; more on output to the screen (and to files) later.</p>
+<p><a name="iteration"></a></p>
+</section>
+<section id="iteration-with-for-while-break-and-continue">
+<h2>Iteration with <code class="docutils literal notranslate"><span class="pre">for</span></code>, <code class="docutils literal notranslate"><span class="pre">while</span></code>, <code class="docutils literal notranslate"><span class="pre">break</span></code> and <code class="docutils literal notranslate"><span class="pre">continue</span></code><a class="headerlink" href="#iteration-with-for-while-break-and-continue" title="Permalink to this headline">#</a></h2>
+<p>The title tells much of the story: this is all very much as in Matlab — and as in Python except with <code class="docutils literal notranslate"><span class="pre">end</span></code> statements.</p>
+<p>The only novelty is the details of the <code class="docutils literal notranslate"><span class="pre">for</span></code> statement, which are roughly the union of the Matlab and Python options.</p>
+<p>Julia denotes ranges of values with Matlab-style notation:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">a:b</span></code> is the values from <code class="docutils literal notranslate"><span class="pre">a</span></code> to <code class="docutils literal notranslate"><span class="pre">b</span></code> by steps of one,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">a:step:b</span></code> is the values from <code class="docutils literal notranslate"><span class="pre">a</span></code> to <code class="docutils literal notranslate"><span class="pre">b</span></code> by steps of <code class="docutils literal notranslate"><span class="pre">step</span></code>.</p></li>
+</ul>
+<p>This gives the first, Matlab-style <code class="docutils literal notranslate"><span class="pre">for</span></code> loop syntax:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="mi">5</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="c"># no end of lines or spaces</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>12345
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">:</span><span class="mi">2</span><span class="o">:</span><span class="mi">5</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1 3 5 
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">5</span><span class="o">:-</span><span class="mi">1</span><span class="o">:</span><span class="mi">1</span>
+    <span class="n">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="s">&quot; &quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>5 4 3 2 1 
+</pre></div>
+</div>
+</div>
+</div>
+<p>However, there is a far more flexible syntax for looping over all kinds of lists and even more general collections.
+The general form is</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for item in list
+    ...
+end
+</pre></div>
+</div>
+<p>but until we see all the sorts of things that the “list” can be, just a few examples:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="mi">4</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$i</span><span class="s">^2 is </span><span class="si">$</span><span class="p">(</span><span class="n">i</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1^2 is 1
+2^2 is 4
+3^2 is 9
+4^2 is 16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">x</span> <span class="k">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">11</span><span class="p">)]</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x is </span><span class="si">$x</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x is 1.0
+x is 1.3333333333333333
+x is 3.3166247903554
+</pre></div>
+</div>
+</div>
+</div>
+<p>A final example using some exotic stuff that will be explained later:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="nb">pi</span><span class="o">/</span><span class="mi">6</span>
+<span class="k">for</span> <span class="n">f</span> <span class="k">in</span> <span class="p">[</span><span class="n">sin</span><span class="p">,</span> <span class="n">cos</span><span class="p">,</span> <span class="n">tan</span><span class="p">]</span>
+    <span class="n">fname</span> <span class="o">=</span> <span class="kt">String</span><span class="p">(</span><span class="kt">Symbol</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="si">$fname</span><span class="s">(</span><span class="si">$theta</span><span class="s">) = </span><span class="si">$</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>sin(0.5235987755982988) = 0.49999999999999994
+cos(0.5235987755982988) = 0.8660254037844387
+tan(0.5235987755982988) = 0.5773502691896257
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="modules"></a></p>
+</section>
+<section id="using-modules-and-packages-and-some-graph-plotting">
+<h2>Using modules and packages, and some graph plotting<a class="headerlink" href="#using-modules-and-packages-and-some-graph-plotting" title="Permalink to this headline">#</a></h2>
+<p>Much like Python, collections of functions (and other stuff like constants) can be created and their contents used.</p>
+<p>There are several ways to do this; here I describe some but not all, and only for a package that already exists (creating your own comes later):
+<code class="docutils literal notranslate"><span class="pre">PyPlot</span></code>, which is for plotting, and is very similar to both Matlab’s plotting commands and the Python package <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code>.
+(There is a bit more more about <a class="reference external" href="#plottingwithpyplot">PyPlot</a> below.)</p>
+<p><strong>Method 1</strong> <code class="docutils literal notranslate"><span class="pre">import</span></code> a module: make the module (or package) available, and access its contents by “full name”;
+much like the same statement in Python:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="n">PyPlot</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mi">2</span><span class="nb">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">PyPlot</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/julia-language-notes_145_0.png" src="../_images/julia-language-notes_145_0.png" />
+</div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Function <code class="docutils literal notranslate"><span class="pre">range</span></code> is similar to <code class="docutils literal notranslate"><span class="pre">linspace</span></code> in both Matlab and Python; the usage here is <code class="docutils literal notranslate"><span class="pre">range(first,</span> <span class="pre">last,</span> <span class="pre">number_of_points)</span></code>, giving that many equally spaced values.</p></li>
+<li><p>This is our first example of vectorizing a function; it must be <code class="docutils literal notranslate"><span class="pre">sin.</span></code> not just <code class="docutils literal notranslate"><span class="pre">sin</span></code></p></li>
+</ul>
+<p><strong>Method 2</strong> <code class="docutils literal notranslate"><span class="pre">import</span></code> specific items from a module, making them available by “first name” only;
+much like <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">PyPlot</span> <span class="pre">import</span> <span class="pre">plot,</span> <span class="pre">title</span></code> In Python:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="n">PyPlot</span><span class="o">:</span> <span class="n">plot</span><span class="p">,</span> <span class="n">title</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="nb">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y = sin(x)&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/julia-language-notes_148_0.png" src="../_images/julia-language-notes_148_0.png" />
+</div>
+</div>
+<p><strong>Method 3.</strong> <code class="docutils literal notranslate"><span class="pre">using</span></code> a module, which makes all items available on a first-name basis full; much like a wild import
+<code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">PyPlot</span> <span class="pre">import</span> <span class="pre">*</span></code> in Python.</p>
+<p>But whereas Python style recommends against wild imports, this is common usage in Julia.
+In this book I will avoid this with user defined modules, to avoid uncertaintly about where an item comes from.</p>
+<p>(Confession: the above is not quite true: a module can choose to “export” only some of its items, but not others;
+then <code class="docutils literal notranslate"><span class="pre">using</span></code> provides only those exported items on a first-name basis; other items must still be accessed by their full name.)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="nb">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y = sin(x)&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/julia-language-notes_150_0.png" src="../_images/julia-language-notes_150_0.png" />
+</div>
+</div>
+<p><strong>Note:</strong> those one character labels still need to be in double quotes;
+the argument is a string, not a character.</p>
+<p><a name="functions1"></a></p>
+</section>
+<section id="functions-part-i">
+<h2>Functions, part I<a class="headerlink" href="#functions-part-i" title="Permalink to this headline">#</a></h2>
+<p>Julia’s function system is quite innovative, powerful, flexible — and therefore rather complicated to describe.
+So I start with just the simplest cases.</p>
+<section id="one-liners">
+<h3>One liners<a class="headerlink" href="#one-liners" title="Permalink to this headline">#</a></h3>
+<p>A very simple syntax for function that just evaluates a single formula is:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="mi">2</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">6</span><span class="n">x</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>(Multiplication by juxtoposition is nice here!)</p>
+<p>Note: semi-colon suppression is used here because the expression defining a function returns a value:
+some information about the function.</p>
+<p>This can be used for graphing, but must be vectorized:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/julia-language-notes_159_0.png" src="../_images/julia-language-notes_159_0.png" />
+</div>
+</div>
+</section>
+<section id="functions-defined-by-a-block-of-code">
+<h3>Functions defined by a block of code<a class="headerlink" href="#functions-defined-by-a-block-of-code" title="Permalink to this headline">#</a></h3>
+<p>The more general syntax is <code class="docutils literal notranslate"><span class="pre">function</span>&#160; <span class="pre">...</span> <span class="pre">end</span></code>, which for the above example is</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="mi">2</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">6</span><span class="n">x</span> <span class="o">+</span> <span class="mi">4</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">6</span>
+<span class="n">vertex</span> <span class="o">=</span> <span class="o">-</span><span class="n">b</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">a</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The vertex is at </span><span class="si">$vertex</span><span class="s">, giving minimum value </span><span class="si">$</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">vertex</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The vertex is at 1.5, giving minimum value -0.5
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-keyword-return">
+<h3>The keyword <code class="docutils literal notranslate"><span class="pre">return</span></code><a class="headerlink" href="#the-keyword-return" title="Permalink to this headline">#</a></h3>
+<p>This is fine if the output value is always computed on the last line of code,
+but for more flexibility (and to my mind, better readability) there is the keyword <code class="docutils literal notranslate"><span class="pre">return</span></code>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mi">2</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">6</span><span class="n">x</span> <span class="o">+</span> <span class="mi">4</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This time the style is more “Pythonic”, since the output variables are specifed in the <code class="docutils literal notranslate"><span class="pre">return</span></code> line rather than on the <code class="docutils literal notranslate"><span class="pre">function</span></code> line as Matlab does.
+This allows different calls of the function to return different type of value:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">squareroots</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">elseif</span> <span class="n">x</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;I can only handle real roots; sorry.&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">squareroots</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>(1.7320508075688772, -1.7320508075688772)
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">squareroots</span><span class="p">(</span><span class="mf">0.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">squareroots</span><span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>I can only handle real roots; sorry.
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="vectorizationoffunctions"></a></p>
+</section>
+</section>
+<section id="vectorization-of-functions">
+<span id="id1"></span><h2>Vectorization of Functions<a class="headerlink" href="#vectorization-of-functions" title="Permalink to this headline">#</a></h2>
+<p>One innovation in Julia is that the dot notation introduced above for
+<a class="reference external" href="#arithemeticonarrays">arithmetic on arrays</a> can also be used to vectorize a function; both ones provided by Julia and ones defined in your code.</p>
+<p>A function <code class="docutils literal notranslate"><span class="pre">f(x)</span></code> whose code expects a number <code class="docutils literal notranslate"><span class="pre">x</span></code> or one <code class="docutils literal notranslate"><span class="pre">g(x,</span> <span class="pre">y)</span></code> that expects several numbers can be used on compatable arrays with</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Y = f.(X)
+Z = g.(X,Y)
+</pre></div>
+</div>
+<p>The former is thus roughly a short-hand for</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span> for i in length(X)
+     Y[i] = f(X[i])
+ end
+</pre></div>
+</div>
+<p>This is used quite a lot in the next section.</p>
+<p><a name="plottingwithpyplot"></a></p>
+</section>
+<section id="plotting-graphs-a-bit-more-about-pyplot">
+<h2>Plotting graphs: a bit more about PyPlot<a class="headerlink" href="#plotting-graphs-a-bit-more-about-pyplot" title="Permalink to this headline">#</a></h2>
+<p>There are many graphics packages for Julia; this book uses <code class="docutils literal notranslate"><span class="pre">PyPlot</span></code>.
+The name is because this is a front end to the Python package <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code> and in turn that name reflects the fact that Matplotlib mimics Matlab’s plotting tools, so this choice makes it easiest for readers familiar with one of those languages.</p>
+<p>To install PyPlot, see the notes on <a class="reference external" href="installing-julia-and-packages#pyplot">getting PyPlot</a> in <a class="reference internal" href="installing-julia-and-packages.html"><span class="doc">Installing Julia and some useful add-ons</span></a></p>
+<p><a name="lstrings"></a></p>
+<section id="l-strings-for-inserting-latex-mathematical-markup">
+<h3>L-Strings for inserting LaTeX mathematical markup<a class="headerlink" href="#l-strings-for-inserting-latex-mathematical-markup" title="Permalink to this headline">#</a></h3>
+<p>Mathematical formulas can be used in the annotations on graphs by the use of <strong>L-strings</strong>:
+string prefixed with ‘L’ and containing LaTeX mathematical markup between ‘$’ signs.</p>
+<p>For now I just illustrate all this with a few examples.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="nb">pi</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span> <span class="o">.*</span> <span class="n">cos</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">()</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;The decaying oscilation </span><span class="si">$y</span><span class="s"> = e^{-x/8} \cos x$&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
+<span class="n">z</span> <span class="o">=</span> <span class="n">exp</span><span class="o">.</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span> <span class="o">.*</span> <span class="n">sin</span><span class="o">.</span><span class="p">(</span><span class="mi">2</span><span class="n">x</span><span class="p">)</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Adding a faster decay, labels, and wide graph paper&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;</span><span class="si">$e</span><span class="s">^{-x/8} \cos x$&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;</span><span class="si">$e</span><span class="s">^{-x/4} \sin 2x$&quot;</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&quot;y and z&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/julia-language-notes_178_0.png" src="../_images/julia-language-notes_178_0.png" />
+<img alt="../_images/julia-language-notes_178_1.png" src="../_images/julia-language-notes_178_1.png" />
+</div>
+</div>
+<hr class="docutils" />
+<p><em>To Be Continued …</em></p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="installing-julia-and-packages.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">9.1. </span>Installing Julia and some useful add-ons</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="NumericalMethods.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">9.3. </span>Module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code></p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

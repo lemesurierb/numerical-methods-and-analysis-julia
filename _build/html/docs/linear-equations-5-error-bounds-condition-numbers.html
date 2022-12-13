@@ -1,0 +1,1231 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc. &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.7. Iterative Methods for Simultaneous Linear Equations" href="linear-equations-6-iterative-methods.html" />
+    <link rel="prev" title="3.5. Solving \(Ax = b\) With Both Pivoting and LU Factorization" href="linear-equations-4-plu-factorization.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/linear-equations-5-error-bounds-condition-numbers.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/linear-equations-5-error-bounds-condition-numbers.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#residuals-backward-errors-forward-errors-and-condition-numbers">
+   Residuals, backward errors, forward errors, and condition numbers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#matrix-norms-induced-by-vector-norms">
+   Matrix norms induced by vector norms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#properties-of-induced-matrix-norms">
+   Properties of (induced) matrix norms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#relative-error-bound-and-condition-number">
+   Relative error bound and condition number
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#aside-estimating-a-1-infty-and-thence-the-condition-number">
+     Aside: estimating
+     <span class="math notranslate nohighlight">
+      \(\| A^{-1} \|_\infty\)
+     </span>
+     and thence the condition number
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#well-conditioned-and-ill-conditioned-problems-and-matrices">
+   Well-conditioned and ill-conditioned problems and matrices
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Error bounds for linear algebra, condition numbers, matrix norms, etc.</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#residuals-backward-errors-forward-errors-and-condition-numbers">
+   Residuals, backward errors, forward errors, and condition numbers
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#matrix-norms-induced-by-vector-norms">
+   Matrix norms induced by vector norms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#properties-of-induced-matrix-norms">
+   Properties of (induced) matrix norms
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#relative-error-bound-and-condition-number">
+   Relative error bound and condition number
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#aside-estimating-a-1-infty-and-thence-the-condition-number">
+     Aside: estimating
+     <span class="math notranslate nohighlight">
+      \(\| A^{-1} \|_\infty\)
+     </span>
+     and thence the condition number
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#well-conditioned-and-ill-conditioned-problems-and-matrices">
+   Well-conditioned and ill-conditioned problems and matrices
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="error-bounds-for-linear-algebra-condition-numbers-matrix-norms-etc">
+<h1><span class="section-number">3.6. </span>Error bounds for linear algebra, condition numbers, matrix norms, etc.<a class="headerlink" href="#error-bounds-for-linear-algebra-condition-numbers-matrix-norms-etc" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 2.3.1 <em>Error Magnification and Condition Number</em> of <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 7.5 <em>Error Bounds and Iterative Refinement</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span> — but you may skip the last part, on <em>Iterative Refinement</em>; that is not relevant here.</p></li>
+<li><p>Section 8.4 of <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="residuals-backward-errors-forward-errors-and-condition-numbers">
+<h2>Residuals, backward errors, forward errors, and condition numbers<a class="headerlink" href="#residuals-backward-errors-forward-errors-and-condition-numbers" title="Permalink to this headline">#</a></h2>
+<p>For an approximation <span class="math notranslate nohighlight">\(x_a\)</span> of the solution <span class="math notranslate nohighlight">\(x\)</span> of <span class="math notranslate nohighlight">\(A x = b\)</span>, the <em>residual</em> <span class="math notranslate nohighlight">\(r = A x_a - b\)</span> measures error as <em>backward error</em>, often measured by a single number, the <em>residual norm</em> <span class="math notranslate nohighlight">\(\| A x_a - b \|\)</span>.
+Any norm could be used, but the maximum norm is usualt preferred, for reasons that we will see soon.</p>
+<p>The corresponding (dimensionless) measure of relative error is defined as</p>
+<div class="math notranslate nohighlight">
+\[\frac{\|r\|}{\|b\|}.\]</div>
+<p>However, these can greatly underestimate the <em>forward</em> errors in the solution: the absolute error <span class="math notranslate nohighlight">\(\|x - x_a\|\)</span> and relative error</p>
+<div class="math notranslate nohighlight">
+\[Rel(x_a) = \frac{\|x - x_a\|}{\| x \|}\]</div>
+<p>To relate these to the residual, we need the concepts of a <em>matrix norm</em> and the <em>condition number</em> of a matrix.</p>
+</section>
+<section id="matrix-norms-induced-by-vector-norms">
+<h2>Matrix norms induced by vector norms<a class="headerlink" href="#matrix-norms-induced-by-vector-norms" title="Permalink to this headline">#</a></h2>
+<p>Given any vector norm <span class="math notranslate nohighlight">\(\| \cdot \|\)</span> — such as the maximum (“infinity”) norm <span class="math notranslate nohighlight">\(\| \cdot \|_\infty\)</span> or the Euclidean norm (length) <span class="math notranslate nohighlight">\(\| \cdot \|_2\)</span> — the correponding <em>induced matrix norm</em> is</p>
+<div class="math notranslate nohighlight">
+\[
+\| A \| := \max_{x \neq 0} \frac{\| Ax \|}{\| x \|}, =  \max_{\|x\|=1} \| Ax \|
+\]</div>
+<p>This maximum exists for ethe rof these vector norms, and for the infinity norm there ia an explicit formula for it:
+for any <span class="math notranslate nohighlight">\(m\times n\)</span> matrix,</p>
+<div class="math notranslate nohighlight">
+\[
+\|A\|_\infty = \max_{i=1}^m \sum_{j=1}^n |a_{ij}|
+\]</div>
+<p>(On the other hand, it is far harder to compute the Euclidean norm of a matrix: the formula requires computing eigenvalues.)</p>
+<p>Note that when the matrix is a vector considered as a matrix with a single column — so <span class="math notranslate nohighlight">\(n=1\)</span> — the sum goes away, and this agrees with the infinity vector norm.
+This allows us to consider vectors as being just matrices with a single column, which we will often do from now on.</p>
+</section>
+<section id="properties-of-induced-matrix-norms">
+<h2>Properties of (induced) matrix norms<a class="headerlink" href="#properties-of-induced-matrix-norms" title="Permalink to this headline">#</a></h2>
+<p>These induced matrix norms have many properties in common with Euclidean length and other vector norms, but there can also be products, and then one has to be careful.</p>
+<ol class="simple">
+<li><p><span class="math notranslate nohighlight">\(\|A\| \geq 0\)</span> (positivity)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\| A \| = 0\)</span> if and only if <span class="math notranslate nohighlight">\(A = 0\)</span> (definiteness)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\| c A \| = |c| \, \|A\|\)</span> for any constant <span class="math notranslate nohighlight">\(c\)</span> (absolute homogeneity)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\| A + B \| \leq \| A \| + \| B \|\)</span> (sub-additivity or the triangle inequality),
+<br>
+and when the product of two matrices makes sense (including matrix-vector products),</p></li>
+<li><p><span class="math notranslate nohighlight">\(\| A B \| \leq \| A \| \, \| B \|\)</span> (sub-multiplicativity)</p></li>
+</ol>
+<p>Note the failure to always have equality with products.
+Indeed one can have <span class="math notranslate nohighlight">\(A B = 0\)</span> with <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(B\)</span> both non-zero, such as when <span class="math notranslate nohighlight">\(A\)</span> is a singular matrix and <span class="math notranslate nohighlight">\(B\)</span> is a null-vector for it.</p>
+<div class="proof remark admonition" id="remark-other-matrix-norms">
+<p class="admonition-title"><span class="caption-number">Remark 3.17 </span> (Other matrix norms)</p>
+<section class="remark-content" id="proof-content">
+<p>There are other matrix norms of use in some contexts, in particular the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Matrix_norm#Frobenius_norm">Frobenius norm</a>.
+Then the above properties are often used to <em>define</em> what it is to be a matrix form, much as the first four define what it is to be a vector norm.</p>
+</section>
+</div><div class="proof remark admonition" id="julia-norm-opnorm">
+<p class="admonition-title"><span class="caption-number">Remark 3.18 </span> (Julia functions norm and opnorm)</p>
+<section class="remark-content" id="proof-content">
+<p>Julia package <code class="docutils literal notranslate"><span class="pre">LinearAlgebra</span></code> provides the functions <code class="docutils literal notranslate"><span class="pre">norm</span></code> and <code class="docutils literal notranslate"><span class="pre">opnorm</span></code> for evaluating matrix norms,
+as seen in the examples in the previous section <a class="reference internal" href="linear-equations-4-plu-factorization.html"><span class="doc">Solving Ax = b With Both Pivoting and LU Factorization</span></a>,
+where <code class="docutils literal notranslate"><span class="pre">norm</span></code> computes the vector norms <span class="math notranslate nohighlight">\(\|v\|_p\)</span> and <code class="docutils literal notranslate"><span class="pre">opnorm</span></code> computes the coresponding matrix norms (“operator norms”)
+<span class="math notranslate nohighlight">\(\|A\|_p\)</span>.</p>
+<ul class="simple">
+<li><p>If <span class="math notranslate nohighlight">\(p\)</span> is omitted, it defaults to <span class="math notranslate nohighlight">\(p=2\)</span>, so <code class="docutils literal notranslate"><span class="pre">norm(v)</span></code> is the familiar Euclidean vector norm.</p></li>
+<li><p>To get the “maximum” or “<span class="math notranslate nohighlight">\(\infty\)</span>” norm, use value <code class="docutils literal notranslate"><span class="pre">Inf</span></code> for <code class="docutils literal notranslate"><span class="pre">p</span></code>.</p></li>
+</ul>
+<p><em>Warning.</em> Even if the argument of <code class="docutils literal notranslate"><span class="pre">norm</span></code> is a matrix, it is treated as a vector:
+for example, <code class="docutils literal notranslate"><span class="pre">norm(A,</span> <span class="pre">Inf)</span></code> returns the maximum of all the absolute values of the elements of an array <code class="docutils literal notranslate"><span class="pre">A</span></code>.</p>
+</section>
+</div></section>
+<section id="relative-error-bound-and-condition-number">
+<h2>Relative error bound and condition number<a class="headerlink" href="#relative-error-bound-and-condition-number" title="Permalink to this headline">#</a></h2>
+<p>It can be proven that, for any choice of norm,</p>
+<div class="math notranslate nohighlight">
+\[
+Rel(x_a) = \frac{\|x - x_a\|}{\| x \|} \leq \|A\|\|A^{-1}\|\frac{\|r\|}{\|b\|},
+\]</div>
+<p>where the last factor is the relative backward error.</p>
+<p>Since we can (though often with considerable effort, due to the inverse!) compute the right-hand side when the infinity norm is used, we can compute an upper bound on the relative error.
+From this, an upper bound on the absolute error can be computed if needed.</p>
+<p>The <em>growth factor</em> between the relative backward error measured by the residual and the relative (forward) error is called the <em>condition number</em>, <span class="math notranslate nohighlight">\(K(A)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\kappa(A) := \|A\| \|A^{-1}\|\]</div>
+<p>so that the above bound on the relative error can be restated as</p>
+<div class="math notranslate nohighlight">
+\[\text{Rel}(x_a) = \frac{\|x - x_a\|}{\| x \|} \leq \kappa(A) \frac{\|r\|}{\|b\|}\]</div>
+<p>Actually there is one condition number for each choice of norm, so we work with</p>
+<div class="math notranslate nohighlight">
+\[\kappa_\infty(A) := \|A\|_\infty \|A^{-1}\|_\infty\]</div>
+<p>Note that for a singular matrix, this is undefined: we can intuitively say that the condition number is then infinite.
+<br>
+At the other extreme, the identity matrix <span class="math notranslate nohighlight">\(I\)</span> has norm 1 and condition number 1 (using any norm), and this is the best possible because in general <span class="math notranslate nohighlight">\(\kappa(A) \geq 1\)</span>. (This follows from sub-multiplicativity.)</p>
+<section id="aside-estimating-a-1-infty-and-thence-the-condition-number">
+<h3>Aside: estimating <span class="math notranslate nohighlight">\(\| A^{-1} \|_\infty\)</span> and thence the condition number<a class="headerlink" href="#aside-estimating-a-1-infty-and-thence-the-condition-number" title="Permalink to this headline">#</a></h3>
+<p>In Julia, good approximations of condition numbers are given by the function <code class="docutils literal notranslate"><span class="pre">cond</span></code> from package <code class="docutils literal notranslate"><span class="pre">LinearAlgebra</span></code>.
+<br>
+As with functions <code class="docutils literal notranslate"><span class="pre">norm</span></code> and <code class="docutils literal notranslate"><span class="pre">opnorm</span></code>, the simple form <code class="docutils literal notranslate"><span class="pre">cond(A)</span></code> defaults to <span class="math notranslate nohighlight">\(\kappa_2(A)\)</span> based on the Euclidian length <span class="math notranslate nohighlight">\(\| \cdot \|_2\)</span> for vectors;
+to get the infinity norm version <span class="math notranslate nohighlight">\(\kappa_\infty(A)\)</span> use <code class="docutils literal notranslate"><span class="pre">cond(A,</span> <span class="pre">Inf)</span></code>.</p>
+<p>This is not done exactly, since computing the inverse is a lot of work for large matrices and good estimates can be got far more quickly.
+The basic idea is start with the formula</p>
+<div class="math notranslate nohighlight">
+\[\| A^{-1} \| = \max_{\|x\|=1} \| A ^{-1} x \|\]</div>
+<p>and instead compute the maximum over some finite selection of values for <span class="math notranslate nohighlight">\(x\)</span>: call them <span class="math notranslate nohighlight">\(x^{(k)}\)</span>.
+Then to evaluate <span class="math notranslate nohighlight">\(y^{(k)} =  A ^{-1} x^{(k)}\)</span>, express this through the equation <span class="math notranslate nohighlight">\(A y^{(k)} = x^{(k)}\)</span>.
+Once we have an LU factorization for <span class="math notranslate nohighlight">\(A\)</span> (which one probably would have when exploring errors in a numerical solution of <span class="math notranslate nohighlight">\(Ax = b\)</span>) each of these systems can be solved relatively fast:
+Then</p>
+<div class="math notranslate nohighlight">
+\[\| A^{-1} \| \approx \max_k \| y^{(k)} \|.\]</div>
+</section>
+</section>
+<section id="well-conditioned-and-ill-conditioned-problems-and-matrices">
+<h2>Well-conditioned and ill-conditioned problems and matrices<a class="headerlink" href="#well-conditioned-and-ill-conditioned-problems-and-matrices" title="Permalink to this headline">#</a></h2>
+<p>Condition numbers, giving upper limit on the ratio of forward error to backward error,
+measure the amplification of errors, and have counterparts in other contexts.
+For example, with an approximation <span class="math notranslate nohighlight">\(r_a\)</span> of a root <span class="math notranslate nohighlight">\(r\)</span> of the equation <span class="math notranslate nohighlight">\(f(x) = 0\)</span>, the ratio of forward error to backward error is bounded by
+<span class="math notranslate nohighlight">\(\displaystyle \max 1/| f'(x) | = \frac{1}{\min | f'(x) |}\)</span>, where the maximum only need be taken over an interval known to contain both the root and the approximation.
+This condition number becomes “infinite” for a multiple root, <span class="math notranslate nohighlight">\(f'(r) = 0\)</span>, related to the problems we have seen in that case.</p>
+<p>Careful calculation of an approximate solution <span class="math notranslate nohighlight">\(x_a\)</span> of <span class="math notranslate nohighlight">\(Ax = b\)</span> can often get a <em>residual</em> that is at the level of machine rounding error, so that roughly the relative backward error is of size comparable to the machine unit, <span class="math notranslate nohighlight">\(u\)</span>.
+The condition number then guarantees that the (forward) relative error is no greater than about <span class="math notranslate nohighlight">\(u \, \kappa(A)\)</span>.</p>
+<p>In terms of significant bits, with <span class="math notranslate nohighlight">\(p\)</span> bit machine arithmetic, one can hope to get <span class="math notranslate nohighlight">\(p - \log_2(\kappa(A))\)</span> significant bits in the result, but can not rely on more, so one loses <span class="math notranslate nohighlight">\(\log_2(\kappa(A))\)</span> significant bits.
+Compare this to the observation that one can expect to lose at least <span class="math notranslate nohighlight">\(p/2\)</span> significant bits when using the approximation <span class="math notranslate nohighlight">\(Df(x) \approx D_hf(x) - (f(x+h) = f(x))/h\)</span>.</p>
+<p>A <strong>well-conditioned problem</strong> is one that is not too highly sensitive to errors in rounding or input data; for an eqution <span class="math notranslate nohighlight">\(Ax = b\)</span>, this corresponds to the condition number of <span class="math notranslate nohighlight">\(A\)</span> not being to large; the matrix <span class="math notranslate nohighlight">\(A\)</span> is then sometimes also called well-conditioned.
+This is of course vague, but might typically mean that <span class="math notranslate nohighlight">\(p - \log_2(\kappa(A))\)</span> is a sufficient number of significant bits for a particular purpose.</p>
+<p>A problem that is not deemed well-conditioned is called <strong>ill-conditioned</strong>, so that a matrix of uncomfortably large condition number is also sometimes called ill-conditioned.
+An ill-conditioned problem might still be well-posed, but just requiring careful and precise solution methods.</p>
+<div class="proof example admonition" id="example-hilbert-matrices">
+<p class="admonition-title"><span class="caption-number">Example 3.6 </span> (the Hilbert matrices)</p>
+<section class="example-content" id="proof-content">
+<p>The <span class="math notranslate nohighlight">\(n \times n\)</span> Hilbert matrix <span class="math notranslate nohighlight">\(H_n\)</span> has elements</p>
+<div class="math notranslate nohighlight">
+\[H_{i, j} = \frac{1}{i+j-1}\]</div>
+<p>For example</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}H_4 = \left[ \begin{array}{cccc} 1 &amp; 1/2 &amp; 1/3 &amp; 1/4 \\ 1/2 &amp; 1/3 &amp; 1/4 &amp; 1/5 \\1/3 &amp; 1/4 &amp; 1/5 &amp; 1/6 \\1/4 &amp; 1/5 &amp; 1/6 &amp; 1/7 \end{array} \right]\end{split}\]</div>
+<p>and for larger or smaller <span class="math notranslate nohighlight">\(n\)</span>, one simply adds or remove rows below and columns at right.</p>
+<p>These matrices arise in important situations like finding the polynomial of degree <span class="math notranslate nohighlight">\(n-1\)</span> that fits given data in the sense of minimizing the root-mean-square error — as we will discuss later in this course if there is time and interest.</p>
+<p>Unfortunately as <span class="math notranslate nohighlight">\(n\)</span> increases the condition number grows rapidly, causing severe rounding error problems.
+To illustrate this, I will do something that one should usually avoid: compute the inverse of these matrices.
+This is also a case that shows the advatage of the LU factorization,
+since one computes the inverse by succesively computing each column, by solving <span class="math notranslate nohighlight">\(n\)</span> different systems of equations, each with the same matrix <span class="math notranslate nohighlight">\(A\)</span> on the left-hand side.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">include</span><span class="p">(</span><span class="s">&quot;NumericalMethods.jl&quot;</span><span class="p">)</span>
+<span class="k">using</span> <span class="o">.</span><span class="n">NumericalMethods</span><span class="o">:</span> <span class="n">lu_factorize</span><span class="p">,</span> <span class="n">forwardsubstitution</span><span class="p">,</span> <span class="n">backwardsubstitution</span><span class="p">,</span> <span class="n">solvelinearsystem</span><span class="p">,</span> <span class="n">printmatrix</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span><span class="o">:</span> <span class="n">norm</span><span class="p">,</span> <span class="n">opnorm</span><span class="p">,</span> <span class="n">cond</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">Random</span><span class="o">:</span> <span class="n">rand</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">inverse</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Use sparingly; there is usually a way to avoid computing inverses that is faster and with less rounding error!</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># First index of the size, which is (n, n)</span>
+    <span class="n">A_inverse</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">))</span>
+    <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">lu_factorize</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;i=</span><span class="si">$i</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="n">e_i</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">e_i</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;e_</span><span class="si">$i</span><span class="s">=</span><span class="si">$e_i</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">forwardsubstitution</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">e_i</span><span class="p">)</span>
+        <span class="n">A_inverse</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+        <span class="c">#A_inverse[:,i] = solvelinearsystem(A, e_i)</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">A_inverse</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="n">H</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">H</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="mi">5</span>
+    <span class="n">H_n</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;H_</span><span class="si">$n</span><span class="s"> is&quot;</span><span class="p">)</span>
+    <span class="n">printmatrix</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">H_n</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">H_n_inverse</span> <span class="o">=</span> <span class="n">inverse</span><span class="p">(</span><span class="n">H_n</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;and its inverse is&quot;</span><span class="p">)</span>
+    <span class="n">printmatrix</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">H_n_inverse</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;to verify, their product is&quot;</span><span class="p">)</span>
+    <span class="n">printmatrix</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">H_n</span> <span class="o">*</span> <span class="n">H_n_inverse</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">println</span><span class="p">()</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H_2 is
+[ 1.0 0.5 
+  0.5 0.3333 ]
+and its inverse is
+[ 4.0 -6.0 
+  -6.0 12.0 ]
+to verify, their product is
+[ 1.0 0.0 
+  0.0 1.0 ]
+
+H_3 is
+[ 1.0 0.5 0.3333 
+  0.5 0.3333 0.25 
+  0.3333 0.25 0.2 ]
+and its inverse is
+[ 9.0 -36.0 30.0 
+  -36.0 192.0 -180.0 
+  30.0 -180.0 180.0 ]
+to verify, their product is
+[ 1.0 0.0 0.0 
+  0.0 1.0 0.0 
+  0.0 0.0 1.0 ]
+
+H_4 is
+[ 1.0 0.5 0.3333 0.25 
+  0.5 0.3333 0.25 0.2 
+  0.3333 0.25 0.2 0.1667 
+  0.25 0.2 0.1667 0.1429 ]
+and its inverse is
+[ 16.0 -120.0 240.0 -140.0 
+  -120.0 1200.0 -2700.0 1680.0 
+  240.0 -2700.0 6480.0 -4200.0 
+  -140.0 1680.0 -4200.0 2800.0 ]
+to verify, their product is
+[ 1.0 0.0 2.3e-13 -1.1e-13 
+  -1.3e-16 1.0 1.1e-13 -1.5e-13 
+  -2.3e-15 2.2e-14 1.0 -4.5e-14 
+  -4.0e-15 6.8e-14 -6.4e-14 1.0 ]
+
+H_5 is
+[ 1.0 0.5 0.3333 0.25 0.2 
+  0.5 0.3333 0.25 0.2 0.1667 
+  0.3333 0.25 0.2 0.1667 0.1429 
+  0.25 0.2 0.1667 0.1429 0.125 
+  0.2 0.1667 0.1429 0.125 0.1111 ]
+and its inverse is
+[ 25.0 -300.0 1050.0 -1400.0 630.0 
+  -300.0 4800.0 -18900.0 26880.0 -12600.0 
+  1050.0 -18900.0 79380.0 -117600.0 56700.0 
+  -1400.0 26880.0 -117600.0 179200.0 -88200.0 
+  630.0 -12600.0 56700.0 -88200.0 44100.0 ]
+to verify, their product is
+[ 1.0 5.9e-13 -8.3e-13 1.2e-12 8.5e-13 
+  2.3e-14 1.0 8.2e-14 -1.0e-12 2.0e-13 
+  -9.4e-16 3.6e-13 1.0 -6.0e-13 -8.7e-13 
+  -1.4e-14 6.8e-13 -2.7e-12 1.0 -1.8e-12 
+  -8.6e-15 2.5e-13 -1.8e-12 1.8e-12 1.0 ]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Note how the inverses have some surprisingly large elements; this is the matrix equivalent of a number being very close to zero and so with a very large reciprocal.</p>
+<p>Since we have the inverses, we can compute the matrix norms of each <span class="math notranslate nohighlight">\(H_n\)</span> and its inverse, and thence their condition numbers.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="mi">5</span>
+    <span class="n">H_n</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;H_</span><span class="si">$n</span><span class="s"> is&quot;</span><span class="p">)</span>
+    <span class="n">printmatrix</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">H_n</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;with infinity norm </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">opnorm</span><span class="p">(</span><span class="n">H_n</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">),</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">H_n_inverse</span> <span class="o">=</span> <span class="n">inverse</span><span class="p">(</span><span class="n">H_n</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;and its inverse is&quot;</span><span class="p">)</span>
+    <span class="n">printmatrix</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">H_n_inverse</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;with infinity norm </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">opnorm</span><span class="p">(</span><span class="n">H_n_inverse</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">),</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span> 
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;Thus the condition number of H_</span><span class="si">$n</span><span class="s"> is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">opnorm</span><span class="p">(</span><span class="n">H_n</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span> <span class="o">*</span> <span class="n">opnorm</span><span class="p">(</span><span class="n">H_n_inverse</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">),</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">()</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>H_2 is
+[ 1.0 0.5 
+  0.5 0.333333 ]
+with infinity norm 1.5
+and its inverse is
+[ 4.0 -6.0 
+  -6.0 12.0 ]
+with infinity norm 18.0
+Thus the condition number of H_2 is 27.0
+
+H_3 is
+[ 1.0 0.5 0.333333 
+  0.5 0.333333 0.25 
+  0.333333 0.25 0.2 ]
+with infinity norm 1.833
+and its inverse is
+[ 9.0 -36.0 30.0 
+  -36.0 192.0 -180.0 
+  30.0 -180.0 180.0 ]
+with infinity norm 408.0
+Thus the condition number of H_3 is 748.0
+
+H_4 is
+[ 1.0 0.5 0.333333 0.25 
+  0.5 0.333333 0.25 0.2 
+  0.333333 0.25 0.2 0.166667 
+  0.25 0.2 0.166667 0.142857 ]
+with infinity norm 2.083
+and its inverse is
+[ 16.0 -120.0 240.0 -140.0 
+  -120.0 1200.0 -2700.0 1680.0 
+  240.0 -2700.0 6480.0 -4200.0 
+  -140.0 1680.0 -4200.0 2800.0 ]
+with infinity norm 13620.0
+Thus the condition number of H_4 is 28370.0
+
+H_5 is
+[ 1.0 0.5 0.333333 0.25 0.2 
+  0.5 0.333333 0.25 0.2 0.166667 
+  0.333333 0.25 0.2 0.166667 0.142857 
+  0.25 0.2 0.166667 0.142857 0.125 
+  0.2 0.166667 0.142857 0.125 0.111111 ]
+with infinity norm 2.283
+and its inverse is
+[ 25.0 -300.0 1050.0 -1400.0 630.0 
+  -300.0 4800.0 -18900.0 26880.0 -12600.0 
+  1050.0 -18900.0 79380.0 -117600.0 56700.0 
+  -1400.0 26880.0 -117600.0 179200.0 -88200.0 
+  630.0 -12600.0 56700.0 -88200.0 44100.0 ]
+with infinity norm 413300.0
+Thus the condition number of H_5 is 943700.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Next, experiment with solving equations, to compare residuals with actual errors.</p>
+<p>I will use the testing strategy of starting with a known solution <span class="math notranslate nohighlight">\(x\)</span>, from which the right-hand side <span class="math notranslate nohighlight">\(b\)</span> is computed;
+then slight simulated error is introduced to <span class="math notranslate nohighlight">\(b\)</span>.
+Running this repeatedly with use of different random “errors” gives an idea of the actual error.</p>
+<div class="proof remark admonition" id="julia-collect">
+<p class="admonition-title"><span class="caption-number">Remark 3.19 </span> (Julia function collect)</p>
+<section class="remark-content" id="proof-content">
+<p>The function <code class="docutils literal notranslate"><span class="pre">collect</span></code> converts the abstract “range” object given by function <code class="docutils literal notranslate"><span class="pre">range</span></code> into an ordinary 1D array.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="mi">5</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;n=</span><span class="si">$n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">H_n</span> <span class="o">=</span> <span class="n">hilbert</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="n">range</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x is </span><span class="si">$x</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">H_n</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;b is </span><span class="si">$b</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">error_scale</span> <span class="o">=</span> <span class="mf">1e-8</span>
+    <span class="n">b_imperfect</span> <span class="o">=</span> <span class="n">b</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">error_scale</span> <span class="o">*</span> <span class="p">(</span><span class="n">rand</span><span class="p">(</span><span class="kt">Float64</span><span class="p">,</span> <span class="p">(</span><span class="n">n</span><span class="p">))</span> <span class="o">.-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="c"># add random &quot;errors&quot; between -error_scale and error_scale</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;b has been slightly changed to </span><span class="si">$b_imperfect</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">x_computed</span> <span class="o">=</span> <span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">H_n</span><span class="p">,</span> <span class="n">b_imperfect</span><span class="p">)</span>
+    <span class="n">residual</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">H_n</span> <span class="o">*</span> <span class="n">x_computed</span>
+    <span class="n">relative_backward_error</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span><span class="o">/</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;The residual maximum norm is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">residual</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">),</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;and the relative backward error ||r||/||b|| is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">relative_backward_error</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">absolute_error</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_computed</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span>
+    <span class="n">relative_error</span> <span class="o">=</span> <span class="n">absolute_error</span><span class="o">/</span><span class="n">norm</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;The absolute error is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">absolute_error</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;The relative error is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">relative_error</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">error_bound</span> <span class="o">=</span> <span class="n">cond</span><span class="p">(</span><span class="n">H_n</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span> <span class="o">*</span> <span class="n">relative_backward_error</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;For comparison, the relative error bound from the formula above is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">error_bound</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Beware: the relative error is larger than the relative backward error by a factor &quot;</span><span class="p">,</span>
+        <span class="s">&quot;</span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">relative_error</span><span class="o">/</span><span class="n">relative_backward_error</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">()</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>n=2
+x is [1.0, 2.0]
+b is [2.0, 1.1666666666666665]
+b has been slightly changed to [2.0000000080803297, 1.1666666764748042]
+The residual maximum norm is 9.8e-9
+and the relative backward error ||r||/||b|| is 4.9e-9
+The absolute error is 6.9e-8
+The relative error is 3.5e-8
+For comparison, the relative error bound from the formula above is 1.3e-7
+
+Beware: the relative error is larger than the relative backward error by a factor 7.1
+
+n=3
+x is [1.0, 2.0, 3.0]
+b is [3.0, 1.9166666666666665, 1.4333333333333333]
+b has been slightly changed to [2.999999991652919, 1.9166666621675716, 1.433333325752684]
+The residual maximum norm is 8.3e-9
+and the relative backward error ||r||/||b|| is 2.8e-9
+The absolute error is 8.1e-7
+The relative error is 2.7e-7
+For comparison, the relative error bound from the formula above is 2.1e-6
+
+Beware: the relative error is larger than the relative backward error by a factor 96.0
+
+n=4
+x is [1.0, 2.0, 3.0, 4.0]
+b is [4.0, 2.716666666666667, 2.1, 1.7214285714285713]
+b has been slightly changed to [4.000000006782543, 2.7166666759068043, 2.099999995598059, 1.72142857008299]
+The residual maximum norm is 9.2e-9
+and the relative backward error ||r||/||b|| is 2.3e-9
+The absolute error is 4.6e-5
+The relative error is 1.2e-5
+For comparison, the relative error bound from the formula above is 6.6e-5
+
+Beware: the relative error is larger than the relative backward error by a factor 5000.0
+
+n=5
+x is [1.0, 2.0, 3.0, 4.0, 5.0]
+b is [5.0, 3.5500000000000003, 2.8142857142857145, 2.3464285714285715, 2.0174603174603174]
+b has been slightly changed to [5.000000006354475, 3.5500000045593687, 2.814285713289512, 2.346428570499546, 2.0174603141398526]
+The residual maximum norm is 6.4e-9
+and the relative backward error ||r||/||b|| is 1.3e-9
+The absolute error is 0.00036
+The relative error is 7.1e-5
+For comparison, the relative error bound from the formula above is 0.0012
+
+Beware: the relative error is larger than the relative backward error by a factor 56000.0
+</pre></div>
+</div>
+</div>
+</div>
+<p>We see in these experiments that:</p>
+<ul class="simple">
+<li><p>As the condition number increases, the relative error becomes increasingly larger than the backward error computed from the residual.</p></li>
+<li><p>It is less than the above bound
+<span class="math notranslate nohighlight">\(\displaystyle \text{Rel}(x_a) = \frac{\|x - x_a\|}{\| x \|} \leq \kappa(A) \frac{\|r\|}{\|b\|},\)</span>
+and typically quite a bit less.</p></li>
+</ul>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="linear-equations-4-plu-factorization.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3.5. </span>Solving <span class="math notranslate nohighlight">\(Ax = b\)</span> With Both Pivoting and LU Factorization</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="linear-equations-6-iterative-methods.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.7. </span>Iterative Methods for Simultaneous Linear Equations</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

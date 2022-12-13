@@ -1,0 +1,1520 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>2.3. Newton’s Method for Solving Equations &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="2.4. Taylor’s Theorem and the Accuracy of Linearization" href="taylors-theorem.html" />
+    <link rel="prev" title="2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)" href="fixed-point-iteration.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/newtons-method.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/newtons-method.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#derivation-as-a-contraction-mapping-with-very-small-contraction-coefficient-c">
+   Derivation as a contraction mapping with “very small contraction coefficient
+   <span class="math notranslate nohighlight">
+    \(C\)
+   </span>
+   ”
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#graphing-newton-s-method-iterations-as-a-fixed-point-iteration">
+     Graphing Newton’s method iterations as a fixed point iteration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newton-s-method-works-with-complex-numbers-too">
+   Newton’s method works with complex numbers too
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newton-s-method-derived-via-tangent-line-approximations-linearization">
+   Newton’s method derived via tangent line approximations: linearization
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-1-linearize-at-x-0">
+     Step 1: Linearize at
+     <span class="math notranslate nohighlight">
+      \(x_0\)
+     </span>
+     .
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-2-find-the-zero-of-this-linearization">
+     Step 2: Find the zero of this linearization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-3-iterate">
+     Step 3: Iterate
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-accurate-and-fast-is-this">
+   How accurate and fast is this?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2">
+     Exercise 2
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Newton’s Method for Solving Equations</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#derivation-as-a-contraction-mapping-with-very-small-contraction-coefficient-c">
+   Derivation as a contraction mapping with “very small contraction coefficient
+   <span class="math notranslate nohighlight">
+    \(C\)
+   </span>
+   ”
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#graphing-newton-s-method-iterations-as-a-fixed-point-iteration">
+     Graphing Newton’s method iterations as a fixed point iteration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newton-s-method-works-with-complex-numbers-too">
+   Newton’s method works with complex numbers too
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#newton-s-method-derived-via-tangent-line-approximations-linearization">
+   Newton’s method derived via tangent line approximations: linearization
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-1-linearize-at-x-0">
+     Step 1: Linearize at
+     <span class="math notranslate nohighlight">
+      \(x_0\)
+     </span>
+     .
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-2-find-the-zero-of-this-linearization">
+     Step 2: Find the zero of this linearization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-3-iterate">
+     Step 3: Iterate
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-accurate-and-fast-is-this">
+   How accurate and fast is this?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2">
+     Exercise 2
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="newton-s-method-for-solving-equations">
+<h1><span class="section-number">2.3. </span>Newton’s Method for Solving Equations<a class="headerlink" href="#newton-s-method-for-solving-equations" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 1.4 <em>Newton’s Method</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span></p></li>
+<li><p>Section 2.3 <em>Newton’s Method and Its Extensions</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span></p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>Newton’s method for solving equations has a number of advantages over the bisection method:</p>
+<ul class="simple">
+<li><p>It is usually faster (but not always, and it can even fail completely!)</p></li>
+<li><p>It can also compute complex roots, such as the non-real roots of polynomial equations.</p></li>
+<li><p>It can even be adapted to solving systems of non-linear equations; that topic wil be visited later.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="derivation-as-a-contraction-mapping-with-very-small-contraction-coefficient-c">
+<h2>Derivation as a contraction mapping with “very small contraction coefficient <span class="math notranslate nohighlight">\(C\)</span>”<a class="headerlink" href="#derivation-as-a-contraction-mapping-with-very-small-contraction-coefficient-c" title="Permalink to this headline">#</a></h2>
+<p>You might have previously seen Newton’s method derived using tangent line approximations.
+That derivation is presented below,
+but first we approach it another way: as a particularly nice contraction mapping.</p>
+<p>To compute a root <span class="math notranslate nohighlight">\(r\)</span> of a differentiable function <span class="math notranslate nohighlight">\(f\)</span>, we design a contraction mapping for which the contraction constant <span class="math notranslate nohighlight">\(C\)</span> becomes arbitrarily small when we restrict to iterations in a sufficiently small interval around the root: <span class="math notranslate nohighlight">\(|x - r| \leq R\)</span>.</p>
+<p>That is, the error ratio <span class="math notranslate nohighlight">\(|E_{k+1}|/|E_k|\)</span> becomes ever smaller as the iterations get closer to the exact solution;
+the error is thus reducing ever faster than the above geometric rate <span class="math notranslate nohighlight">\(C^k\)</span>.</p>
+<p>This effect is in turn achieved by getting <span class="math notranslate nohighlight">\(|g&quot;(x)|\)</span> arbitrarily small for <span class="math notranslate nohighlight">\(|x - r| \leq R\)</span> with <span class="math notranslate nohighlight">\(R\)</span> small enough,
+and then using the above connection between <span class="math notranslate nohighlight">\(g&quot;(x)\)</span> and <span class="math notranslate nohighlight">\(C\)</span>.
+This can be achieved by ensuring that <span class="math notranslate nohighlight">\(g&quot;(r) = 0\)</span> at a root <span class="math notranslate nohighlight">\(r\)</span> of <span class="math notranslate nohighlight">\(f\)</span> — so long as the root <span class="math notranslate nohighlight">\(r\)</span> is <em>simple</em>:
+<span class="math notranslate nohighlight">\(f&quot;(r) \neq 0\)</span> (which is generically true, but not always).</p>
+<p>To do so, seek <span class="math notranslate nohighlight">\(g\)</span> in the above form <span class="math notranslate nohighlight">\(g(x) = x - w(x)f(x)\)</span>, and choose <span class="math notranslate nohighlight">\(w(x)\)</span> appropriately.
+At the root <span class="math notranslate nohighlight">\(r\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[
+g'(r) = 1 - w'(r)f(r) - w(r)f'(r) = 1 - w(r)f'(r) \quad\text{(using } f(r) = 0,)
+\]</div>
+<p>so we ensure <span class="math notranslate nohighlight">\(g'(r) = 0\)</span> by requiring <span class="math notranslate nohighlight">\(w(r) = 1/f'(r)\)</span> (hence the problem if <span class="math notranslate nohighlight">\(f'(r) = 0\)</span>).</p>
+<p>We do not know <span class="math notranslate nohighlight">\(r\)</span>, but that does not matter!
+We can just choose <span class="math notranslate nohighlight">\(w(x) = 1/f&quot;(x)\)</span> for all <span class="math notranslate nohighlight">\(x\)</span> values.
+That gives</p>
+<div class="math notranslate nohighlight">
+\[g(x) = x - {f(x)}/{f'(x)}\]</div>
+<p>and thus the iteration formula</p>
+<div class="math notranslate nohighlight">
+\[x_{k+1} = x_k - {f(x_k)}/{f'(x_k)}\]</div>
+<p>(That is, <span class="math notranslate nohighlight">\(g(x) = x - {f(x)}/{f'(x)}\)</span>.)</p>
+<p>You might recognize this as the formula for Newton’s method.</p>
+<p>To explore some examples of this, here is a function implementing Newton’s method.</p>
+<div class="proof remark admonition" id="julia-remark-keyword-parameters">
+<p class="admonition-title"><span class="caption-number">Remark 2.7 </span> (On Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>This function uses optional keyword parameters with default values for the first time;
+these will be described in <a class="reference external" href="julia-language-notes#functions2">Functions, part 2</a> in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a> once they have been written.</p>
+</section>
+</div><div class="proof remark admonition" id="module-numerical-methods">
+<p class="admonition-title"><span class="caption-number">Remark 2.8 </span> (A Julia module)</p>
+<section class="remark-content" id="proof-content">
+<p>This and many other functions defined in this book are also gathered in the module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code>;
+see the appendix <a class="reference internal" href="NumericalMethods.html"><span class="doc">Module NumericalMethods</span></a>.
+It can be made available with the commands</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>include(&quot;NumericalMethods.jl&quot;)
+using .NumericalMethods: newtonmethod
+</pre></div>
+</div>
+<p>The dot at the start of the module name is a litle surprising;
+that is needed whe the module is defined locally; in this case by that <code class="docutils literal notranslate"><span class="pre">include</span></code> line.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Df</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">maxiterations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Basic usage is:</span>
+    <span class="c"># (rootapproximation, errorestimate, iterations) = newton(f, Df, x0, errortolerance)</span>
+    <span class="c"># There is an optional input parameter &quot;demomode&quot; which controls whether to</span>
+    <span class="c"># - println intermediate results (for &quot;study&quot; purposes), or to</span>
+    <span class="c"># - work silently (for &quot;production&quot; use).</span>
+    <span class="c"># The default is silence.</span>
+    
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Solving by Newton&#39;s Method.&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;maxiterations = </span><span class="si">$maxiterations</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;errortolerance = </span><span class="si">$errortolerance</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span>
+    <span class="k">global</span> <span class="n">errorestimate</span>  <span class="c"># make it global to this function; without this it would be local to the &quot;for&quot; loop.</span>
+    <span class="k">for</span> <span class="n">iteration</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">maxiterations</span>
+        <span class="n">fx</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">Dfx</span> <span class="o">=</span> <span class="n">Df</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c"># Note: a careful, robust code would check for the possibility of division by zero here,</span>
+        <span class="c"># but for now I just want a simple presentation of the basic mathematical idea.</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">fx</span><span class="o">/</span><span class="n">Dfx</span>
+        <span class="n">x</span> <span class="o">-=</span> <span class="n">dx</span>  <span class="c"># Aside: this is shorthand for &quot;x = x - dx&quot;</span>
+        <span class="n">errorestimate</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">dx</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;At iteration </span><span class="si">$iteration</span><span class="s">, x = </span><span class="si">$x</span><span class="s"> with estimated error </span><span class="si">$errorestimate</span><span class="s"> and backward error </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">errorestimate</span> <span class="o">&lt;=</span> <span class="n">errortolerance</span>
+            <span class="k">if</span> <span class="n">demomode</span>
+                <span class="n">println</span><span class="p">(</span><span class="s">&quot;Done!&quot;</span><span class="p">)</span>
+            <span class="k">end</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">errorestimate</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c"># Note: if we get to here (no &quot;return&quot; above), it completed maxIterations iterations without satisfying the accuracy target,</span>
+    <span class="c"># but we still return the information that we have.</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">errorestimate</span><span class="p">,</span> <span class="n">maxiterations</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof example admonition" id="example-newton-x-cosx">
+<p class="admonition-title"><span class="caption-number">Example 2.6 </span></p>
+<section class="example-content" id="proof-content">
+<p>Let’s start with our favorite equation, <span class="math notranslate nohighlight">\(x = \cos x\)</span>.</p>
+</section>
+</div><div class="proof remark admonition" id="remark-julia-style">
+<p class="admonition-title"><span class="caption-number">Remark 2.9 </span> (On Julia style)</p>
+<section class="remark-content" id="proof-content">
+<p>Recommended style for Julia code is that function names be alpha-numeric
+(possibly with the underscore <code class="docutils literal notranslate"><span class="pre">_</span></code> as a “special guest letter”),
+so I will avoid primes in notation for derivatives as much as possible:
+from now on, the derivative of <span class="math notranslate nohighlight">\(f\)</span> is most often denoted as <span class="math notranslate nohighlight">\(Df\)</span> rather than <span class="math notranslate nohighlight">\(f\)</span>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">Df1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">errortolerance</span> <span class="o">=</span> <span class="mf">1e-8</span>
+<span class="n">rei</span> <span class="o">=</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">Df1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">maxiterations</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">rei</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">errorestimate</span> <span class="o">=</span> <span class="n">rei</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="n">rei</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">errorestimate</span> <span class="o">&gt;</span> <span class="n">errortolerance</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;Warning: the error tolerance was not achieved!&quot;</span><span class="p">)</span>
+    <span class="n">println</span><span class="p">()</span>
+<span class="k">end</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The root is approximately </span><span class="si">$root</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The estimated absolute error is </span><span class="si">$errorestimate</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The backward error is </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f1</span><span class="p">(</span><span class="n">root</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;This required </span><span class="si">$iterations</span><span class="s"> iterations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving by Newton&#39;s Method.
+maxiterations = 4
+errortolerance = 1.0e-8
+At iteration 1, x = 1.0 with estimated error 1.0 and backward error 0.45969769413186023
+At iteration 2, x = 0.7503638678402439 with estimated error 0.24963613215975608 and backward error 0.018923073822117442
+At iteration 3, x = 0.7391128909113617 with estimated error 0.011250976928882236 and backward error 4.6455898990771516e-5
+At iteration 4, x = 0.739085133385284 with estimated error 2.77575260776869e-5 and backward error 2.847205804457076e-10
+
+Warning: the error tolerance was not achieved!
+
+The root is approximately 0.739085133385284
+The estimated absolute error is 2.77575260776869e-5
+The backward error is 2.847205804457076e-10
+This required 4 iterations
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here we have introduced another way of talking about errors and accuracy, which is further discussed in <a class="reference internal" href="error-measures-convergence-rates.html"><span class="doc">Measures of Error and Order of Convergence</span></a>.</p>
+<div class="proof definition admonition" id="backward-error">
+<p class="admonition-title"><span class="caption-number">Definition 2.5 </span> (Backward Error)</p>
+<section class="definition-content" id="proof-content">
+<ul class="simple">
+<li><p>The <strong>backward error</strong> in <span class="math notranslate nohighlight">\(\tilde x\)</span> as an approximation to a root of a function <span class="math notranslate nohighlight">\(f\)</span> is <span class="math notranslate nohighlight">\(f(\tilde x)\)</span>.</p></li>
+<li><p>The <strong>absolute backward</strong> error is its absolute value, <span class="math notranslate nohighlight">\(|f(\tilde x)|\)</span>.
+However sometimes the latter is simply called the backward error — as the above code does.</p></li>
+</ul>
+</section>
+</div><p>This has the advantage that we can actually compute it without knowing the exact solution!</p>
+<p>The backward error also has a useful geometrical meaning:
+if the function <span class="math notranslate nohighlight">\(f\)</span> were changed by this much to a nearbly function <span class="math notranslate nohighlight">\(\tilde f\)</span>
+then <span class="math notranslate nohighlight">\(\tilde x\)</span> could be an exact root of <span class="math notranslate nohighlight">\(\tilde f\)</span>.
+Hence, if we only know the values of <span class="math notranslate nohighlight">\(f\)</span> to within this backward error
+(for example due to rounding error in evaluating the function)
+then <span class="math notranslate nohighlight">\(\tilde x\)</span> could well be an exact root,
+so there is no point in striving for greater accuracy in the approximate root.</p>
+<p>We will see this in the next example.</p>
+<section id="graphing-newton-s-method-iterations-as-a-fixed-point-iteration">
+<h3>Graphing Newton’s method iterations as a fixed point iteration<a class="headerlink" href="#graphing-newton-s-method-iterations-as-a-fixed-point-iteration" title="Permalink to this headline">#</a></h3>
+<p>Since this is a fixed point iteration with <span class="math notranslate nohighlight">\(g(x) = x - (x - \cos(x)/(1 + \sin(x))\)</span>,
+let us compare its graph to the ones seen in <a class="reference internal" href="fixed-point-iteration.html"><span class="doc">Solving Equations by Fixed Point Iteration (of Contraction Mappings)</span></a>.
+Now <span class="math notranslate nohighlight">\(g\)</span> is neither increasing nor decreasing at the fixed point,
+so the graph has an unusual form.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">g</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="c"># An array of x values for graphing</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="mi">4</span><span class="p">;</span>  <span class="c"># Not so many are needed now!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># Start at left</span>
+<span class="n">description</span> <span class="o">=</span> <span class="s">&quot;Starting near the left end of the domain&quot;</span>
+<span class="n">println</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+<span class="n">x_k</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x_0 = </span><span class="si">$x_k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">iterations</span>
+    <span class="n">g_x_k</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)</span>
+    <span class="c"># Graph evalation of g(x_k) from x_k:</span>
+    <span class="n">plot</span><span class="p">([</span><span class="n">x_k</span><span class="p">,</span> <span class="n">x_k</span><span class="p">],</span> <span class="p">[</span><span class="n">x_k</span><span class="p">,</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)],</span> <span class="s">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">x_k_plus_1</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)</span>
+    <span class="c">#Connect to the new x_k on the line y = x:</span>
+    <span class="n">plot</span><span class="p">([</span><span class="n">x_k</span><span class="p">,</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)],</span> <span class="p">[</span><span class="n">x_k_plus_1</span><span class="p">,</span> <span class="n">x_k_plus_1</span><span class="p">],</span> <span class="s">&quot;b&quot;</span><span class="p">)</span>
+    <span class="c"># Update names: the old x_k+1 is the new x_k</span>
+    <span class="n">x_k</span> <span class="o">=</span> <span class="n">x_k_plus_1</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x_</span><span class="si">$k</span><span class="s"> = </span><span class="si">$x_k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Starting near the left end of the domain
+x_0 = 0.1
+x_1 = 0.9137633861014282
+x_2 = 0.7446642419816996
+x_3 = 0.7390919659607759
+x_4 = 0.7390851332254692
+</pre></div>
+</div>
+<img alt="../_images/newtons-method_17_1.png" src="../_images/newtons-method_17_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># Start at right</span>
+<span class="n">description</span> <span class="o">=</span> <span class="s">&quot;Starting near the right end of the domain&quot;</span>
+<span class="n">println</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+<span class="n">x_k</span> <span class="o">=</span> <span class="mf">0.99</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">g</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;r&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x_0 = </span><span class="si">$x_k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">iterations</span>
+    <span class="n">g_x_k</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)</span>
+    <span class="c"># Graph evalation of g(x_k) from x_k:</span>
+    <span class="n">plot</span><span class="p">([</span><span class="n">x_k</span><span class="p">,</span> <span class="n">x_k</span><span class="p">],</span> <span class="p">[</span><span class="n">x_k</span><span class="p">,</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)],</span> <span class="s">&quot;b&quot;</span><span class="p">)</span>
+    <span class="n">x_k_plus_1</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)</span>
+    <span class="c">#Connect to the new x_k on the line y = x:</span>
+    <span class="n">plot</span><span class="p">([</span><span class="n">x_k</span><span class="p">,</span> <span class="n">g</span><span class="p">(</span><span class="n">x_k</span><span class="p">)],</span> <span class="p">[</span><span class="n">x_k_plus_1</span><span class="p">,</span> <span class="n">x_k_plus_1</span><span class="p">],</span> <span class="s">&quot;b&quot;</span><span class="p">)</span>
+    <span class="c"># Update names: the old x_k+1 is the new x_k</span>
+    <span class="n">x_k</span> <span class="o">=</span> <span class="n">x_k_plus_1</span>
+    <span class="n">println</span><span class="p">(</span><span class="s">&quot;x_</span><span class="si">$k</span><span class="s"> = </span><span class="si">$x_k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Starting near the right end of the domain
+x_0 = 0.99
+x_1 = 0.7496384013287254
+x_2 = 0.7391094534708724
+x_3 = 0.7390851333457581
+x_4 = 0.7390851332151607
+</pre></div>
+</div>
+<img alt="../_images/newtons-method_18_1.png" src="../_images/newtons-method_18_1.png" />
+</div>
+</div>
+<p>In fact, wherever you start, all iterations take you to the right of the root, and then approach the fixed point monotonically — and very fast.
+We will see an explanation for this in <a class="reference internal" href="newtons-method-convergence-rate.html"><span class="doc">The Convergence Rate of Newton’s Method</span></a>.</p>
+<div class="proof example admonition" id="example-2">
+<p class="admonition-title"><span class="caption-number">Example 2.7 </span> (Pushing to the limits of standard 64-bit computer arithmetic)</p>
+<section class="example-content" id="proof-content">
+<p>Next, demand more accuracy; this time silently.
+As we will see in a later section, <span class="math notranslate nohighlight">\(10^{-16}\)</span> is about the limit of the precision of standard (IEE64) computer arithmetic with 64-bit numbers.</p>
+<p>So let’s try to compute the root as accurately as we can within these limits:</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">errortolerance</span><span class="o">=</span><span class="mf">1e-16</span>
+<span class="n">rei</span> <span class="o">=</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">Df1</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">rei</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">errorestimate</span> <span class="o">=</span> <span class="n">rei</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">iterations</span> <span class="o">=</span> <span class="n">rei</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The root is approximately </span><span class="si">$root</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The estimated absolute error is </span><span class="si">$errorestimate</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The backward error is </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f1</span><span class="p">(</span><span class="n">root</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;This required </span><span class="si">$iterations</span><span class="s"> iterations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The root is approximately 0.7390851332151607
+The estimated absolute error is 0.0
+The backward error is 0.0
+This required 6 iterations
+</pre></div>
+</div>
+</div>
+</div>
+<p>Observations:</p>
+<ul class="simple">
+<li><p>It only took one more iteration to meet the demand for twice as many decimal places of accuracy.</p></li>
+<li><p>The result is “exact” as fas as the computer arithmeric can tell, as shown by the zero backward error:
+we have indeed reached the accuracy limits of computer arithmetic.</p></li>
+</ul>
+</section>
+</section>
+<section id="newton-s-method-works-with-complex-numbers-too">
+<h2>Newton’s method works with complex numbers too<a class="headerlink" href="#newton-s-method-works-with-complex-numbers-too" title="Permalink to this headline">#</a></h2>
+<p>This book will work almost entirely with real values and vectors in <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span>, but actually,
+everything above also works for complex numbers.
+In particular, Newton’s method works for finding roots of functions <span class="math notranslate nohighlight">\(f:\mathbb{C} \to \mathbb{C}\)</span>;
+for example when seeking all roots of a polynomial.</p>
+<p>(See the notes on <a class="reference external" href="%22julia-language-notes#complexnumbers%22">Complex number in Julia</a>.)</p>
+<div class="proof example admonition" id="example-3">
+<p class="admonition-title"><span class="caption-number">Example 2.8 </span> (All roots of a cubic)</p>
+<section class="example-content" id="proof-content">
+<p>As an example, let us seek all three cube roots of 8,
+by solving <span class="math notranslate nohighlight">\(x^3 - 8 = 0\)</span> and trying different initial values <span class="math notranslate nohighlight">\(x_0\)</span>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">x</span><span class="o">^</span><span class="mi">3</span> <span class="o">-</span> <span class="mi">8</span>
+<span class="n">Df2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="mi">3</span><span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>First, <span class="math notranslate nohighlight">\(x_0 = 1\)</span></strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">;</span>
+<span class="n">errortolerance</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">;</span>
+<span class="n">rei1</span> <span class="o">=</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">Df2</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">root1</span> <span class="o">=</span> <span class="n">rei1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">errorestimate1</span> <span class="o">=</span> <span class="n">rei1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">iterations1</span> <span class="o">=</span> <span class="n">rei1</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The first root is approximately </span><span class="si">$root1</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The estimated absolute error is </span><span class="si">$errorestimate1</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The backward error is </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f2</span><span class="p">(</span><span class="n">root1</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;This required </span><span class="si">$iterations1</span><span class="s"> iterations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving by Newton&#39;s Method.
+maxiterations = 20
+errortolerance = 1.0e-8
+At iteration 1, x = 3.3333333333333335 with estimated error 2.3333333333333335 and backward error 29.037037037037045
+At iteration 2, x = 2.462222222222222 with estimated error 0.8711111111111113 and backward error 6.92731645541838
+At iteration 3, x = 2.081341247671579 with estimated error 0.380880974550643 and backward error 1.0163315496105625
+At iteration 4, x = 2.003137499141287 with estimated error 0.07820374853029163 and backward error 0.03770908398584538
+At iteration 5, x = 2.000004911675504 with estimated error 0.003132587465783101 and backward error 5.894025079733467e-5
+At iteration 6, x = 2.0000000000120624 with estimated error 4.911663441917921e-6 and backward error 1.447482134153688e-10
+At iteration 7, x = 2.0 with estimated error 1.2062351117801901e-11 and backward error 0.0
+Done!
+
+The first root is approximately 2.0
+The estimated absolute error is 1.2062351117801901e-11
+The backward error is 0.0
+This required 7 iterations
+</pre></div>
+</div>
+</div>
+</div>
+<p><strong>Next, start at <span class="math notranslate nohighlight">\(x_0 = i\)</span> (a.k.a. <span class="math notranslate nohighlight">\(x_0 = im\)</span>):</strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="nb">im</span><span class="p">;</span>
+<span class="n">rei2</span> <span class="o">=</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">Df2</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">root2</span> <span class="o">=</span> <span class="n">rei2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">errorestimate2</span> <span class="o">=</span> <span class="n">rei2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">iterations2</span> <span class="o">=</span> <span class="n">rei2</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The second root is approximately </span><span class="si">$root2</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The estimated absolute error is </span><span class="si">$errorestimate2</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The backward error is </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f2</span><span class="p">(</span><span class="n">root2</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;This required </span><span class="si">$iterations2</span><span class="s"> iterations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Solving by Newton&#39;s Method.
+maxiterations = 20
+errortolerance = 1.0e-8
+At iteration 1, x = -2.6666666666666665 + 0.6666666666666667im with estimated error 2.6874192494328497 and backward error 27.23670564570405
+At iteration 2, x = -1.4663590926566703 + 0.6105344098423685im with estimated error 1.2016193667222377 and backward error 10.211311837398133
+At iteration 3, x = -0.23293230984230884 + 1.1571382823138845im with estimated error 1.3491172750968106 and backward error 7.206656519642179
+At iteration 4, x = -1.9202321953438537 + 1.5120026439880303im with estimated error 1.7242127533456901 and backward error 13.405769067901167
+At iteration 5, x = -1.1754417924325344 + 1.4419675366055338im with estimated error 0.7480759724352086 and backward error 3.7583743808280228
+At iteration 6, x = -0.9389355523964149 + 1.716001974171807im with estimated error 0.36198076543966584 and backward error 0.7410133693135651
+At iteration 7, x = -1.0017352527552088 + 1.7309534907089796im with estimated error 0.06455501693838851 and backward error 0.02463614729973853
+At iteration 8, x = -0.9999988050398477 + 1.7320490713246675im with estimated error 0.0020531798639315357 and backward error 2.529258531285453e-5
+At iteration 9, x = -1.0000000000014002 + 1.7320508075706016im with estimated error 2.107719871290353e-6 and backward error 2.6654146785452274e-11
+At iteration 10, x = -1.0 + 1.7320508075688774im with estimated error 2.2211788987828177e-12 and backward error 1.9860273225978185e-15
+Done!
+
+The second root is approximately -1.0 + 1.7320508075688774im
+The estimated absolute error is 2.2211788987828177e-12
+The backward error is 1.9860273225978185e-15
+This required 10 iterations
+</pre></div>
+</div>
+</div>
+</div>
+<p>This root is in fact <span class="math notranslate nohighlight">\(-1 + i \sqrt{3}\)</span>.</p>
+<p><strong>Finally, <span class="math notranslate nohighlight">\(x_0 = 1 - i\)</span></strong></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="nb">im</span>
+<span class="n">rei3</span> <span class="o">=</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">Df2</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+<span class="n">root3</span> <span class="o">=</span> <span class="n">rei3</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">errorestimate3</span> <span class="o">=</span> <span class="n">rei3</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">iterations3</span> <span class="o">=</span> <span class="n">rei3</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The third root is approximately </span><span class="si">$root3</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The estimated absolute error is </span><span class="si">$errorestimate3</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The backward error is </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f2</span><span class="p">(</span><span class="n">root3</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;This required </span><span class="si">$iterations3</span><span class="s"> iterations&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The third root is approximately -1.0 - 1.7320508075688772im
+The estimated absolute error is 3.62974830495685e-15
+The backward error is 1.9860273225978185e-15
+This required 10 iterations
+</pre></div>
+</div>
+</div>
+</div>
+<p>This root is in fact <span class="math notranslate nohighlight">\(-1 - i \sqrt{3}\)</span>.</p>
+</section>
+<section id="newton-s-method-derived-via-tangent-line-approximations-linearization">
+<h2>Newton’s method derived via tangent line approximations: linearization<a class="headerlink" href="#newton-s-method-derived-via-tangent-line-approximations-linearization" title="Permalink to this headline">#</a></h2>
+<p>The more traditional derivation of Newton”s method is based on the very widely useful idea of <em>linearization</em>;
+using the fact that a differentiable function can be approximated over a small part of its domain by a straight line — its tangent line — and it is easy to compute the root of this linear function.</p>
+<p>So start with a first approximation <span class="math notranslate nohighlight">\(x_0\)</span> to a solution <span class="math notranslate nohighlight">\(r\)</span> of <span class="math notranslate nohighlight">\(f(x) = 0\)</span>.</p>
+<section id="step-1-linearize-at-x-0">
+<h3>Step 1: Linearize at <span class="math notranslate nohighlight">\(x_0\)</span>.<a class="headerlink" href="#step-1-linearize-at-x-0" title="Permalink to this headline">#</a></h3>
+<p>The tangent line to the graph of this function wih center <span class="math notranslate nohighlight">\(x_0\)</span>,
+also know as the <em>linearization of <span class="math notranslate nohighlight">\(f\)</span> at <span class="math notranslate nohighlight">\(x_0\)</span></em>, is</p>
+<div class="math notranslate nohighlight">
+\[L_0(x) = f(x_0) + f'(x_0) (x - x_0).\]</div>
+<p>(Note that <span class="math notranslate nohighlight">\(L_0(x_0) = f(x_0)\)</span> and <span class="math notranslate nohighlight">\(L_0'(x_0) = f'(x_0)\)</span>.)</p>
+</section>
+<section id="step-2-find-the-zero-of-this-linearization">
+<h3>Step 2: Find the zero of this linearization<a class="headerlink" href="#step-2-find-the-zero-of-this-linearization" title="Permalink to this headline">#</a></h3>
+<p>Hopefully, the two functions <span class="math notranslate nohighlight">\(f\)</span> and <span class="math notranslate nohighlight">\(L_0\)</span> are close, so that the root of <span class="math notranslate nohighlight">\(L_0\)</span> is close to a root of <span class="math notranslate nohighlight">\(f\)</span>;
+close enough to be a better approximation of the root <span class="math notranslate nohighlight">\(r\)</span> than <span class="math notranslate nohighlight">\(x_0\)</span> is.</p>
+<p>Give the name <span class="math notranslate nohighlight">\(x_1\)</span> to this root of <span class="math notranslate nohighlight">\(L_0\)</span>:
+it solves <span class="math notranslate nohighlight">\(L_0(x_1) = f(x_0) + f'(x_0) (x_1 - x_0) = 0\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[x_1 = x_0 - {f(x_0)}/{f'(x_0)}\]</div>
+</section>
+<section id="step-3-iterate">
+<h3>Step 3: Iterate<a class="headerlink" href="#step-3-iterate" title="Permalink to this headline">#</a></h3>
+<p>We can then use this new value <span class="math notranslate nohighlight">\(x_1\)</span> as the center for a new linearization
+<span class="math notranslate nohighlight">\(L_1(x) = f(x_1) + f'(x_1)(x - x_1)\)</span>,
+and repeat to get a hopefully even better approximate root,</p>
+<div class="math notranslate nohighlight">
+\[x_2 = x_1 - f(x_1)/f'(x_1)\]</div>
+<p>And so on: at each step, we get from approximation <span class="math notranslate nohighlight">\(x_k\)</span> to a new one <span class="math notranslate nohighlight">\(x_{k+1}\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[x_{k+1} = x_k - {f(x_k)}/{f'(x_k)}\]</div>
+<p>And indeed this is the same formula seen above for Newton’s method.</p>
+<p><strong>Illustration: a few steps of Newton’s method for <span class="math notranslate nohighlight">\(x - \cos(x) = 0\)</span>.</strong></p>
+<p>This approach to Newton’s method via linearization and tangent lines suggests another graphical presentation;
+again we use the example of <span class="math notranslate nohighlight">\(f(x) = x - \cos (x)\)</span>.
+This has <span class="math notranslate nohighlight">\(Df(x) = 1 + \sin(x)\)</span>, so the linearization at center <span class="math notranslate nohighlight">\(a\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[L(x) = (a - \cos(a)) + (1 + \sin(a))(x-a)\]</div>
+<p>For Newton’s method starting at <span class="math notranslate nohighlight">\(x_0 = 0\)</span>, this gives</p>
+<div class="math notranslate nohighlight">
+\[L_0(x) = -1 + x\]</div>
+<p>and its root — the next iterate in Newton”s method — is <span class="math notranslate nohighlight">\(x_1 = 1\)</span></p>
+<p>Then the linearization at center <span class="math notranslate nohighlight">\(x_1\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+L_1(x) = (1 - \cos(1) + (1 + \sin(1))(x-1),
+\approx 0.4596 + 1.8415(x-1)
+\]</div>
+<p>giving <span class="math notranslate nohighlight">\(x_2 \approx 1 - 0.4596/1.8415 \approx 0.7504\)</span>.</p>
+<p>Let’s graph a few steps.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">L_0</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">x</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;First iteration, from </span><span class="si">$x_0</span><span class="s"> = 0$&quot;</span><span class="p">)</span>
+<span class="n">left</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.1</span>
+<span class="n">right</span> <span class="o">=</span> <span class="mf">1.1</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f1</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;x - \cos(x)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;x=0&quot;</span><span class="p">)</span>  <span class="c"># The x-axis, in black</span>
+<span class="n">x_0</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_0</span><span class="p">],</span> <span class="p">[</span><span class="n">f1</span><span class="p">(</span><span class="n">x_0</span><span class="p">)],</span> <span class="s">&quot;g*&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_0</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;y&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;L_0(x)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_0</span><span class="p">],</span> <span class="p">[</span><span class="n">f1</span><span class="p">(</span><span class="n">x_0</span><span class="p">)],</span> <span class="s">&quot;g*&quot;</span><span class="p">)</span>
+<span class="n">x_1</span> <span class="o">=</span> <span class="n">x_0</span> <span class="o">-</span> <span class="n">f1</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span><span class="o">/</span><span class="n">Df1</span><span class="p">(</span><span class="n">x_0</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x_1 = </span><span class="si">$x_1</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x_1 = 1.0
+</pre></div>
+</div>
+<img alt="../_images/newtons-method_37_1.png" src="../_images/newtons-method_37_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">L_1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_1</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">x_1</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">x_1</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_1</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;Second iteration, from </span><span class="si">$x_1</span><span class="s"> = 1$&quot;</span><span class="p">)</span>
+<span class="c"># Shrink the domain</span>
+<span class="n">left</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">right</span> <span class="o">=</span> <span class="mf">1.05</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f1</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;x - \cos(x)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;x=0&quot;</span><span class="p">)</span>  <span class="c"># The x-axis, in black</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_1</span><span class="p">],</span> <span class="p">[</span><span class="n">f1</span><span class="p">(</span><span class="n">x_1</span><span class="p">)],</span> <span class="s">&quot;g*&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_1</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;y&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;L_1(x)&quot;</span><span class="p">)</span>
+<span class="n">x_2</span> <span class="o">=</span> <span class="n">x_1</span> <span class="o">-</span> <span class="n">f1</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span><span class="o">/</span><span class="n">Df1</span><span class="p">(</span><span class="n">x_1</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x_2 = </span><span class="si">$x_2</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_2</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x_2 = 0.7503638678402439
+</pre></div>
+</div>
+<img alt="../_images/newtons-method_39_1.png" src="../_images/newtons-method_39_1.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">L_2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_2</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">x_2</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">sin</span><span class="p">(</span><span class="n">x_2</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x_2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;Third iteration, from </span><span class="si">$x_2</span><span class="s">=$&quot;</span><span class="o">*</span><span class="s">&quot;</span><span class="si">$x_2</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="c"># Shrink the domain some more</span>
+<span class="n">left</span> <span class="o">=</span> <span class="mf">0.735</span>
+<span class="n">right</span> <span class="o">=</span> <span class="mf">0.755</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f1</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;x - \cos(x)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;k&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;x=0&quot;</span><span class="p">)</span>  <span class="c"># The x-axis, in black</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_2</span><span class="p">],</span> <span class="p">[</span><span class="n">f1</span><span class="p">(</span><span class="n">x_2</span><span class="p">)],</span> <span class="s">&quot;g*&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">L_2</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="s">&quot;y&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">L</span><span class="s">&quot;L_2(x)&quot;</span><span class="p">)</span>
+<span class="n">x_3</span> <span class="o">=</span> <span class="n">x_2</span> <span class="o">-</span> <span class="n">f1</span><span class="p">(</span><span class="n">x_2</span><span class="p">)</span><span class="o">/</span><span class="n">Df1</span><span class="p">(</span><span class="n">x_2</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x_3 = </span><span class="si">$x_3</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">x_3</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x_3 = 0.7391128909113617
+</pre></div>
+</div>
+<img alt="../_images/newtons-method_41_1.png" src="../_images/newtons-method_41_1.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="how-accurate-and-fast-is-this">
+<h2>How accurate and fast is this?<a class="headerlink" href="#how-accurate-and-fast-is-this" title="Permalink to this headline">#</a></h2>
+<p>For the bisection method, we have seen in <a class="reference internal" href="root-finding-by-interval-halving.html"><span class="doc">Root Finding by Interval Halving (Bisection)</span></a>
+a fairly simple way to get an upper limit on the absolute error in the approximations.</p>
+<p>For absolute guarantees of accuracy, things do not go quite as well for Newton’s method,
+but we can at least get a very “probable” <em>estimate</em> of how large the error can be.
+This requires some calculus, and more specifically Taylor’s theorem,
+reviewed in <a class="reference internal" href="taylors-theorem.html"><span class="doc">Taylor’s Theorem and the Accuracy of Linearization</span></a>.</p>
+<p>So we will return to the question of both the speed and accuracy of Newton’s method in <a class="reference internal" href="newtons-method-convergence-rate.html"><span class="doc">The Convergence Rate of Newton’s Method</span></a>.</p>
+<p>On the other hand, the example graphs above illustrate that the successive linearizations become ever more accurate as approximations of the function <span class="math notranslate nohighlight">\(f\)</span> itself, so that the approximation <span class="math notranslate nohighlight">\(x_3\)</span> looks “perfect” on the graph —
+the speed of Newton’s method looks far better than for bisection.
+This will also be explained in <a class="reference internal" href="newtons-method-convergence-rate.html"><span class="doc">The Convergence Rate of Newton’s Method</span></a>.</p>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-1"></a></p>
+<section id="exercise-1">
+<h3>Exercise 1<a class="headerlink" href="#exercise-1" title="Permalink to this headline">#</a></h3>
+<p>a) Show that Newton’s method applied to</p>
+<div class="math notranslate nohighlight">
+\[ f(x) = x^k - a \]</div>
+<p>leads to fixed point iteration with function</p>
+<div class="math notranslate nohighlight">
+\[ g(x) = \frac{(k-1) x + \displaystyle \frac{a}{x^{k-1}}}{k}. \]</div>
+<p>b) Then verify mathematically that the iteration <span class="math notranslate nohighlight">\(x_{k+1} = g(x_k)\)</span> has super-linear convergence.</p>
+<p><a name="exercise-2"></a></p>
+</section>
+<section id="exercise-2">
+<h3>Exercise 2<a class="headerlink" href="#exercise-2" title="Permalink to this headline">#</a></h3>
+<p>a) Create a Julia function for Newton’s method, with usage</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(root, errorEstimate, iterations, functionEvaluations) = newtonMethod(f, Df, x_0, errorTolerance, maxIterations)
+</pre></div>
+</div>
+<p>(The last input parameter <code class="docutils literal notranslate"><span class="pre">maxIterations</span></code> could be optional, with a default like <code class="docutils literal notranslate"><span class="pre">maxIterations=100</span></code>.)</p>
+<p>b) based on your function <code class="docutils literal notranslate"><span class="pre">bisection2</span></code> create a third (and final!) version with usage</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>(root, errorBound, iterations, functionEvaluations) = bisection(f, a, b, errorTolerance, maxIterations)
+</pre></div>
+</div>
+<p>c) Use both of these to solve the equation</p>
+<div class="math notranslate nohighlight">
+\[ f_1(x) = 10 - 2x + \sin(x) = 0 \]</div>
+<p>i) with [estimated] absolute error of no more than <span class="math notranslate nohighlight">\(10^{-6}\)</span>, and then</p>
+<p>ii) with [estimated] absolute error of no more than <span class="math notranslate nohighlight">\(10^{-15}\)</span>.</p>
+<p>Note in particular how many iterations and how many function evaluations are needed.</p>
+<p>Graph the function, which will help to find a good starting interval <span class="math notranslate nohighlight">\([a, b]\)</span> and initial approximation <span class="math notranslate nohighlight">\(x_0\)</span>.</p>
+<p>d) Repeat, this time finding the unique real root of</p>
+<div class="math notranslate nohighlight">
+\[ f_2(x) = x^3 - 3.3 x^2 + 3.63 x - 1.331 = 0 \]</div>
+<p>Again graph the function, to find a good starting interval <span class="math notranslate nohighlight">\([a, b]\)</span> and initial approximation <span class="math notranslate nohighlight">\(x_0\)</span>.</p>
+<p>e) This second case will behave differently than for <span class="math notranslate nohighlight">\(f_1\)</span> in part (c): describe the difference.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="fixed-point-iteration.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">2.2. </span>Solving Equations by Fixed Point Iteration (of Contraction Mappings)</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="taylors-theorem.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">2.4. </span>Taylor’s Theorem and the Accuracy of Linearization</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

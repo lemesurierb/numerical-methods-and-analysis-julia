@@ -1,0 +1,920 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5.6. Definite Integrals, Part 4: Romberg Integration" href="integrals-4-romberg-integration.html" />
+    <link rel="prev" title="5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules" href="integrals-2-composite-rules.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/integrals-3-simpson-richardson.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/integrals-3-simpson-richardson.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-basic-simpson-s-rule-by-richardson-extrapolation">
+   The Basic Simpson’s Rule by Richardson Extrapolation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#accuracy-and-order-of-precision-of-simpson-s-rule">
+   Accuracy and Order of Precision of Simpson’s Rule
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#appendix-deriving-simpson-s-rule-by-the-method-of-undetermined-coefficients">
+   Appendix: Deriving Simpson’s Rule by the Method of Undetermined Coefficients
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-basic-simpson-s-rule-by-richardson-extrapolation">
+   The Basic Simpson’s Rule by Richardson Extrapolation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#accuracy-and-order-of-precision-of-simpson-s-rule">
+   Accuracy and Order of Precision of Simpson’s Rule
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#appendix-deriving-simpson-s-rule-by-the-method-of-undetermined-coefficients">
+   Appendix: Deriving Simpson’s Rule by the Method of Undetermined Coefficients
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="definite-integrals-part-3-the-composite-simpson-s-rule-and-richardson-extrapolation">
+<h1><span class="section-number">5.5. </span>Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation<a class="headerlink" href="#definite-integrals-part-3-the-composite-simpson-s-rule-and-richardson-extrapolation" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Sections 5.2.2 and 5.2.3 of Chapter 5 <em>Numerical Differentiation and Integration</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Sections 4.3 and 4.4 of Chapter 5 <em>Numerical Differentiation and Integration</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>The Composite Simpson’s Rule can be be derived in several ways.
+The traditional approach is to devise Simpson’s Rule by approximating the integrand function with a colocating quadratic (using three equally spaced nodes) and then “compounding”, as seen with the Trapezoid and Midpoint Rules.</p>
+<p>We have already seen another approach: using a 2:1 weighted average of the Trapezoid and Midpoint Rules with th goal of cancelling their <span class="math notranslate nohighlight">\(O(h^2)\)</span> error terms.</p>
+<p>This section will show a third approach, based on Richardson extrapolation:
+this will set us up for Romberg Integration.</p>
+</section>
+<section id="the-basic-simpson-s-rule-by-richardson-extrapolation">
+<h2>The Basic Simpson’s Rule by Richardson Extrapolation<a class="headerlink" href="#the-basic-simpson-s-rule-by-richardson-extrapolation" title="Permalink to this headline">#</a></h2>
+<p>From the section on
+<a class="reference internal" href="integrals-2-composite-rules.html"><span class="doc">The Composite Trapezoid and Midpoint Rules</span></a>,
+we have</p>
+<div class="math notranslate nohighlight">
+\[
+T_n = \int_a^b f(x) \,dx + \frac{Df(b) - Df(a)}{12} h^2 + O(h^4),
+= I + c_2 h^2 + O(h^4)
+\]</div>
+<p>where <span class="math notranslate nohighlight">\(I\)</span> is the integral to be approximated (the “Q” in the section on
+<a class="reference internal" href="richardson-extrapolation.html"><span class="doc">Richardson Extrapolation</span></a>,
+and <span class="math notranslate nohighlight">\(c_2 = (Df(b) - Df(a))/12\)</span>.</p>
+<p>Thus the “n form” of Richardson Extrapolation with <span class="math notranslate nohighlight">\(p=2\)</span>  gives a new approximation that I will call <span class="math notranslate nohighlight">\(S_{2n}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ S_{2n} = \frac{4T_{2n} - T_n}{4-1} \]</div>
+<p>To start, look at the simplest case of this:</p>
+<div class="math notranslate nohighlight">
+\[
+S_{2} = \frac{4 T_{2} - T_1}{3}
+\]</div>
+<p>Definfing <span class="math notranslate nohighlight">\(h = (b-a)/2\)</span>, the ingredients are</p>
+<div class="math notranslate nohighlight">
+\[
+T_1 = \frac{f(a) + f(b)}{2} (b-a) = \frac{f(a) + f(b)}{2} 2 h = (f(a) + f(b)) h
+\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[
+T_2 = \left[ \frac{f(a)}{2} + f(a+h) + \frac{f(b)}{2} \right] h
+\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[
+S_{2} = \frac{\left[ 2f(a) + 4f(a+h) + 2f(b) \right] - [f(a) + f(b)]}{3} h,
+= \frac{f(a) + 4f(a+h) + f(b)}{3} h
+\]</div>
+<p>which is the basic Simpson’s Rule.
+The subscript “2” is because this uses two intervals, with <span class="math notranslate nohighlight">\(h=(b-a)/2\)</span></p>
+</section>
+<section id="accuracy-and-order-of-precision-of-simpson-s-rule">
+<h2>Accuracy and Order of Precision of Simpson’s Rule<a class="headerlink" href="#accuracy-and-order-of-precision-of-simpson-s-rule" title="Permalink to this headline">#</a></h2>
+<p>Rather than derive this the traditional way — by fitting a quadratic to the function values at <span class="math notranslate nohighlight">\(x=a\)</span>, <span class="math notranslate nohighlight">\(a+h\)</span> and <span class="math notranslate nohighlight">\(b\)</span> —
+this can be confirmed “a postiori” by showing that the degree of precision is at least 2,
+so that it is exact for all quadratics. And actually we get a bonus, thanks to some symmetry.</p>
+<p><strong>For <span class="math notranslate nohighlight">\(f(x) = 1\)</span>,</strong> the exact integral is <span class="math notranslate nohighlight">\(I = b-a, = 2h\)</span>, and also</p>
+<div class="math notranslate nohighlight">
+\[ S_2 = \frac{1 + 4 \times 1 + 1}{3} h, = 2h \]</div>
+<p><strong>For <span class="math notranslate nohighlight">\(f(x) = x\)</span>,</strong> the exact integral is
+<span class="math notranslate nohighlight">\(I = \int_a^b x \, dx = [x^2/2]_a^b = (b^2 - a^2)/2 = (b-a)(b+a)/2 = (a+b)h\)</span></p>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[
+S_2 = \frac{a + 4(a+b)/2 + b}{3} h
+= \frac{a + 2(a+b) + b}{3} h
+= (a+b)h
+\]</div>
+<p>However, it is sufficient to traslate the domain to the symmetric interval <span class="math notranslate nohighlight">\([-h, h]\)</span>, so redo the <span class="math notranslate nohighlight">\(f(x)=x\)</span> case this easier way:</p>
+<p>The exact integral is <span class="math notranslate nohighlight">\(\int_{-h}^h x \, dx = 0\)</span> (because the function is odd)</p>
+<div class="math notranslate nohighlight">
+\[
+S_2 = \frac{-h + 4 \times 0 + h}{3} h = 0
+\]</div>
+<p><strong>For <span class="math notranslate nohighlight">\(f(x) = x^2\)</span>,</strong> again do it just on the symmetric interval <span class="math notranslate nohighlight">\([-h, h]\)</span>:
+the exact integral is
+<span class="math notranslate nohighlight">\(\int_{-h}^h x^2 \, dx = [x^3/3]_{-h}^h = 2h^3/3\)</span>
+and</p>
+<div class="math notranslate nohighlight">
+\[ S_2 = \frac{(-h)^2 + 4\times 0^2 + h^2}{3} h = 2h^3/3 \]</div>
+<p>So the degree of precision is <em>at least</em> 2, as expected.</p>
+<p>What about cubics? Check with <span class="math notranslate nohighlight">\(f(x)=x^3\)</span>, again on interval <span class="math notranslate nohighlight">\([-h, h]\)</span>.</p>
+<p>Almost no calculation is needed: symmetry does it all for us:</p>
+<ul class="simple">
+<li><p>on one hand, the exact integral is zero due to the function being odd on a symmetric interval:
+<span class="math notranslate nohighlight">\(\int_{-h}^h x^3 \, dx = [x^4/4]_{-h}^h = 0\)</span></p></li>
+<li><p>on the other hand,</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ S_2 = \frac{(-h)^3 + 4 \times 0^3 + h^3}{3} h = 0 \]</div>
+<p>The degree of precision is at least 3.</p>
+<p>Our luck ends here, but looking at <span class="math notranslate nohighlight">\(f(x)=x^4\)</span> is informative:</p>
+<p><strong>For <span class="math notranslate nohighlight">\(f(x) = x^4\)</span>,</strong></p>
+<ul class="simple">
+<li><p>the exact integral is <span class="math notranslate nohighlight">\(\int_{-h}^h x^4 \, dx = [x^5/5]_{-h}^h = 2h^5/5\)</span></p></li>
+<li><p>on the other hand</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ S_2 = \frac{(-h)^4 + 4\times 0^4 + h^4}{3} h = 2h^5/3 \]</div>
+<p>So there is a discrepancy of <span class="math notranslate nohighlight">\((4/15) h^5, = O(h^5)\)</span>.</p>
+<p>This Simpson’s Rule has degree of precision 3: it is exact for all cubics, but not for all quartics.</p>
+<p>The last result also indicate the order of error:</p>
+<div class="math notranslate nohighlight">
+\[ S_2 - I = O(h^5) \]</div>
+<p>Just as for the composite Trapezoid and Midpoint Rules, when we combine multiple simple Simpson’s Rule approximations with <span class="math notranslate nohighlight">\(2n\)</span> intervals each of width <span class="math notranslate nohighlight">\(h= (b-a)/(2n)\)</span>, the error is roughly multiplied by <span class="math notranslate nohighlight">\(n\)</span>, so <span class="math notranslate nohighlight">\(h^5\)</span> goes to <span class="math notranslate nohighlight">\(n h^5, = (b-a)h^4\)</span>,
+leading to</p>
+<div class="math notranslate nohighlight">
+\[ S_{2n} - I = O(h^4) \]</div>
+</section>
+<section id="appendix-deriving-simpson-s-rule-by-the-method-of-undetermined-coefficients">
+<h2>Appendix: Deriving Simpson’s Rule by the Method of Undetermined Coefficients<a class="headerlink" href="#appendix-deriving-simpson-s-rule-by-the-method-of-undetermined-coefficients" title="Permalink to this headline">#</a></h2>
+<p>We wish the determine the most accurate approximation of the form</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) \, dx \approx \left[ C_1 f(a) + C_2 f(c) + C_3 f(b) \right] h \]</div>
+<p>where <span class="math notranslate nohighlight">\(c\)</span> is the midpoint, <span class="math notranslate nohighlight">\(c = (a+b)/2\)</span></p>
+<p>This wilk be done by the first, “hardest” method: inserting Taylor polynomial and error terms,
+but to make it a bit less hard, we can consider just the symmetric case <span class="math notranslate nohighlight">\(a=-h\)</span>, <span class="math notranslate nohighlight">\(b=h\)</span>, <span class="math notranslate nohighlight">\(h= (b-a)/2\)</span> by making the change of variables <span class="math notranslate nohighlight">\(x \to x-c\)</span>.</p>
+<p>As we now know that this will be exact for cubics, use third order Tayloe polynomials:</p>
+<div class="math notranslate nohighlight">
+\[
+f(\pm h) = f(0) \pm f'(0) h + \frac{f''(0)}{2} h^2 \pm \frac{f'''(0)}{6} h^3 + \frac{f''''(\xi_\pm)}{24} h^4
+\]</div>
+<p>(Note that the special values <span class="math notranslate nohighlight">\(\xi_\pm\)</span> are in general different for the “<span class="math notranslate nohighlight">\(+h\)</span>” and  “<span class="math notranslate nohighlight">\(-h\)</span>” cases.</p>
+<p>As usual, gather terms with the same power of <span class="math notranslate nohighlight">\(h\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+S_2 &amp;= h f(0) (C_1 + C_2 + C_3)
+\\&amp;+ h^2 f^{(1)}(0) (-C_1 + C_3)
+\\&amp;+ h^3 f^{(2)}(0) (C_1/2 + C_3/2)
+\\&amp;+ h^4 f^{(3)}(0) (-C_1/6 + C_3/6)
+\\&amp;+ h^5 (C_1 f^{(4)}(\xi_-) + C_3 f^{(4)}(\xi_+))/24 
+\end{split}
+\end{split}\]</div>
+<p>The exact integral can also be computed with Taylor’s formula:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+I = \int_{-h}^h f(x)\, dx
+&amp;= \int_{-h}^h \left[ f(0) + Df(0) x + \frac{D^2f(0)}{2}x^2 + \frac{D^3f(0)}{6}x^3 + \frac{D^4f(24)}{2}x^4 + \frac{D^5f(\xi_x)}{120}x^5 \right]\, dx
+\\&amp;= 2 h f(0) + \frac{D^2f(0)}{3} h^3  + \frac{D^3f(0)}{12} h^5 + O(h^6)
+\end{split}
+\end{split}\]</div>
+<p>(Symmetry causes all the odd power integrals to valish.)</p>
+<p>so the error is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+S_2 - I
+&amp;= h f(0) (C_1 + C_2 + C_3 - 2)
+\\&amp;+ h^2 Df(0) (-C_1 + C_3)
+\\&amp;+ h^3 D^2f(0) (C_1/2 + C_3/2 - 1/3)
+\\&amp;+ O(h^5)
+\end{split}
+\end{split}\]</div>
+<p>The best possibility is setting the coeficients of <span class="math notranslate nohighlight">\(h\)</span>, <span class="math notranslate nohighlight">\(h^2\)</span> and <span class="math notranslate nohighlight">\(h^3\)</span> to zero:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+C_1 + C_2 + C_3 &amp;= 2
+\\-C_1 + C_3 &amp;= 0
+\\C_1/2 + C_3/2 &amp;= 1/3
+\end{split}
+\end{split}\]</div>
+<p>Symmetry helps, as the “<span class="math notranslate nohighlight">\(h^2&quot;\)</span> equation <span class="math notranslate nohighlight">\(-C_1 + C_3 = 0\)</span> gives <span class="math notranslate nohighlight">\(C_3 = C_1\)</span>, leaving</p>
+<div class="math notranslate nohighlight">
+\[ C_1 = 1/3, \quad 2C_1 + C_2 = 2 \]</div>
+<p>and thus</p>
+<div class="math notranslate nohighlight">
+\[ C_1 = C_3 = 1/3, \quad C_2 = 4/3 \]</div>
+<p>as claimed above.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="integrals-2-composite-rules.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">5.4. </span>Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="integrals-4-romberg-integration.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">5.6. </span>Definite Integrals, Part 4: Romberg Integration</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

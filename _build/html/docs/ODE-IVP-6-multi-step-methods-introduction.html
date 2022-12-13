@@ -1,0 +1,1138 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>7.7. An Introduction to Multistep Methods &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7.8. Adams-Bashforth Multistep Methods" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html" />
+    <link rel="prev" title="7.6. Error Control and Variable Step Sizes" href="ODE-IVP-5-error-control.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/ODE-IVP-6-multi-step-methods-introduction.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/ODE-IVP-6-multi-step-methods-introduction.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-leapfrog-method">
+   The Leapfrog method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#second-order-accuracy-of-the-leapfrog-method">
+   Second order accuracy of the leapfrog method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-speed-advantage-of-multi-step-methods-like-the-leapfrog-method">
+   The speed advantage of multi-step methods like the leapfrog method
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#demo-with-the-mass-spring-system">
+     Demo with the mass-spring system
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#but-with-damping-things-eventually-go-wrong">
+     But with damping, things eventually go wrong!
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>An Introduction to Multistep Methods</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-leapfrog-method">
+   The Leapfrog method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#second-order-accuracy-of-the-leapfrog-method">
+   Second order accuracy of the leapfrog method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-speed-advantage-of-multi-step-methods-like-the-leapfrog-method">
+   The speed advantage of multi-step methods like the leapfrog method
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#demo-with-the-mass-spring-system">
+     Demo with the mass-spring system
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#but-with-damping-things-eventually-go-wrong">
+     But with damping, things eventually go wrong!
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="an-introduction-to-multistep-methods">
+<h1><span class="section-number">7.7. </span>An Introduction to Multistep Methods<a class="headerlink" href="#an-introduction-to-multistep-methods" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 6.7 <em>Multistep Methods</em> of <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 5.6 <em>Multistep Methods</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>When approximating derivatives we saw that there is a distinct advantage in accuracy to using the centered difference approximation</p>
+<div class="math notranslate nohighlight">
+\[\frac{df}{dt}(t) \approx \delta_h f(t) := \frac{f(t+h) - f(t-h)}{2h}\]</div>
+<p>(with error <span class="math notranslate nohighlight">\(O(h^2)\)</span>) over the forward difference approximation</p>
+<div class="math notranslate nohighlight">
+\[\frac{df}{dt}(t) \approx \Delta_h f(t) := \frac{f(t+h) - f(t)}{h}\]</div>
+<p>(which has error <span class="math notranslate nohighlight">\(O(h)\)</span>).</p>
+<p>However Euler’s method used the latter, and all ODE methods seen so far avoid using values at “previous” times like <span class="math notranslate nohighlight">\(t-h\)</span>.
+There is a reason for this, as using data from previous times introduces some complications, but sometimes those are worth overcoming, so let us look into this.</p>
+<p>In this section, we look at one simple multi-step method, based on the above centered-difference derivative approximation.</p>
+<p>Future sections will look at higher order methods such as the Adams-Bashforth and Adams-Moulton methods.</p>
+</section>
+<section id="the-leapfrog-method">
+<h2>The Leapfrog method<a class="headerlink" href="#the-leapfrog-method" title="Permalink to this headline">#</a></h2>
+<p>Inserting the above centered difference approximation of the derivative into the ODE <span class="math notranslate nohighlight">\(du/dt = f(t, u)\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[\frac{u(t+h) - u(t-h)}{h} \approx f(t, u(t))\]</div>
+<p>which leads to the <strong>leapfrog method</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{U_{i+1} - U_{i-1}}{2h} = f(t_i, U_i)\]</div>
+<p>or</p>
+<div class="math notranslate nohighlight">
+\[U_{i+1} = U_{i-1} + 2 h f(t_i, U_i)\]</div>
+<p>This is the first example of a</p>
+<div class="proof definition admonition" id="multistep-method">
+<p class="admonition-title"><span class="caption-number">Definition 7.1 </span> (Multistep Method)</p>
+<section class="definition-content" id="proof-content">
+<p>A <strong>multistep method</strong> for numerical solution of an ODE IVP <span class="math notranslate nohighlight">\(du/dt = f(t, u)\)</span>, <span class="math notranslate nohighlight">\(u(t_0) = u_0\)</span> is one of the form</p>
+<div class="math notranslate nohighlight">
+\[ U_{i+1} = \phi(U_i, \dots U_{i-s+1}, h), \quad s &gt; 1 \]</div>
+<p>so that the new approximate value of <span class="math notranslate nohighlight">\(u(t)\)</span> depends on approximate values at multiple previous times.</p>
+<p>More specifically, this is called an <span class="math notranslate nohighlight">\(s\)</span>-step method.</p>
+</section>
+</div><p>This jargon is consistent with all methods seen in earlier sections being called <em>one-step methods</em>.
+For example, Euler’s method can be written as</p>
+<div class="math notranslate nohighlight">
+\[ U_{i+1} = \phi_E(U_i, h) := U_i + h f(t_i, U_i) \]</div>
+<p>and the explicit midpoint method can be written as the one-liner</p>
+<div class="math notranslate nohighlight">
+\[ U_{i+1} = \phi_{EMP}(U_i, h) := U_i + h f(t_i+h/2, U_i + h f(t_i, U_i)/2) h \]</div>
+<p>The leapfrog method already illustrates two of the complications that arise with multistep methods:</p>
+<ul class="simple">
+<li><p>The initial data <span class="math notranslate nohighlight">\(u(a) = u_0\)</span> gives <span class="math notranslate nohighlight">\(U_0\)</span>, but then the above formula gives <span class="math notranslate nohighlight">\(U_1\)</span> in terms of <span class="math notranslate nohighlight">\(U_0\)</span> and the non-existent value <span class="math notranslate nohighlight">\(U_{-1}\)</span>; a different method is needed to get <span class="math notranslate nohighlight">\(U_1\)</span>.
+More generally, with an <span class="math notranslate nohighlight">\(s\)</span>-step methods, one needs to compute the first <span class="math notranslate nohighlight">\(s-1\)</span> steps, up to <span class="math notranslate nohighlight">\(U_{s-1}\)</span>, by some other method.</p></li>
+<li><p>leapfrog needs a constant step size <span class="math notranslate nohighlight">\(h\)</span>; the strategy of error estimation and error control using variable step size is still possible with some multistep methods, but that is distinctly more complicated than we have seen with one-step methods, and is not addressed in these notes.</p></li>
+</ul>
+<p>Fortunately, many differential equations can be handled well by choosing a suitable fixed step size <span class="math notranslate nohighlight">\(h\)</span>.
+Thus, in these notes we work only with equal step sizes, so that our times are <span class="math notranslate nohighlight">\(t_i = a + i h\)</span> and we aim for approximations
+<span class="math notranslate nohighlight">\(U_i \approx u(a + ih)\)</span>.</p>
+</section>
+<section id="second-order-accuracy-of-the-leapfrog-method">
+<h2>Second order accuracy of the leapfrog method<a class="headerlink" href="#second-order-accuracy-of-the-leapfrog-method" title="Permalink to this headline">#</a></h2>
+<p>Using the fact that the centered difference approximation is second order accurate,
+one can verify that</p>
+<div class="math notranslate nohighlight">
+\[\frac{u(t_{i+1}) - u(t_{i-1})}{2h} - f(t, u(t_i)) = O(h^2)\]</div>
+<p>(Alternatively one can get this by inserting quadratic Taylor polynomials centered at <span class="math notranslate nohighlight">\(t_i\)</span>, and their error terms.)</p>
+<p>The definition of local trunctation error needs to be extended slightly:
+it is the error <span class="math notranslate nohighlight">\(U_{i+1} - u(t_{i+1})\)</span> when one starts with exact values for all previous steps;
+that is, assuming <span class="math notranslate nohighlight">\(U_j = u(t_j)\)</span> for all <span class="math notranslate nohighlight">\(j\leq i\)</span>.</p>
+<p>The above results then shows that the local truncation error in each step is <span class="math notranslate nohighlight">\(U_{i+1} - u(t_{i+1}) = O(h^3)\)</span>,
+so that the “local truncation error per unit time” is</p>
+<p>$<span class="math notranslate nohighlight">\(\frac{U_{i+1} - u(t_{i+1})}{h} = O(h^2)\)</span>$.</p>
+<p>A theorem in the section on <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html"><span class="doc">A Global Error Bound for One Step Methods</span></a>
+says that when a one-step methods has local truncation error per unit time of <span class="math notranslate nohighlight">\(O(h^p)\)</span> it also has global truncation error of the same order.
+The situation is a bit more complicated with multi-step methods, but loosely:</p>
+<p><strong>if</strong> the errors in a multistep method has local truncation <span class="math notranslate nohighlight">\(O(h^p)\)</span> <strong>and</strong> it converges
+(i.e. the global error goes to zero at <span class="math notranslate nohighlight">\(h \to 0\)</span>) then it does so at the expected rate of <span class="math notranslate nohighlight">\(O(h^p)\)</span>.</p>
+<p>But multi-step methods can fail to converge, even if the local truncation error is of high order!
+This is dealt with via the concept of <strong>stability</strong>; not considered here, but addressed in both references above, and a topic for future expansion of these notes.</p>
+<p>In particular, when the leapfrog method converges it is second order accurate, just like the centered difference approximation of <span class="math notranslate nohighlight">\(du/dt\)</span> that it is built upon.</p>
+</section>
+<section id="the-speed-advantage-of-multi-step-methods-like-the-leapfrog-method">
+<h2>The speed advantage of multi-step methods like the leapfrog method<a class="headerlink" href="#the-speed-advantage-of-multi-step-methods-like-the-leapfrog-method" title="Permalink to this headline">#</a></h2>
+<p>This second order accuracy illustrates a major potential advantage of multi-step methods:
+whereas any one-step Runge-Kutta method that is second order accurate (such as the explicit trapezoid or explicit midpoint methods) require at least two evaluations of <span class="math notranslate nohighlight">\(f(t, u)\)</span> for each time step, the leapfrog methods requires only one.</p>
+<p>More generally, for every <span class="math notranslate nohighlight">\(s\)</span>, there are <span class="math notranslate nohighlight">\(s\)</span>-step methods with errors <span class="math notranslate nohighlight">\(O(h^s)\)</span> that require only one evaluation of <span class="math notranslate nohighlight">\(f(t, u)\)</span> per time step — for example, the Adams-Bashforth methods, as seen at</p>
+<ul class="simple">
+<li><p>Section <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html"><span class="doc">Adams-Bashforth Multistep Methods</span></a></p></li>
+<li><p><a class="reference external" href="https://en.wikipedia.org/wiki/Linear_multistep_method#Adams-Bashforth_methods">https://en.wikipedia.org/wiki/Linear_multistep_method#Adams-Bashforth_methods</a></p></li>
+<li><p><a class="reference external" href="https://en.m.wikiversity.org/wiki/Adams-Bashforth_and_Adams-Moulton_methods">https://en.m.wikiversity.org/wiki/Adams-Bashforth_and_Adams-Moulton_methods</a></p></li>
+<li><p><span id="id3">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span> Section 6.7.1  and 6.7.2</p></li>
+<li><p><span id="id4">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span> Section 5.6</p></li>
+</ul>
+<p>In comparison, any <em>explicit</em> one-step method order <span class="math notranslate nohighlight">\(p\)</span> require at least <span class="math notranslate nohighlight">\(p\)</span> evaluations of <span class="math notranslate nohighlight">\(f(t, u)\)</span> per time step.</p>
+<p>(See the <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html"><span class="doc">Implicit Methods: Adams-Moulton</span></a> for the distinction between explicit and implicit methods.)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">include</span><span class="p">(</span><span class="s">&quot;NumericalMethods.jl&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Main.NumericalMethods
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="o">.</span><span class="n">NumericalMethods</span> <span class="n">as</span> <span class="n">NM</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">leapfrog</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="n">U_1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">U_0</span><span class="p">)</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">U_0</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">U_1</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">h</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="demo-with-the-mass-spring-system">
+<h3>Demo with the mass-spring system<a class="headerlink" href="#demo-with-the-mass-spring-system" title="Permalink to this headline">#</a></h3>
+<p>As seen in the section <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html"><span class="doc">Systems of ODEs and Higher Order ODEs</span></a></p>
+<p>the damped mass-spring equation is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+M \frac{d^2 y}{d t^2} &amp;= -K y - D \frac{d y}{d t}
+\\
+&amp; \text{with initial conditions}
+\\
+y(a) &amp;= y_0
+\\
+\left. \frac{dy}{dt} \right|_{t=a} &amp;= v_0
+\end{split}
+\end{split}\]</div>
+<p>with first-order system form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+\frac{d u_0}{d t} &amp;= u_1
+\\
+\frac{d u_1}{d t} &amp;= -\frac{K}{M} u_0 - \frac{D}{M} u_1
+\\
+&amp;\text{with initial conditions}
+\\
+u_0(a) &amp;= y_0
+\\
+u_1(a) &amp;= v_0
+\end{split}
+\end{split}\]</div>
+<p>The right-hand side <span class="math notranslate nohighlight">\(f\)</span> is given by</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_mass_spring</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">D</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>and the solutions seen in that section are given by function <code class="docutils literal notranslate"><span class="pre">y_mass_spring</span></code></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">y_mass_spring</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">y_0</span><span class="p">,</span> <span class="n">v_0</span><span class="p">)</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="n">discriminant</span> <span class="o">=</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span>
+    <span class="k">if</span> <span class="n">discriminant</span> <span class="o">&lt;</span> <span class="mi">0</span>  <span class="c"># underdamped</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span> <span class="o">-</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">y_0</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_0</span> <span class="o">+</span> <span class="n">y_0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">))</span><span class="o">/</span><span class="n">omega</span>
+        <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span> <span class="n">A</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">)))</span>
+    <span class="k">elseif</span> <span class="n">discriminant</span> <span class="o">&gt;</span> <span class="mi">0</span>  <span class="c"># overdamped</span>
+        <span class="n">Delta</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">discriminant</span><span class="p">)</span>
+        <span class="n">lambda_plus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">D</span> <span class="o">+</span> <span class="n">Delta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">lambda_minus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">D</span> <span class="o">-</span> <span class="n">Delta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="p">(</span><span class="n">v_0</span> <span class="o">-</span> <span class="n">lambda_minus</span> <span class="o">*</span> <span class="n">y_0</span><span class="p">)</span><span class="o">/</span><span class="n">Delta</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">y_0</span> <span class="o">-</span> <span class="n">A</span>
+        <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda_plus</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda_minus</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span>
+    <span class="k">else</span>
+        <span class="n">lambda</span> <span class="o">=</span> <span class="o">-</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">y_0</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">v_0</span> <span class="o">-</span> <span class="n">A</span> <span class="o">*</span> <span class="n">lambda</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>which alternatively could be imported from module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">M</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">D</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">U_0</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="c"># Note: In the notes on systems, the second order methods were tested with 50 steps per period</span>
+<span class="c">#stepsperperiod = 50  # As for the second order accurate explicit trapezoid and midpoint methods</span>
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c"># Equal cost per unit time as for the explicit trapezoid and midpoint and Runge-Kutta methods</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="c"># We need U_1, and get it with the Runge-Kutta method;</span>
+<span class="c"># this is overkill for accuracy, but since only one step is needed, the time cost is negligible.</span>
+<span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+<span class="p">(</span><span class="n">t_1step</span><span class="p">,</span> <span class="n">U_1step</span><span class="p">)</span> <span class="o">=</span> <span class="n">NM</span><span class="o">.</span><span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">U_1</span> <span class="o">=</span> <span class="n">U_1step</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">leapfrog</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="n">U_1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">U_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for K/M=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by leapfrog with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>  <span class="c"># Make axes equal length; orbits should be circular or &quot;circular spirals&quot;</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbits&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">DY</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_18_0.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_18_0.png" />
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_18_1.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_18_1.png" />
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_18_2.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_18_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="c"># Note: In the notes on systems, the second order methods were tested with 50 steps per period</span>
+<span class="n">stepsperperiod</span> <span class="o">=</span> <span class="mi">50</span>  <span class="c"># As for the second order accurate explicit trapezoid and midpoint methods</span>
+<span class="c">#stepsperperiod = 100  # Equal cost per unit time as for the explicit trapezoid and midpoint and Runge-Kutta methods</span>
+<span class="n">n</span> <span class="o">=</span> <span class="kt">Int</span><span class="p">(</span><span class="n">stepsperperiod</span> <span class="o">*</span> <span class="n">periods</span><span class="p">)</span>
+
+<span class="c"># We need U_1, and get it with the Runge-Kutta method;</span>
+<span class="c"># this is overkill for accuracy, but since only one step is needed, the time cost is negligible.</span>
+<span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+<span class="p">(</span><span class="n">t_1step</span><span class="p">,</span> <span class="n">U_1step</span><span class="p">)</span> <span class="o">=</span> <span class="n">NM</span><span class="o">.</span><span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">U_1</span> <span class="o">=</span> <span class="n">U_1step</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">leapfrog</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="n">U_1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">U_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for K/M=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D= </span><span class="si">$D</span><span class="s"> by leapfrog with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>  <span class="c"># Make axes equal length; orbits should be circular or &quot;circular spirals&quot;</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The orbits&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">DY</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s">&quot;g*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;start&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">Y</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="n">DY</span><span class="p">[</span><span class="k">end</span><span class="p">],</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;end&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_19_0.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_19_0.png" />
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_19_1.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_19_1.png" />
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_19_2.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_19_2.png" />
+</div>
+</div>
+<p>The errors in leapfrog have an interesting feature: they are largely in timing, with its solutions rotating a little too fast, while the orbits stay on the correct circle:
+leapfrog respects the conserved “energy” <span class="math notranslate nohighlight">\(E(t) = \frac{1}{2}(y^2(t) + Dy^2(t))\)</span>.
+In the section <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html"><span class="doc">Adams-Bashforth Multistep Methods</span></a>, this behavior wil be compared to a more “typical” methods.</p>
+<p>In some situations, this respecting of conserved quantities is very important, and the so-called <strong>conservative methods</strong> like leapfrog are then good choices.</p>
+</section>
+<section id="but-with-damping-things-eventually-go-wrong">
+<h3>But with damping, things eventually go wrong!<a class="headerlink" href="#but-with-damping-things-eventually-go-wrong" title="Permalink to this headline">#</a></h3>
+<p>This is an example in <strong>instability</strong>: reducing the step-size only postpones the problem, but does not avoid it.</p>
+<p>In future sections it will be seen that the leapfrog method is stable (and a good choice) for “conservative” systems like the undamped mass-spring system, but unstable otherwise, such as for the damped case.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">D</span> <span class="o">=</span> <span class="mf">0.2</span>
+
+<span class="n">periods</span> <span class="o">=</span> <span class="mi">16</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span> <span class="o">*</span> <span class="n">periods</span>
+
+<span class="c"># We need U_1, and get it with the Runge-Kutta method;</span>
+<span class="c"># this is overkill for accuracy, but since only one step is needed, the time cost is negligible.</span>
+<span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+<span class="p">(</span><span class="n">t_1step</span><span class="p">,</span> <span class="n">U_1step</span><span class="p">)</span> <span class="o">=</span> <span class="n">NM</span><span class="o">.</span><span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="n">U_1</span> <span class="o">=</span> <span class="n">U_1step</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">leapfrog</span><span class="p">(</span><span class="n">f_mass_spring</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">U_0</span><span class="p">,</span> <span class="n">U_1</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+<span class="n">Y</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">DY</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="o">:</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y_mass_spring</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="o">=</span><span class="n">U_0</span><span class="p">,</span> <span class="n">K</span><span class="o">=</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="o">=</span><span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="o">=</span><span class="n">D</span><span class="p">)</span>  <span class="c"># Exact solution</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;y for K/M=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="s">, D=</span><span class="si">$D</span><span class="s"> by leapfrog with </span><span class="si">$periods</span><span class="s"> periods, </span><span class="si">$stepsperperiod</span><span class="s"> steps per period&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;y computed&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;exact solution&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in Y&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">Y</span><span class="p">)</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&quot;t&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_22_0.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_22_0.png" />
+<img alt="../_images/ODE-IVP-6-multi-step-methods-introduction_22_1.png" src="../_images/ODE-IVP-6-multi-step-methods-introduction_22_1.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="ODE-IVP-5-error-control.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">7.6. </span>Error Control and Variable Step Sizes</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7.8. </span>Adams-Bashforth Multistep Methods</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

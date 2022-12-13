@@ -1,0 +1,2044 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.1. Row Reduction/Gaussian Elimination &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.2. Machine Numbers, Rounding Error and Error Propagation" href="machine-numbers-rounding-error-and-error-propagation.html" />
+    <link rel="prev" title="3. Linear Algebra and Simultaneous Equations" href="linear-algebra.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/linear-equations-1-row-reduction.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/linear-equations-1-row-reduction.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#strategy-for-getting-from-mathematical-facts-to-a-good-algorithm-and-then-to-its-implentation-in-julia-code">
+   Strategy for getting from mathematical facts to a good algorithm and then to its implentation in [Julia] code
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-1-get-a-basic-algorithm">
+     Step 1. Get a basic algorithm:
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-2-refine-to-get-a-more-robust-algorithm">
+     Step 2. Refine to get a more
+     <strong>
+      robust
+     </strong>
+     algorithm:
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-3-refine-to-get-a-more-efficient-algorithm">
+     Step 3. Refine to get a more
+     <strong>
+      efficient
+     </strong>
+     algorithm
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gaussian-elimination-a-k-a-row-reduction">
+   Gaussian elimination, a.k.a. row reduction
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determining-those-choices-to-produce-a-first-algorithm-naive-gaussian-elimination">
+     Determining those choices, to produce a first algorithm: “naive gaussian elimination”
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-general-case-of-solving-ax-b">
+   The general case of solving
+   <span class="math notranslate nohighlight">
+    \(Ax = b\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-naive-gaussian-elimination-algorithm-in-pseudo-code">
+   The naive Gaussian elimination algorithm, in pseudo-code
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-naive-gaussian-elimination-algorithm-in-julia">
+   The naive Gaussian elimination algorithm, in Julia
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#backward-substitution-with-an-upper-triangular-matrix">
+   Backward substitution with an upper triangular matrix
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-backward-substitution-algorithm-in-julia">
+     The backward substitution algorithm in Julia
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#two-code-testing-hacks-starting-from-a-known-solution-and-using-randomly-generated-examples">
+   Two code testing hacks: starting from a known solution, and using randomly generated examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-can-go-wrong-some-examples">
+   What can go wrong? Some examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#when-naive-guassian-elimination-is-safe-diagonal-dominance">
+   When naive Guassian elimination is safe: diagonal dominance
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Row Reduction/Gaussian Elimination</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#strategy-for-getting-from-mathematical-facts-to-a-good-algorithm-and-then-to-its-implentation-in-julia-code">
+   Strategy for getting from mathematical facts to a good algorithm and then to its implentation in [Julia] code
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-1-get-a-basic-algorithm">
+     Step 1. Get a basic algorithm:
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-2-refine-to-get-a-more-robust-algorithm">
+     Step 2. Refine to get a more
+     <strong>
+      robust
+     </strong>
+     algorithm:
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-3-refine-to-get-a-more-efficient-algorithm">
+     Step 3. Refine to get a more
+     <strong>
+      efficient
+     </strong>
+     algorithm
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#gaussian-elimination-a-k-a-row-reduction">
+   Gaussian elimination, a.k.a. row reduction
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#determining-those-choices-to-produce-a-first-algorithm-naive-gaussian-elimination">
+     Determining those choices, to produce a first algorithm: “naive gaussian elimination”
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-general-case-of-solving-ax-b">
+   The general case of solving
+   <span class="math notranslate nohighlight">
+    \(Ax = b\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-naive-gaussian-elimination-algorithm-in-pseudo-code">
+   The naive Gaussian elimination algorithm, in pseudo-code
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-naive-gaussian-elimination-algorithm-in-julia">
+   The naive Gaussian elimination algorithm, in Julia
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#backward-substitution-with-an-upper-triangular-matrix">
+   Backward substitution with an upper triangular matrix
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-backward-substitution-algorithm-in-julia">
+     The backward substitution algorithm in Julia
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#two-code-testing-hacks-starting-from-a-known-solution-and-using-randomly-generated-examples">
+   Two code testing hacks: starting from a known solution, and using randomly generated examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#what-can-go-wrong-some-examples">
+   What can go wrong? Some examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#when-naive-guassian-elimination-is-safe-diagonal-dominance">
+   When naive Guassian elimination is safe: diagonal dominance
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="row-reduction-gaussian-elimination">
+<h1><span class="section-number">3.1. </span>Row Reduction/Gaussian Elimination<a class="headerlink" href="#row-reduction-gaussian-elimination" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 2.1.1 <em>Naive Gaussian elimination</em> of <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 6.1 <em>Linear Systems of Equations</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Section 7.1 of <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>The problem of solving a system of <span class="math notranslate nohighlight">\(n\)</span> simultaneous linear equations in <span class="math notranslate nohighlight">\(n\)</span> unknowns,
+with matrix-vector form <span class="math notranslate nohighlight">\(A x = b\)</span>, is quite thoroughly understood as far as having a good general-purpose methods usable with any <span class="math notranslate nohighlight">\(n \times n\)</span> matrix <span class="math notranslate nohighlight">\(A\)</span>: essentially, Gaussian elimination (or row-reduction) as seen in most linear algebra courses, combined with some modifications to stay well away from division by zero: <em>partial pivoting</em>.
+Also, good robust software for this general case is readily available, for example in the Julia package <code class="docutils literal notranslate"><span class="pre">LinearAlgebra</span></code>.</p>
+<p>Nevertheless, this basic algorithm can be very slow when <span class="math notranslate nohighlight">\(n\)</span> is large – as it often is when dealing with differential equations (even more so with <em>partial</em> differential equations).
+We will see that it requires about <span class="math notranslate nohighlight">\(n^3/3\)</span> arithmetic operations.</p>
+<p>Thus I will summarise the basic method of row reduction or Gaussian elimination, and then build on it with methods for doing things more robustly, and on methods for doing it faster in some important special cases:</p>
+<ol class="simple">
+<li><p>When one has to solve many systems <span class="math notranslate nohighlight">\(A x^{(m)} = b^{(m)}\)</span> with the same matrix <span class="math notranslate nohighlight">\(A\)</span> but different right-hand side vectors <span class="math notranslate nohighlight">\(b^{(m)}.\)</span></p></li>
+<li><p>When <span class="math notranslate nohighlight">\(A\)</span> is <em>banded</em>: most elements are zero, and all the non-zero elements <span class="math notranslate nohighlight">\(a_{i,j}\)</span> are near the main diagonal: <span class="math notranslate nohighlight">\(|i - j|\)</span> is far less than <span class="math notranslate nohighlight">\(n\)</span>. (<em>Aside on notation:</em> “far less than” is sometimes denoted <span class="math notranslate nohighlight">\(\ll\)</span>, as in <span class="math notranslate nohighlight">\(|i-j| \ll n\)</span>.)</p></li>
+<li><p>When <span class="math notranslate nohighlight">\(A\)</span> is <em>strictly diagonally dominant</em>: each diagonal element <span class="math notranslate nohighlight">\(a_{i,i}\)</span> is larger in magnitude that the sum of the magnitudes of all other elements in the same row.</p></li>
+</ol>
+<p>Other cases not (yet) discussed in this text are</p>
+<ol class="simple">
+<li><p>When <span class="math notranslate nohighlight">\(A\)</span> is <em>positive definite</em>: symmetric (<span class="math notranslate nohighlight">\(a_{i,j} = a_{j,i}\)</span>) and with all eigenvalues positive.
+This last condition would seem hard to verify, since computing all the eigenvalues of <span class="math notranslate nohighlight">\(A\)</span> is harder that solving <span class="math notranslate nohighlight">\(Ax = b\)</span>,
+but there are important situations where this property is automatically guaranteed, such as with <em>Galerkin</em> and <em>finite-element methods</em> for solving boundary value problems for differential equations.</p></li>
+<li><p>When <span class="math notranslate nohighlight">\(A\)</span> is <em>sparse</em>: most elements are zero, but not necessarily with all the non-zero elements near the main diagonal.</p></li>
+</ol>
+</section>
+<section id="strategy-for-getting-from-mathematical-facts-to-a-good-algorithm-and-then-to-its-implentation-in-julia-code">
+<h2>Strategy for getting from mathematical facts to a good algorithm and then to its implentation in [Julia] code<a class="headerlink" href="#strategy-for-getting-from-mathematical-facts-to-a-good-algorithm-and-then-to-its-implentation-in-julia-code" title="Permalink to this headline">#</a></h2>
+<p>Here I take the opportunity to illustrate some useful strategies for getting from mathematical facts and ideas to good algorithms and working code for solving a numerical problem.
+The pattern we will see here, and often later, is:</p>
+<section id="step-1-get-a-basic-algorithm">
+<h3>Step 1. Get a basic algorithm:<a class="headerlink" href="#step-1-get-a-basic-algorithm" title="Permalink to this headline">#</a></h3>
+<ol class="simple">
+<li><p>Start with mathematical facts (like the equations <span class="math notranslate nohighlight">\(\sum_{j=1}^n a_{ij}x_j = b_i\)</span>).</p></li>
+<li><p>Solve to get an equation for each unknown — or for an updated aproximation of each unknown — in terms of other quantitities.</p></li>
+<li><p>Specify an order of evaluation in which all the quantities at right are evaluated earlier.</p></li>
+</ol>
+<p>In this, it is often best to start with a verbal description before specifying the details in more precise and detailed mathematical form.</p>
+</section>
+<section id="step-2-refine-to-get-a-more-robust-algorithm">
+<h3>Step 2. Refine to get a more <strong>robust</strong> algorithm:<a class="headerlink" href="#step-2-refine-to-get-a-more-robust-algorithm" title="Permalink to this headline">#</a></h3>
+<ol class="simple">
+<li><p>Identify cases that can lead to failure due to division by zero and such, and revise to avoid them.</p></li>
+<li><p>Avoid inaccuracy due to problems like severe rounding error. One rule of thumb is that anywhere that a zero value is a fatal flaw (in particular, division by zero), a very small value is also a hazard when rounding error is present.
+So <strong>avoid very small denominators</strong>. (We will soon examine this through the phenomenon of <strong>loss of significance</strong> and it extreme case <strong>catastrophic cancellation</strong>.)</p></li>
+</ol>
+</section>
+<section id="step-3-refine-to-get-a-more-efficient-algorithm">
+<h3>Step 3. Refine to get a more <strong>efficient</strong> algorithm<a class="headerlink" href="#step-3-refine-to-get-a-more-efficient-algorithm" title="Permalink to this headline">#</a></h3>
+<p>For example,</p>
+<ul class="simple">
+<li><p>Avoid repeated evaluation of exactly the same quantity.</p></li>
+<li><p>Avoid redundant calculations, such as ones whose value can be determnied in advance;
+for example, values that can be shown in advance to be zero.</p></li>
+<li><p>Compare and choose between alternative algorithms.</p></li>
+</ul>
+</section>
+</section>
+<section id="gaussian-elimination-a-k-a-row-reduction">
+<h2>Gaussian elimination, a.k.a. row reduction<a class="headerlink" href="#gaussian-elimination-a-k-a-row-reduction" title="Permalink to this headline">#</a></h2>
+<p>We start by considering the most basic algorithm, based on ideas seen in a linear algebra course.</p>
+<p>The problem is best stated as a collection of equations for individual numerical values:</p>
+<p>Given coefficients <span class="math notranslate nohighlight">\(a_{i,j} 1 \leq i \leq n,\, 1 \leq j \leq n\)</span> and right-hand side values <span class="math notranslate nohighlight">\(b_i,\, 1 \leq i \leq n\)</span>,
+solve for the <span class="math notranslate nohighlight">\(n\)</span> unknowns <span class="math notranslate nohighlight">\(x_j,\, 1 \leq j \leq n\)</span> in the equations
+$<span class="math notranslate nohighlight">\(
+\sum_{j=1}^n a_{i,j} x_j = b_i,\, 1 \leq i \leq n.
+\)</span>$</p>
+<p>In verbal form, the basic strategy of <em>row reduction</em> or <em>Gaussian elimination</em> is this:</p>
+<ul class="simple">
+<li><p><strong>Choose</strong> one equation and use it to eliminate one <strong>chosen</strong> unknown from all the other equations, leaving that chosen equation plus <span class="math notranslate nohighlight">\(n-1\)</span> equations in <span class="math notranslate nohighlight">\(n-1\)</span> unknowns.</p></li>
+<li><p>Repeat recursively, at each stage using one of the remaining equations to eliminate one of the remaining unknowns from all the other equations.</p></li>
+<li><p>This gives a final equation in just one unknown, preceeded by an equation in that unknown plus one other, and so on: solve them in this order, from last to first.</p></li>
+</ul>
+<section id="determining-those-choices-to-produce-a-first-algorithm-naive-gaussian-elimination">
+<h3>Determining those choices, to produce a first algorithm: “naive gaussian elimination”<a class="headerlink" href="#determining-those-choices-to-produce-a-first-algorithm-naive-gaussian-elimination" title="Permalink to this headline">#</a></h3>
+<p>A precise algorithm must include rules specifying all the choices indicated above.
+The simplest “naive” choice, which works in most but not all cases, is to eliminate from the top to bottom and left to right:</p>
+<ul class="simple">
+<li><p>Use the first equation to eliminate the first unknown from all other equations.</p></li>
+<li><p>Repeat recursively, at each stage using the first remaining equation to eliminate the first remaining unknown. Thus, at step <span class="math notranslate nohighlight">\(k\)</span>, equation <span class="math notranslate nohighlight">\(k\)</span> is used to eliminate unknown <span class="math notranslate nohighlight">\(x_k\)</span>.</p></li>
+<li><p>This gives one equation in just the last unknown <span class="math notranslate nohighlight">\(x_n\)</span>; another equation in the last two unknowns <span class="math notranslate nohighlight">\(x_{n-1}\)</span> and <span class="math notranslate nohighlight">\(x_n\)</span>, and so on: solve them in this reverse order, evaluating the unknowns from last to first.</p></li>
+</ul>
+<p>This usually works, but can fail because at some stage the (updated) <span class="math notranslate nohighlight">\(k\)</span>-th equation might not include the <span class="math notranslate nohighlight">\(k\)</span>-th unknown: that is, its coefficient might be zero, leading to division by zero.</p>
+<p>We will refine the algorithm to deal with that in the later section <a class="reference internal" href="linear-equations-2-pivoting.html"><span class="doc">Partial Pivoting</span></a>.</p>
+</section>
+</section>
+<section id="the-general-case-of-solving-ax-b">
+<h2>The general case of solving <span class="math notranslate nohighlight">\(Ax = b\)</span><a class="headerlink" href="#the-general-case-of-solving-ax-b" title="Permalink to this headline">#</a></h2>
+<p>The problem of solving <span class="math notranslate nohighlight">\(Ax = b\)</span> in general, when all you know is that <span class="math notranslate nohighlight">\(A\)</span> is an <span class="math notranslate nohighlight">\(n \times n\)</span> matrix and <span class="math notranslate nohighlight">\(b\)</span> is an <span class="math notranslate nohighlight">\(n\)</span>-vector, can in most cases be handled well by using standard software rather than by writing your own code. Here is an example in Julia, solving</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[ \begin{array}{rrr} 4 &amp; 2 &amp; 7 \\ 3 &amp; 5 &amp; -6 \\ 1 &amp; -3 &amp; 2 \end{array} \right]
+\left[ \begin{array}{r} x_1 \\ x_2 \\ x_3 \end{array} \right]
+= \left[ \begin{array}{r} 2 \\ 3 \\ 4 \end{array} \right]
+\end{split}\]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="p">[</span><span class="mf">4.0</span> <span class="mf">2.0</span> <span class="mf">7.0</span><span class="p">;</span> <span class="mf">3.0</span> <span class="mf">5.0</span> <span class="o">-</span><span class="mf">6.0</span><span class="p">;</span> <span class="mf">1.0</span> <span class="o">-</span><span class="mf">3.0</span> <span class="mf">2.0</span><span class="p">]</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A =</span><span class="se">\n</span><span class="si">$</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">;</span> <span class="mf">3.0</span><span class="p">;</span> <span class="mf">4.0</span><span class="p">]</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b = </span><span class="si">$</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A*b = </span><span class="si">$</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">b</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A =
+[4.0 2.0 7.0; 3.0 5.0 -6.0; 1.0 -3.0 2.0]
+b = [2.0, 3.0, 4.0]
+A*b = [42.0, -3.0, 1.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="remark-julia-arrays">
+<p class="admonition-title"><span class="caption-number">Remark 3.1 </span> (On Julia)</p>
+<section class="remark-content" id="proof-content">
+<ul class="simple">
+<li><p>See the notes on <a class="reference internal" href="julia-language-notes.html#julia-language-arrays"><span class="std std-ref">Arrays</span></a> or <a class="reference internal" href="julia-language-notes.html#julia-language-arrays"><span class="std std-ref">Arrays</span></a> in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p></li>
+<li><p>Julia mimics Matlab’s notation for “dividing from the left”:
+the solution of <span class="math notranslate nohighlight">\(Ax = b\)</span> is <span class="math notranslate nohighlight">\(x = A^{-1} b\)</span> and given by <code class="docutils literal notranslate"><span class="pre">A\b</span></code>; it is not <span class="math notranslate nohighlight">\(b A^{-1}\)</span> which is what you get from the usual “divide from the right” notation of <code class="docutils literal notranslate"><span class="pre">b/A</span></code>.</p></li>
+</ul>
+</section>
+</div><p>See the notes on <a class="reference internal" href="julia-language-notes.html#julia-language-arrays"><span class="std std-ref">Arrays</span></a> or <a class="reference internal" href="julia-language-notes.html#julia-language-arrays"><span class="std std-ref">Julia arrays</span></a> or <a class="reference internal" href="julia-language-notes.html#julia-language-arrays"><span class="std std-ref">Arrays</span></a>  in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">A</span><span class="o">\</span><span class="n">b</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Julia says that the solution of Ax=b is x=</span><span class="si">$</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Julia says that the solution of Ax=b is x=[1.8116883116883116, -1.0324675324675323, -0.45454545454545453]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Check the <strong>residual</strong> <span class="math notranslate nohighlight">\(b - Ax\)</span>, a measure of <em>backward error</em>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">b</span><span class="o">-</span><span class="n">A</span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;As a check, the residual is&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;    r = b - Ax = </span><span class="si">$</span><span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;and its infinity (or &#39;maximum&#39;) norm is&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;    ||r|| = </span><span class="si">$</span><span class="p">(</span><span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>As a check, the residual is
+    r = b - Ax = [0.0, 0.0, 8.881784197001252e-16]
+and its infinity (or &#39;maximum&#39;) norm is
+    ||r|| = 8.881784197001252e-16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="remark-1-not-quite-zero-values-and-rounding">
+<p class="admonition-title"><span class="caption-number">Remark 3.2 </span> (Not quite zero values and rounding)</p>
+<section class="remark-content" id="proof-content">
+<p>Some values here that you might hope to be zero are instead very small non-zero numbers, with exponent <span class="math notranslate nohighlight">\(10^{-16}\)</span>,
+due to rounding error in computer arithmetic.
+For details on this (like why “-16” in particular) see <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html"><span class="doc">Machine Numbers, Rounding Error and Error Propagation</span></a>.</p>
+</section>
+</div></section>
+<section id="the-naive-gaussian-elimination-algorithm-in-pseudo-code">
+<h2>The naive Gaussian elimination algorithm, in pseudo-code<a class="headerlink" href="#the-naive-gaussian-elimination-algorithm-in-pseudo-code" title="Permalink to this headline">#</a></h2>
+<p>Here the elements of the transformed matrix and vector after step <span class="math notranslate nohighlight">\(k\)</span> are named <span class="math notranslate nohighlight">\(a_{i,j}^{(k)}\)</span> and <span class="math notranslate nohighlight">\(b_{k}^{(k)}\)</span>, so that the original values are <span class="math notranslate nohighlight">\(a_{i,j}^{(0)} = a_{i,j}\)</span> and <span class="math notranslate nohighlight">\(b_{i}^{(0)} = b_{i}\)</span>.</p>
+<p>The name <span class="math notranslate nohighlight">\(l_{i,k}\)</span> is given to the multiple of row <span class="math notranslate nohighlight">\(k\)</span> that is subtracted from row <span class="math notranslate nohighlight">\(i\)</span> at step <span class="math notranslate nohighlight">\(k\)</span>. This naming might seem redundant, but it becomes very useful later.</p>
+<div class="proof algorithm admonition" id="naive-gaussian-elimination">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.1 </span> (naive Gaussian elimination)</p>
+<section class="algorithm-content" id="proof-content">
+<p>for k from 1 to n-1 <span class="math notranslate nohighlight">\(\qquad\)</span> <em>Step k: get zeros in column k below row k:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for i from k+1 to n
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <em>Evaluate the multiple of row k to subtract from row i:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad l_{i,k} = a_{i,k}^{(k-1)}/a_{k,k}^{(k-1)}\)</span> <span class="math notranslate nohighlight">\(\qquad\)</span> <strong>If</strong> <span class="math notranslate nohighlight">\(a_{k,k}^{(k-1)} \neq 0\)</span>!
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <em>Subtract <span class="math notranslate nohighlight">\((l_{i,k}\)</span> times row k) from row i in matrix A …:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> for j from 1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\quad a_{i,j}^{(k)} = a_{i,j}^{(k-1)} - l_{i,k} a_{k,j}^{(k-1)}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> … and at right, subtract <span class="math notranslate nohighlight">\((l_{i,k}\)</span> times <span class="math notranslate nohighlight">\(b_k)\)</span> from <span class="math notranslate nohighlight">\(b_i\)</span>:
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad b_i^{(k)} = b_i^{(k-1)} - l_{i,k} b_{k}^{(k-1)}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end</p>
+</section>
+</div><p>The rows before <span class="math notranslate nohighlight">\(i=k\)</span> are unchanged, so they are ommited from the update;
+however, in a situation where we need to complete the definitions of <span class="math notranslate nohighlight">\(A^{(k)}\)</span> and <span class="math notranslate nohighlight">\(b^{(k)}\)</span> we would also need the following inside the <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">k</span></code> loop:</p>
+<div class="proof algorithm admonition" id="gaussian-elimination-inserting-zeros">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.2 </span> (Inserting the zeros below the main diagonal)</p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(\quad\)</span> for i from 1 to k
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> for j from 1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\quad a_{i,j}^{(k)} = a_{i,j}^{(k-1)}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad b_i^{(k)} = b_i^{(k-1)}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end</p>
+</section>
+</div><p>However, the algorithm will usually be implemented by overwriting the previous values in an array with new ones, and then this part is redundant.</p>
+<p>The next improvement in efficiency: the updates in the first <span class="math notranslate nohighlight">\(k\)</span> columns at step <span class="math notranslate nohighlight">\(k\)</span> give zero values (that is the key idea of the algorithm!),
+so there is no need to compute or store those zeros,
+and thus the only calculations needed in the above <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">1</span> <span class="pre">to</span> <span class="pre">n</span></code> loop are covered by <code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">j</span> <span class="pre">from</span> <span class="pre">k+1</span> <span class="pre">to</span> <span class="pre">n</span></code>.
+Thus from now on we use only the latter—except when, for demonstration purposes, we need those zeros.</p>
+<p>Thus, the standard algorithm looks like this:</p>
+<div class="proof algorithm admonition" id="gaussian-elimination">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.3 </span> (basic Gaussian elimination)</p>
+<section class="algorithm-content" id="proof-content">
+<p>for k from 1 to n-1 <span class="math notranslate nohighlight">\(\qquad\)</span> <em>Step k: Get zeros in column k below row k:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for i from k+1 to n <span class="math notranslate nohighlight">\(\qquad\)</span> <em>Update only the rows that change: from k+1 on:</em>
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <em>Evaluate the multiple of row k to subtract from row i:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad l_{i,k} = a_{i,k}^{(k-1)}/a_{k,k}^{(k-1)}\)</span> <span class="math notranslate nohighlight">\(\qquad\)</span> <strong>If</strong> <span class="math notranslate nohighlight">\(a_{k,k}^{(k-1)} \neq 0\)</span>!
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <em>Subtract <span class="math notranslate nohighlight">\((l_{i,k}\)</span> times row k) from row i in matrix A, in the columns that are not automaticaly zero:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> for j from k+1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\quad a_{i,j}^{(k)} = a_{i,j}^{(k-1)} - l_{i,k} a_{k,j}^{(k-1)}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <em>and at right, subtract <span class="math notranslate nohighlight">\((l_{i,k}\)</span> times <span class="math notranslate nohighlight">\(b_k)\)</span> from <span class="math notranslate nohighlight">\(b_i\)</span>:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad b_i^{(k)} = b_i^{(k-1)} - l_{i,k} b_{k}^{(k-1)}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end</p>
+</section>
+</div></section>
+<section id="the-naive-gaussian-elimination-algorithm-in-julia">
+<h2>The naive Gaussian elimination algorithm, in Julia<a class="headerlink" href="#the-naive-gaussian-elimination-algorithm-in-julia" title="Permalink to this headline">#</a></h2>
+<p>Conversion to actual Julia code is now quite straightforward; there is litle more to be done than:</p>
+<ul class="simple">
+<li><p>Change the way that indices are described, from <span class="math notranslate nohighlight">\(b_i\)</span> to <code class="docutils literal notranslate"><span class="pre">b[i]</span></code> and from <span class="math notranslate nohighlight">\(a_{i,j}\)</span> to <code class="docutils literal notranslate"><span class="pre">A[i,j]</span></code>.</p></li>
+<li><p>Use case consistently in array names, since the quirk in mathematical notation of using upper-case letters for matrix names but lower case letters for their elements is gone!
+In these notes, matrix names will be upper-case and vector names will be lower-case (even when a vector is considered as 1-column matrix).</p></li>
+<li><p>Rather than create a new array for each matrix <span class="math notranslate nohighlight">\(A^{(0)}\)</span>, <span class="math notranslate nohighlight">\(A^{(1)}\)</span>, etc. and each vector <span class="math notranslate nohighlight">\(b^{(0)}\)</span>, <span class="math notranslate nohighlight">\(b^{(1)}\)</span>,
+we overwite each in the same array.</p></li>
+</ul>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for k in 1:n
+    for i in k+1:n
+        L[i,k] = A[i,k] / A[k,k]
+        for j in k+1:n
+            A[i,j] -= L[i,k] * A[k,j]
+        end
+        b[i] -= L[i,k] * b[k]
+    end
+end
+</pre></div>
+</div>
+<p>To demonstrate this, some additions are needed:</p>
+<ul class="simple">
+<li><p>Putting this algorithm into a function.</p></li>
+<li><p>Getting the value <span class="math notranslate nohighlight">\(n\)</span> needed for the loop, using the fact that it is the length of vector <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p></li>
+<li><p>Creating the array <span class="math notranslate nohighlight">\(L\)</span>.</p></li>
+<li><p>Copying the input arrays <code class="docutils literal notranslate"><span class="pre">A</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> into new ones, <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">c</span></code>, so that the original arrays are not changed. That is, when the row reduction is completed, <code class="docutils literal notranslate"><span class="pre">U</span></code>  contains <span class="math notranslate nohighlight">\(A^{(n-1)}\)</span> and <code class="docutils literal notranslate"><span class="pre">c</span></code> contains <span class="math notranslate nohighlight">\(b^{(n-1)}\)</span>.</p></li>
+</ul>
+<p>Also, for some demonstrations, the zero values below the main diagonal of <code class="docutils literal notranslate"><span class="pre">U</span></code> are inserted, though usually they would not be needed.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="c"># To avoid modifying the matrix and vector specified as input,</span>
+    <span class="c"># they are copied to new arrays, with the function copy().</span>
+    <span class="c"># Warning: it does not work to say &quot;U = A&quot; and &quot;c = b&quot;;</span>
+    <span class="c"># this makes these names synonyms, referring to the same stored data.</span>
+
+    <span class="n">U</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>  <span class="c"># not &quot;U=A&quot;, which makes U and A synonyms</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="c"># compute all the L values for column k:</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>  <span class="c"># Beware the case where U[k,k] is 0</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+                <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">end</span>
+            <span class="c"># Put in the zeros below the main diagonal in column k of U;</span>
+            <span class="c"># this is not important for calculations,</span>
+            <span class="c"># since those elements of U are not used in backward substitution,</span>
+            <span class="c"># but it helps for displaying results and for checking the results via residuals.</span>
+            <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            
+            <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span>
+            <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Here is a helper function for displaying matrices.
+Since it will be used in several sections, it is also in the module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code>, along with the above function;
+see <a class="reference internal" href="NumericalMethods.html"><span class="doc">Module NumericalMethods</span></a>.</p>
+<div class="proof remark admonition" id="julia-modules">
+<p class="admonition-title"><span class="caption-number">Remark 3.3 </span> (Julia Modules)</p>
+<section class="remark-content" id="proof-content">
+<p>Modules and their usage are introduced in the notes on <a class="reference external" href="julia-language-notes#modules">Using modules and packages</a>.
+As explained there, these two functions can be obtained with</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>include(&quot;NumericalMethods.jl&quot;)
+using .NumericalMethods: rowreduce
+using .NumericalMethods: printmatrix
+</pre></div>
+</div>
+<p>Details about creating your own modules will be given in <a class="reference external" href="julia-language-notes#creatingmodules">creating modules</a> once those notes are written;
+meanwhile, examining <a class="reference internal" href="NumericalMethods.html"><span class="doc">Module NumericalMethods</span></a> could help:
+the actual module definition file is just the Julia code from there with the interspersed explanatory comments removed.</p>
+</section>
+</div><p>Some helper functions to cleanup output</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="c"># A helper function to &quot;pretty print&quot; matrices</span>
+    
+    <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;[ &quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">rows</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="n">print</span><span class="p">(</span><span class="s">&quot;  &quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">cols</span>
+            <span class="n">print</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">],</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="n">rows</span><span class="p">;</span>
+            <span class="n">println</span><span class="p">()</span>
+        <span class="k">else</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;]&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># A shorthand for rounding off to n significant digits.</span>
+<span class="k">import</span> <span class="n">Base</span><span class="o">:</span> <span class="n">round</span>
+<span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="o">::</span><span class="kt">Integer</span><span class="p">)</span> <span class="o">=</span> <span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;A is&quot;</span><span class="p">)</span>
+<span class="n">printmatrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b = </span><span class="si">$</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A is
+[ 4.0 2.0 7.0 
+  3.0 5.0 -6.0 
+  1.0 -3.0 2.0 ]
+b = [2.0, 3.0, 4.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Row reduction gives&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U =&quot;</span><span class="p">)</span>
+<span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;c = </span><span class="si">$</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Row reduction gives
+U =
+[ 4.0 2.0 7.0 
+  0.0 3.5 -11.25 
+  0.0 0.0 -11.0 ]
+c = [2.0, 1.5, 5.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Let’s take advantage of the fact that we have used Julia’s built-in linear algebra command <code class="docutils literal notranslate"><span class="pre">b\A</span></code> to get a very accurate approximation of the solution <span class="math notranslate nohighlight">\(x\)</span> to <span class="math notranslate nohighlight">\(Ax=b\)</span>; this should also solve <span class="math notranslate nohighlight">\(Ux=c\)</span>, so check the backward error, a.k.a. the <em>residual</em>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">r</span> <span class="o">=</span> <span class="n">c</span> <span class="o">-</span> <span class="n">U</span> <span class="o">*</span> <span class="n">x</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The residual (backward error) r = c-Ux is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">,&quot;</span> <span class="o">*</span>
+    <span class="s">&quot; with maximum norm </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The residual (backward error) r = c-Ux is [0.0, -2.22e-16, 0.0], with maximum norm 2.22e-16
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="julia-array-slicing">
+<p class="admonition-title"><span class="caption-number">Remark 3.4 </span> (Array slicing in Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>Many operations in linear algebra can be expressed more concisely using
+<a class="reference external" href="julia-language-notes#arrayindexingslicing">array slicing</a> and
+<a class="reference external" href="julia-language-notes#vectorization">vectorization</a> as described in <a class="reference internal" href="julia-language-notes.html"><span class="doc">Notes on the Julia Language</span></a>
+allowing the loops above to be expressed as</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>for k in 1:n
+    L[k+1:end,end] = A[k+1:end,k] / A[k,k]
+    A[k+1:end,k+1:end] -= L[k+1:end,k] * A[[k],k+1:end]
+    b[k+1:end] -= L[k+1:end,k] * b[k]
+    end
+end
+</pre></div>
+</div>
+</section>
+</div><div class="proof remark admonition" id="julia-array-slicing-2">
+<p class="admonition-title"><span class="caption-number">Remark 3.5 </span> (Matrix slicing in Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>One subtlety here, as mentioned in the notes on <a class="reference external" href="julia-language-notes#arrayindexingslicing">slicing</a>:
+that row slice at the end of line 3 has to be done as <code class="docutils literal notranslate"><span class="pre">A[[k],k+1:end]</span></code> with brackets around the row index,
+in order to make it a 1-row matrix;
+using <code class="docutils literal notranslate"><span class="pre">A[k,k+1:end]</span></code> instead would give a vector, and then the product would fail.</p>
+</section>
+</div><p>I will break my usual guideline of non-repetition by redefining <code class="docutils literal notranslate"><span class="pre">rowreduce</span></code>,
+since this is just a restatement of exactly the same algorithm with different Julia notation.</p>
+<p>While I am about it, I add a <code class="docutils literal notranslate"><span class="pre">demomode</span></code>, for display of intermediate results.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># To avoid modifying the matrix and vector specified as input,</span>
+    <span class="c"># they are copied to new arrays, with the method .copy()</span>
+    <span class="c"># Warning: it does not work to say &quot;U = A&quot; and &quot;c = b&quot;;</span>
+    <span class="c"># this makes these names synonyms, referring to the same stored data.</span>
+    
+    <span class="c"># This version vectorizes the inner loops, and all of the &quot;i, j&quot; loop for updating U.</span>
+
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;rowreduce version 2: some loops vectorized&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>  <span class="c"># not &quot;U=A&quot;, which makes U and A synonyms</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Step </span><span class="si">$</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="s">:&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="c"># compute all the L values for column k:</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>  <span class="c"># Beware the case where U[k,k] is 0</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        
+        <span class="c"># Insert the below-diagonal zeros in column k;</span>
+        <span class="c"># this is not important for calculations,</span>
+        <span class="c"># since those elements of U are not used in backward substitution,</span>
+        <span class="c"># but it helps for displaying results and for checking the results via residuals.</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">.=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;After step </span><span class="si">$k</span><span class="s"> the matrix is&quot;</span><span class="p">)</span>
+            <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;and the right-hand side is </span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+     <span class="k">return</span> <span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Repeating the above testing:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">U</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>1×3 Matrix{Float64}:
+ 1.0  1.0  1.0
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">);</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;Row reduction gives U=&quot;</span><span class="p">)</span>
+<span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;and right-hand side </span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>rowreduce version 2: some loops vectorized
+Step 1:
+After step 1 the matrix is
+[ 4.0 2.0 7.0 
+  0.0 3.5 -11.25 
+  0.0 -3.5 0.25 ]
+and the right-hand side is [2.0, 1.5, 3.5]
+Step 2:
+After step 2 the matrix is
+[ 4.0 2.0 7.0 
+  0.0 3.5 -11.25 
+  0.0 0.0 -11.0 ]
+and the right-hand side is [2.0, 1.5, 5.0]
+Row reduction gives U=
+[ 4.0 2.0 7.0 
+  0.0 3.5 -11.25 
+  0.0 0.0 -11.0 ]
+and right-hand side [2.0, 1.5, 5.0]
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="backward-substitution-with-an-upper-triangular-matrix">
+<h2>Backward substitution with an upper triangular matrix<a class="headerlink" href="#backward-substitution-with-an-upper-triangular-matrix" title="Permalink to this headline">#</a></h2>
+<p>The transformed equations have the form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+u_{1,1} x_1 + u_{1,2} x_2 +  u_{1,3} x_3 + \cdots  + u_{1,n} x_n &amp;= c_1 \\
+\vdots \\
+u_{i,i} x_i + u_{i+1,i+1} x_{i+1} + \cdots + u_{i,n} x_n &amp;= c_i \\
+\vdots \\
+u_{n-1,n-1} x_{n-1} + u_{n-1,n} x_{n} &amp;= c_{n-1} \\
+u_{nn} x_n &amp;= c_n \\
+\end{split}
+\end{split}\]</div>
+<p>and can be solved from bottom up, starting with <span class="math notranslate nohighlight">\(x_n = c_n/u_{n,n}\)</span>.</p>
+<p>All but the last equation can be written as</p>
+<div class="math notranslate nohighlight">
+\[
+u_{i,i}x_i + \sum_{j=i+1}^{n} u_{i,j} x_j = c_i, \; 1 \leq i \leq n-1
+\]</div>
+<p>and so solved as</p>
+<div class="math notranslate nohighlight">
+\[
+x_i = \frac{c_i - \sum_{j=i+1}^{n} u_{i,j} x_j}{u_{i,i}},
+\qquad \textbf{ If } u_{i,i} \neq 0
+\]</div>
+<p>This procedure is <strong>backward substitution</strong>, giving the algorithm</p>
+<div class="proof algorithm admonition" id="backward-substitution">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.4 </span> (Backward substitution)</p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(x_n = c_n/u_{n,n}\)</span>
+<br>for i from n-1 down to 1
+<br><span class="math notranslate nohighlight">\(\displaystyle \quad x_i = \frac{c_i - \sum_{j=i+1}^{n} u_{i,j} x_j}{u_{i,i}}\)</span>
+<br>end</p>
+</section>
+</div><p>This works so long as none of the main diagonal terms <span class="math notranslate nohighlight">\(u_{i,i}\)</span> is zero, because when done in this order, everything on the right hand side is known by the time it is evaluated.</p>
+<p>For future reference, note that the elements <span class="math notranslate nohighlight">\(u_{k,k}\)</span> that must be non-zero here, the ones on the <strong>main diagonal</strong> of <span class="math notranslate nohighlight">\(U\)</span>, are the same as the elements <span class="math notranslate nohighlight">\(a_{k,k}^{(k)}\)</span> that must be non-zero in the row reduction stage above, because after stage <span class="math notranslate nohighlight">\(k\)</span>, the elements of row <span class="math notranslate nohighlight">\(k\)</span> do not change any more: <span class="math notranslate nohighlight">\(a_{k,k}^{(k)} = a_{k,k}^{(n-1)} = u_{k,k}\)</span>.</p>
+<div class="proof remark admonition" id="julia-summing">
+<p class="admonition-title"><span class="caption-number">Remark 3.6 </span> (Summing in Julia)</p>
+<section class="remark-content" id="proof-content">
+<p>For an <span class="math notranslate nohighlight">\(n\)</span>-element single-index array <code class="docutils literal notranslate"><span class="pre">v</span></code>, the sum of its elements <span class="math notranslate nohighlight">\(\sum_{i=1}^{n} v_i\)</span> is given by <code class="docutils literal notranslate"><span class="pre">sum(v)</span></code>.</p>
+<p>Thus <span class="math notranslate nohighlight">\(\sum_{i=a}^{b} v_i\)</span>, the sum over a subset of indices <span class="math notranslate nohighlight">\([a,b]\)</span>, is given by <code class="docutils literal notranslate"><span class="pre">sum(v[a:b])</span></code>.</p>
+</section>
+</div><section id="the-backward-substitution-algorithm-in-julia">
+<h3>The backward substitution algorithm in Julia<a class="headerlink" href="#the-backward-substitution-algorithm-in-julia" title="Permalink to this headline">#</a></h3>
+<p>With all the above Julia details, the core code for backward substitution is:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>x[end] = c[end]/U[end,end]
+for i in n-1:-1:1
+    x[i] = (c[i] - U[i,i+1:end] * x[i+1:end])) / U[i,i]
+end
+</pre></div>
+</div>
+<div class="proof observation admonition" id="remark-2-lu-is-functionally-correct">
+<p class="admonition-title"><span class="caption-number">Observation 3.1 </span></p>
+<section class="observation-content" id="proof-content">
+<p>Note that the backward substitution algorithm and its Julia coding have a nice mathematical advantage over the row reduction algorithm above:
+the precise mathematical statement of the algorithm does not need any intermediate quantities distinguished by superscripts <span class="math notranslate nohighlight">\({}^{(k)}\)</span>
+and correspondingly, all variables in the code have fixed meanings, rather than changing at each step.</p>
+<p>In other words, all uses of the equal sign are mathematically correct as equations!</p>
+<p>This can be advantageous in creating algorithms and code that is more understandable and more readily verified to be correct,
+and is an aspect of the <em>functional programming</em> approach.
+We will soon go part way to that <em>functional</em> ideal, by rephrasing Gaussian elimination in a form where all variables have clear,
+fixed meanings, corresponding to the natural mathematical description of the process:
+the method of <strong>LU factorization</strong> introduced in <a class="reference internal" href="linear-equations-3-lu-factorization.html"><span class="doc">Solving Ax = b with LU factorization</span></a>.</p>
+</section>
+</div><p>As a final demonstration, we put this second version of the code into a complete working Julia function and test it:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">/</span><span class="n">U</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;x_</span><span class="si">$n</span><span class="s"> = </span><span class="si">$</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">:-</span><span class="mi">1</span><span class="o">:</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;i=</span><span class="si">$i</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">sum</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span> <span class="o">.*</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">])</span> <span class="p">)</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;x_</span><span class="si">$i</span><span class="s"> = </span><span class="si">$</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">x</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="remark-importing-backwardsubstitution">
+<p class="admonition-title"><span class="caption-number">Remark 3.7 </span></p>
+<section class="remark-content" id="proof-content">
+<p>As usual, this is also available via</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>using .NumericalMethods: backwardsubstitution
+</pre></div>
+</div>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x = </span><span class="si">$x</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x_3 = -0.45454545454545453
+i=2
+x_2 = -1.0324675324675323
+i=1
+x_1 = 1.8116883116883116
+x = [1.8116883116883116, -1.0324675324675323, -0.45454545454545453]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;x = </span><span class="si">$x</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">A</span><span class="o">*</span><span class="n">x</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The residual b - Ax = </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">, with maximum norm </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span><span class="mi">4</span><span class="p">))</span><span class="s">)&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x = [1.8116883116883116, -1.0324675324675323, -0.45454545454545453]
+The residual b - Ax = [0.0, 0.0, 8.882e-16], with maximum norm 8.882e-16)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Since one is often just interested in the solution given by the two steps of row reduction and then backward substitution,
+they can be combined in a single function by composition:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">...</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="julia-splat">
+<p class="admonition-title"><span class="caption-number">Remark 3.8 </span> (The Julia “splat” operation)</p>
+<section class="remark-content" id="proof-content">
+<p>The <strong>splat</strong> notation “…” takes the item to its left (here the tuple <code class="docutils literal notranslate"><span class="pre">(U,</span> <span class="pre">c)</span></code> returned by <code class="docutils literal notranslate"><span class="pre">rowreduce</span></code>) and unpacks it into separate items [here <code class="docutils literal notranslate"><span class="pre">U</span></code> and <code class="docutils literal notranslate"><span class="pre">c</span></code>, as needed for input to <code class="docutils literal notranslate"><span class="pre">backwardsubstitution</span></code>.</p>
+</section>
+</div></section>
+</section>
+<section id="two-code-testing-hacks-starting-from-a-known-solution-and-using-randomly-generated-examples">
+<h2>Two code testing hacks: starting from a known solution, and using randomly generated examples<a class="headerlink" href="#two-code-testing-hacks-starting-from-a-known-solution-and-using-randomly-generated-examples" title="Permalink to this headline">#</a></h2>
+<p>An often useful strategy in developing and testing code is to create a test case with a known solution;
+another is to use random numbers to avoid accidently using a test case that in unusually easy.</p>
+<div class="proof remark admonition" id="julia-Random-rand">
+<p class="admonition-title"><span class="caption-number">Remark 3.9 </span> (function rand! from module Random)</p>
+<section class="remark-content" id="proof-content">
+<ul class="simple">
+<li><p>The preferred style is to have all <code class="docutils literal notranslate"><span class="pre">import</span></code> and <code class="docutils literal notranslate"><span class="pre">using</span></code> statements near the top,
+but since this is the first time we’ve heard of module <code class="docutils literal notranslate"><span class="pre">Random</span></code> I did not want it to be mentioned mysteriously above.</p></li>
+<li><p>The exclamation point in <code class="docutils literal notranslate"><span class="pre">rand!</span></code> indicates that the function modifies its input.
+This will be discussed in <a class="reference external" href="julia-language-notes#functions2">Functions part 2</a> when that section gets written.</p></li>
+</ul>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">Random</span><span class="o">:</span> <span class="n">rand!</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+<span class="n">xrandom</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">rand!</span><span class="p">(</span><span class="n">xrandom</span><span class="p">)</span>  <span class="c"># fill with random values, uniform in [0, 1)</span>
+<span class="p">(</span><span class="n">xrandom</span> <span class="o">*=</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">.-=</span> <span class="mf">1.0</span>  <span class="c"># double and then subtract 1: now uniform in [-1, 1)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;xrandom = </span><span class="si">$xrandom</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>xrandom = [0.13386638477695145, -0.7305805960100351, -0.8909949807354525]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Create a right-hand side b that automatically makes <code class="docutils literal notranslate"><span class="pre">xrandom</span></code> the correct solution:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">brandom</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">xrandom</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;A is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">brandom is </span><span class="si">$brandom</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">crandom</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">brandom</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">U is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Residual crandom - U*xrandom  = </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">crandom</span> <span class="o">-</span> <span class="n">U</span><span class="o">*</span><span class="n">xrandom</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">xcomputed</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">crandom</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">xcomputed is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">xcomputed</span><span class="p">,</span><span class="mi">12</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">brandom</span> <span class="o">-</span>  <span class="n">A</span><span class="o">*</span><span class="n">xcomputed</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Residual brandom-A*xcomputed is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Backward error is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">r</span><span class="p">)),</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">xerror</span> <span class="o">=</span> <span class="n">xrandom</span> <span class="o">-</span> <span class="n">xcomputed</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Error xrandom - xcomputed is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="o">.</span><span class="p">(</span><span class="n">xerror</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Absolute error |xrandom-xcomputed| is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">maximum</span><span class="p">(</span><span class="n">abs</span><span class="o">.</span><span class="p">(</span><span class="n">xerror</span><span class="p">)),</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A is
+[ 4.0 2.0 7.0 
+  3.0 5.0 -6.0 
+  1.0 -3.0 2.0 ]
+
+brandom is [-7.162660518060432, 2.0946660586933934, 0.5436182113361516]
+
+U is
+[ 4.0 2.0 7.0 
+  0.0 3.5 -11.25 
+  0.0 0.0 -11.0 ]
+
+Residual crandom - U*xrandom  = [0.0, 0.0, 0.0]
+
+xcomputed is [0.133866384777, -0.73058059601, -0.890994980735]
+
+Residual brandom-A*xcomputed is [0.0, 4.441e-16, -4.441e-16]
+
+Backward error is 4.441e-16
+
+Error xrandom - xcomputed is [0.0, 1.11e-16, 0.0]
+
+Absolute error |xrandom-xcomputed| is 1.11e-16
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="what-can-go-wrong-some-examples">
+<h2>What can go wrong? Some examples<a class="headerlink" href="#what-can-go-wrong-some-examples" title="Permalink to this headline">#</a></h2>
+<div class="proof example admonition" id="example-obvious-division-by-zero">
+<p class="admonition-title"><span class="caption-number">Example 3.1 </span> (An obvious division by zero problem)</p>
+<section class="example-content" id="proof-content">
+<p>Consider the system of two equations</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+x_2 &amp;= 1
+\\
+x_1 + x_2 &amp;= 2
+\end{align*}\]</div>
+<p>It is easy to see that this has the solution <span class="math notranslate nohighlight">\(x_1 = x_2 = 1\)</span>;
+in fact it is already in “reduced form”.
+However when put into matrix form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{rr} 0 &amp; 1 \\ 1 &amp; 1 \end{array}\right]
+\left[\begin{array}{r} x_1 \\ x_2 \end{array}\right] = \left[\begin{array}{r} 1 \\ 2 \end{array}\right]
+\end{split}\]</div>
+<p>the above algorithm fails, because the fist <em>pivot element</em> <span class="math notranslate nohighlight">\(a_{11}\)</span> is zero:</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span> <span class="mf">1.0</span> <span class="p">;</span> <span class="mf">1.0</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="n">b1</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="p">;</span> <span class="mf">1.0</span><span class="p">]</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A1 is)&quot;</span><span class="p">);</span>   <span class="n">printmatrix</span><span class="p">(</span><span class="n">A1</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b1 is </span><span class="si">$</span><span class="p">(</span><span class="n">b1</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A1 is)
+[ 0.0 1.0 
+  1.0 1.0 ]
+b1 is [1.0, 1.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U1</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U1</span><span class="p">,</span> <span class="n">c1</span><span class="p">)</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U1 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U1</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;c1 is </span><span class="si">$c1</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;x1 is </span><span class="si">$x1</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>U1 is
+[ 0.0 1.0 
+  0.0 -Inf ]
+c1 is [1.0, -Inf]x1 is [NaN, NaN]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof remark admonition" id="inf-nan">
+<p class="admonition-title"><span class="caption-number">Remark 3.10 </span> (IEEE fake numbers Inf and NaN)</p>
+<section class="remark-content" id="proof-content">
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Inf</span></code>, meaning “infinity”, is a special value given as the result of calculations like division by zero.
+Surprisingly, it can have a sign!</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NaN</span></code>, meaning “Not a Number”, is a special value given as the result of a calculation like <code class="docutils literal notranslate"><span class="pre">0/0</span></code>.</p></li>
+</ul>
+</section>
+</div><div class="proof example admonition" id="example-less-obvious-division-by-zero">
+<p class="admonition-title"><span class="caption-number">Example 3.2 </span> (A less obvious division by zero problem)</p>
+<section class="example-content" id="proof-content">
+<p>Next consider this system</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{rrr} 1 &amp; 1 &amp; 1 \\ 1 &amp; 1 &amp; 2 \\ 1 &amp; 2 &amp; 2 \end{array}\right]
+\left[\begin{array}{r} x_1 \\ x_2 \\ x_3 \end{array}\right] = \left[\begin{array}{r} 3 \\ 4 \\ 5 \end{array}\right]
+\end{split}\]</div>
+<p>The solution is <span class="math notranslate nohighlight">\(x_1 = x_2 = x_3 = 1\)</span>, and this time none of th diagonal elements is zero,
+so it is not so obvious that a division by zero problem will occur, but:</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span>  <span class="mf">1.0</span>  <span class="mf">1.0</span> <span class="p">;</span> <span class="mf">1.0</span>  <span class="mf">1.0</span>  <span class="mf">2.0</span> <span class="p">;</span> <span class="mf">1.0</span> <span class="mf">2.0</span> <span class="mf">2.</span><span class="p">]</span>
+<span class="n">b2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.0</span> <span class="p">;</span> <span class="mf">4.0</span> <span class="p">;</span> <span class="mf">5.</span><span class="p">]</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A2 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b2 is </span><span class="si">$b2</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A2 is
+[ 1.0 1.0 1.0 
+  1.0 1.0 2.0 
+  1.0 2.0 2.0 ]
+b2 is [3.0, 4.0, 5.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U2</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>
+<span class="n">x2</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U2</span><span class="p">,</span> <span class="n">c2</span><span class="p">)</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U2 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U2</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;c2 is </span><span class="si">$c2</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x2 is </span><span class="si">$x2</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>U2 is
+[ 1.0 1.0 1.0 
+  0.0 0.0 1.0 
+  0.0 0.0 -Inf ]
+c2 is [3.0, 1.0, -Inf]
+x2 is [NaN, NaN, NaN]
+</pre></div>
+</div>
+</div>
+</div>
+<p>What happens here is that the first stage subtracts the first row from each of the others …</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A2</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">-=</span> <span class="n">A2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+<span class="n">b2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-=</span> <span class="n">b2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="n">A2</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">-=</span> <span class="n">A2</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+<span class="n">b2</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">-=</span> <span class="n">b2</span><span class="p">[</span><span class="mi">1</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>… and the new matrix has the same problem as above at the next stage:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">println</span><span class="p">(</span><span class="s">&quot;Now A2 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A2</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;and b2 is </span><span class="si">$</span><span class="p">(</span><span class="n">b2</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Now A2 is
+[ 1.0 1.0 1.0 
+  0.0 0.0 1.0 
+  0.0 1.0 1.0 ]
+and b2 is [3.0, 1.0, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Thus, the second and third equations are</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{rr} 0 &amp; 1 \\ 1 &amp; 1 \end{array}\right]
+\left[\begin{array}{r} x_2 \\ x_3 \end{array}\right] = \left[\begin{array}{r} 1 \\ 2 \end{array}\right]
+\end{split}\]</div>
+<p>with the same problem as in <a class="reference internal" href="#example-obvious-division-by-zero">Example 3.1</a>.</p>
+<div class="proof example admonition" id="example-almost-division-by-zero">
+<p class="admonition-title"><span class="caption-number">Example 3.3 </span> (Problems caused by inexact arithmetic: “divison by almost zero”)</p>
+<section class="example-content" id="proof-content">
+<p>The equations</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{rr} 1 &amp; 10^{16} \\ 1 &amp; 1 \end{array}\right]
+\left[\begin{array}{r} x_1 \\ x_2 \end{array}\right] = \left[\begin{array}{r} 1+10^{16} \\ 2 \end{array}\right]
+\end{split}\]</div>
+<p>again have the solution <span class="math notranslate nohighlight">\(x_1 = x_2 = 1\)</span>, and the only division that happens in the above algorithm for row reduction is by that pivot element
+<span class="math notranslate nohighlight">\(a_{11} = 1, \neq 0\)</span>, so with exact arithmetic, all would be well. But:</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span>  <span class="mf">1e16</span> <span class="p">;</span> <span class="mf">1.0</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="n">b3</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e16</span> <span class="p">;</span> <span class="mf">2.0</span><span class="p">]</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A3 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A3</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b3 is </span><span class="si">$b3</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A3 is
+[ 1.0 1.0e16 
+  1.0 1.0 ]
+b3 is [1.0e16, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U3</span><span class="p">,</span> <span class="n">c3</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A3</span><span class="p">,</span> <span class="n">b3</span><span class="p">)</span>
+<span class="n">x3</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U3</span><span class="p">,</span> <span class="n">c3</span><span class="p">)</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U3 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U3</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;c3 is </span><span class="si">$c3</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x3 is </span><span class="si">$x3</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>U3 is
+[ 1.0 1.0e16 
+  0.0 -1.0e16 ]
+c3 is [1.0e16, -9.999999999999998e15]
+x3 is [2.0, 0.9999999999999998]
+</pre></div>
+</div>
+</div>
+</div>
+<p>This gets <span class="math notranslate nohighlight">\(x_2 = 1\)</span> fairly accurately, but <span class="math notranslate nohighlight">\(x_1\)</span> is completely wrong!</p>
+<p>One hint is that <span class="math notranslate nohighlight">\(b_1\)</span>, which should be <span class="math notranslate nohighlight">\(1 + 10^{16} = 1000000000000001\)</span>, is instead just given as <span class="math notranslate nohighlight">\(10^{16}\)</span>.</p>
+<p>On the other hand, all is well with less large values, like <span class="math notranslate nohighlight">\(10^{15}\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A3a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span>  <span class="mf">1e15</span> <span class="p">;</span> <span class="mf">1.0</span>  <span class="mf">1.0</span><span class="p">]</span>
+<span class="n">b3a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e15</span> <span class="p">;</span> <span class="mf">2.0</span><span class="p">]</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A3a is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A3a</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b3a is </span><span class="si">$b3a</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A3a is
+[ 1.0 1.0e15 
+  1.0 1.0 ]
+b3a is [1.000000000000001e15, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U3a</span><span class="p">,</span> <span class="n">c3a</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A3a</span><span class="p">,</span> <span class="n">b3a</span><span class="p">)</span>
+<span class="n">x3a</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U3a</span><span class="p">,</span> <span class="n">c3a</span><span class="p">)</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U3a is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U3a</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;c3a is </span><span class="si">$c3a</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x3a is </span><span class="si">$x3a</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>U3a is
+[ 1.0 1.0e15 
+  0.0 -9.99999999999999e14 ]
+c3a is [1.000000000000001e15, -9.99999999999999e14]
+x3a is [1.0, 1.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="proof example admonition" id="example-avoiding-small-denominators">
+<p class="admonition-title"><span class="caption-number">Example 3.4 </span> (Avoiding small denominators)</p>
+<section class="example-content" id="proof-content">
+<p>The first equation in <a class="reference internal" href="#example-almost-division-by-zero">Example 3.3</a> can be divided by <span class="math notranslate nohighlight">\(10^{16}\)</span> to get an equivalent system with the same problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\left[\begin{array}{rr} 10^{-16} &amp; 1 \\ 1 &amp; 1 \end{array}\right]
+\left[\begin{array}{r} x_1 \\ x_2 \end{array}\right] = \left[\begin{array}{r} 1+10^{-16} \\ 2 \end{array}\right]
+\end{split}\]</div>
+<p>Now the problem is more obvious: this system differs from the system in <a class="reference internal" href="#example-obvious-division-by-zero">Example 3.1</a>
+just by a tiny change of <span class="math notranslate nohighlight">\(10^{-16}\)</span> in that pivot elements <span class="math notranslate nohighlight">\(a_{11}\)</span>, and the problem is <em>division by a value very close to zero</em>.</p>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A4</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e-16</span>  <span class="mf">1.0</span> <span class="p">;</span> <span class="mf">1.0</span> <span class="mf">1.0</span><span class="p">]</span>
+<span class="n">b4</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span> <span class="o">+</span> <span class="mf">1e-16</span> <span class="p">;</span> <span class="mf">2.0</span><span class="p">]</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A4 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A4</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;b4 is </span><span class="si">$b4</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A4 is
+[ 1.0e-16 1.0 
+  1.0 1.0 ]
+b4 is [1.0, 2.0]
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">U4</span><span class="p">,</span> <span class="n">c4</span><span class="p">)</span> <span class="o">=</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A4</span><span class="p">,</span> <span class="n">b4</span><span class="p">)</span>
+<span class="n">x4</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U4</span><span class="p">,</span> <span class="n">c4</span><span class="p">)</span>
+
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U4 is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U4</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;c4 is </span><span class="si">$c4</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x4 is </span><span class="si">$x4</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>U4 is
+[ 1.0e-16 1.0 
+  0.0 -1.0e16 ]
+c4 is [1.0, -9.999999999999998e15]
+x4 is [2.220446049250313, 0.9999999999999998]
+</pre></div>
+</div>
+</div>
+</div>
+<p>One might think that there is no such small denominator in <a class="reference internal" href="#example-almost-division-by-zero">Example 3.3</a>,
+but what counts for being “small” is magnitude relative to other values — 1 is very small compared to <span class="math notranslate nohighlight">\(10^{16}\)</span>.</p>
+<p>To understand these problems more (and how to avoid them) we will explore <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html"><span class="doc">Machine Numbers, Rounding Error and Error Propagation</span></a> in the next section.</p>
+</section>
+<section id="when-naive-guassian-elimination-is-safe-diagonal-dominance">
+<h2>When naive Guassian elimination is safe: diagonal dominance<a class="headerlink" href="#when-naive-guassian-elimination-is-safe-diagonal-dominance" title="Permalink to this headline">#</a></h2>
+<p>There are several important cases when we can guarantee that these problem do not occur.
+One obvious case is when the matrix <span class="math notranslate nohighlight">\(A\)</span> is diagonal and non-singular (so with all non-zero elements);
+then it is already row-reduced and with all denominators in backward substitution being non-zero.</p>
+<p>A useful measure of being “close to diagonal” is <em>diagonal dominance</em>:</p>
+<div class="proof definition admonition" id="definition-strictly-diagonally-dominant">
+<p class="admonition-title"><span class="caption-number">Definition 3.1 </span> (Strict Diagonal Dominance)</p>
+<section class="definition-content" id="proof-content">
+<p>A matrix <span class="math notranslate nohighlight">\(A\)</span> is <strong>row-wise strictly diagonally dominant</strong>,
+sometimes abbreviated as just <strong>strictly diagonally dominant</strong> or <strong>SDD</strong>,
+if</p>
+<div class="math notranslate nohighlight">
+\[\sum_{1 \leq k \leq n, k \neq i}|a_{i,k}| &lt; |a_{i,i}|\]</div>
+<p>Loosely, each main diagonal “dominates” in size over all other elements in its row.</p>
+</section>
+</div><div class="proof definition admonition" id="definition-columnwise-strictly-diagonally-dominant">
+<p class="admonition-title"><span class="caption-number">Definition 3.2 </span> (Column-wise Strict Diagonal Dominance)</p>
+<section class="definition-content" id="proof-content">
+<p>If instead</p>
+<div class="math notranslate nohighlight">
+\[\sum_{1 \leq k \leq n, k \neq i}|a_{k,i}| &lt; |a_{i,i}|\]</div>
+<p>(so that each main diagonal element “dominates its column”)
+the matrix is called <strong>column-wise strictly diagonally dominant</strong>.</p>
+<p>Note that this is the same as saying that the transpose <span class="math notranslate nohighlight">\(A^T\)</span> is SDD.</p>
+</section>
+</div><p><strong>Aside:</strong> If only the corresponding non-strict inequality holds, the matrix is called <em>diagonally dominant</em>.</p>
+<div class="proof theorem admonition" id="theorem-row-reduction-preserves-sdd">
+<p class="admonition-title"><span class="caption-number">Theorem 3.1 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>For any strictly diagonally dominant matrix <span class="math notranslate nohighlight">\(A\)</span>, each of the intermediate matrices <span class="math notranslate nohighlight">\(A^{(k)}\)</span> given by the naive Gaussan elimination algorithm is also strictly diagonally dominant, and so the final upper triangular matrix <span class="math notranslate nohighlight">\(U\)</span> is.
+In particular, all the diagonal elements <span class="math notranslate nohighlight">\(a_{i,i}^{(k)}\)</span> and <span class="math notranslate nohighlight">\(u_{i,i}\)</span> are non-zero, so no division by zero occurs in any of these algorithms, including the backward substitution solving for <span class="math notranslate nohighlight">\(x\)</span> in <span class="math notranslate nohighlight">\(Ux = c\)</span>.</p>
+<p>The corresponding fact also true if the matrix is column-wise strictly diagonally dominant: that property is also preserved at each stage in naive Guassian elimination.</p>
+</section>
+</div><p>Thus in each case the diagonal elements — the elements divided by in both row reduction and backward substitution — are in some sense safely away from zero.
+We will have more to say about this in the sections on <a class="reference internal" href="linear-equations-2-pivoting.html"><span class="doc">Partial Pivoting</span></a>
+and <a class="reference internal" href="linear-equations-3-lu-factorization.html"><span class="doc">Solving Ax = b with LU factorization</span></a></p>
+<p>For a column-wise SDD matrix, more is true: at stage <span class="math notranslate nohighlight">\(k\)</span>, the diagonal dominance says that
+the pivot elemet on the diagonal, <span class="math notranslate nohighlight">\(a_{k,k}^{(k-1)}\)</span>, is larger (in magnitude) than any of the elements <span class="math notranslate nohighlight">\(a_{i,k}^{(k-1)}\)</span> below it, so the multipliers <span class="math notranslate nohighlight">\(l_{i,k}\)</span> have</p>
+<div class="math notranslate nohighlight">
+\[|l_{i,k}| = |a_{i,k}^{(k-1)}/a_{k,k}^{(k-1)}| &lt; 1.\]</div>
+<p>As we will see when we look at the effects of rounding error in <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html"><span class="doc">Machine Numbers, Rounding Error and Error Propagation</span></a> and
+<a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html"><span class="doc">Error bounds for linear algebra, condition numbers, matrix norms, etc.</span></a>,
+keeping intermediate value small is generally good for accuracy, so this is a nice feature.</p>
+<div class="proof remark admonition" id="remark-positive-definite-matrices-also-work">
+<p class="admonition-title"><span class="caption-number">Remark 3.11 </span> (Positive definite matrices)</p>
+<section class="remark-content" id="proof-content">
+<p>Another class of matrices for which naive Gaussian elimination works well is <strong>positive definite matrices</strong> which arise in any important situations; that property is in some sense more natural than diagonal dominance.
+However that topic will be left for later.</p>
+</section>
+</div></section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="linear-algebra.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3. </span>Linear Algebra and Simultaneous Equations</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="machine-numbers-rounding-error-and-error-propagation.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.2. </span>Machine Numbers, Rounding Error and Error Propagation</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

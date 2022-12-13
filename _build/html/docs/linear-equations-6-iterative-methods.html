@@ -1,0 +1,1135 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.7. Iterative Methods for Simultaneous Linear Equations &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.8. Faster Methods for Solving \(Ax = b\) for Tridiagonal and Banded matrices, and Strict Diagonal Dominance" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html" />
+    <link rel="prev" title="3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc." href="linear-equations-5-error-bounds-condition-numbers.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/linear-equations-6-iterative-methods.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/linear-equations-6-iterative-methods.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-jacobi-method">
+   The Jacobi method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-underlying-strategy">
+   The underlying strategy
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#what-does-this-say-about-the-jacobi-method">
+     What does this say about the Jacobi method?
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-gauss-seidel-method">
+   The Gauss-Seidel method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-family-of-test-cases-arising-from-boundary-value-problems-for-differential-equations">
+   A family of test cases, arising from boundary value problems for differential equations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1-implement-and-test-the-jacobi-method">
+     Exercise 1: Implement and test the Jacobi method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2-implement-and-test-the-gauss-seidel-method-and-compare-to-jacobi">
+     Exercise 2: Implement and test the Gauss-Seidel method, and compare to Jacobi
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Iterative Methods for Simultaneous Linear Equations</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-jacobi-method">
+   The Jacobi method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-underlying-strategy">
+   The underlying strategy
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#what-does-this-say-about-the-jacobi-method">
+     What does this say about the Jacobi method?
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-gauss-seidel-method">
+   The Gauss-Seidel method
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-family-of-test-cases-arising-from-boundary-value-problems-for-differential-equations">
+   A family of test cases, arising from boundary value problems for differential equations
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1-implement-and-test-the-jacobi-method">
+     Exercise 1: Implement and test the Jacobi method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2-implement-and-test-the-gauss-seidel-method-and-compare-to-jacobi">
+     Exercise 2: Implement and test the Gauss-Seidel method, and compare to Jacobi
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="iterative-methods-for-simultaneous-linear-equations">
+<h1><span class="section-number">3.7. </span>Iterative Methods for Simultaneous Linear Equations<a class="headerlink" href="#iterative-methods-for-simultaneous-linear-equations" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 2.5 <em>Iterative Methods</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>, sub-sections 2.5.1 to 2.5.3.</p></li>
+<li><p>Chapter 7 <em>Iterative Techniques in Linear Algebra</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>, sections 7.1 to 7.3.</p></li>
+<li><p>Section 8.4 in <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>This topic is a huge area, with lots of ongoing research; this section just explores the first few methods in the field:</p>
+<ol class="simple">
+<li><p>The Jacobi Method.</p></li>
+<li><p>The Gauss-Seidel Method.</p></li>
+</ol>
+<p>The next three major topics for further study are:</p>
+<ol class="simple">
+<li><p>The Method of Succesive Over-Relaxation (“SOR”).
+This is usually done as a modification of the Gauss-Seidel method, though the strategy of “over-relaxation” can also be applied to other iterative methods such as the Jacobi method.</p></li>
+<li><p>The Conjugate Gradient Method (“CG”).
+This is beyond the scope of this course; I mention it because in the realm of solving linear systems that arise in the solution of differential equations, CG and SOR are the basis of many of the most modern, advanced methods.</p></li>
+<li><p>Preconditioning.</p></li>
+</ol>
+</section>
+<section id="the-jacobi-method">
+<h2>The Jacobi method<a class="headerlink" href="#the-jacobi-method" title="Permalink to this headline">#</a></h2>
+<p>The basis of the Jacobi method for solving <span class="math notranslate nohighlight">\(Ax = b\)</span>
+is splitting <span class="math notranslate nohighlight">\(A\)</span> as <span class="math notranslate nohighlight">\(D + R\)</span> where <span class="math notranslate nohighlight">\(D\)</span> is the diagonal of <span class="math notranslate nohighlight">\(A\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+d_{i,i} &amp;= a_{i,i}
+\\
+d_{i,j} &amp;= 0, \quad i \neq j
+\end{split}\end{split}\]</div>
+<p>so that <span class="math notranslate nohighlight">\(R = A-D\)</span> has</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+r_{i,i} &amp;= 0
+\\
+r_{i,j} &amp;= a_{i, j}, \quad i \neq j
+\end{split}\end{split}\]</div>
+<p>Visually</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+D = \left[ \begin{array}{cccc}
+a_{11} &amp; 0 &amp; 0 &amp; \dots
+\\
+0 &amp; a_{22} &amp; 0 &amp; \dots
+\\
+0 &amp; 0 &amp; a_{33} &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
+\end{split}\]</div>
+<p>It is easy to solve <span class="math notranslate nohighlight">\(Dx = b\)</span>: the equations are just <span class="math notranslate nohighlight">\(a_{ii} x_i = b_i\)</span> with solution <span class="math notranslate nohighlight">\(x_i = b_i/a_{ii}\)</span>.</p>
+<p>Thus we rewrite the equation
+<span class="math notranslate nohighlight">\(Ax = Dx + Rx = b\)</span>
+in the fixed point form</p>
+<div class="math notranslate nohighlight">
+\[Dx = b - Rx\]</div>
+<p>and then use the familiar fixed point iteration strategy of inserting the currect approximation at right and solving for the new approximation at left:</p>
+<div class="math notranslate nohighlight">
+\[D x^{(k)} = b - R x^{(k-1)}\]</div>
+<p><strong>Note:</strong> We could make this look closer to the standard fixed-point iteration form <span class="math notranslate nohighlight">\(x_k = g(x_{k-1})\)</span> by dividing out <span class="math notranslate nohighlight">\(D\)</span> to get</p>
+<div class="math notranslate nohighlight">
+\[x^{(k)} = D^{-1}(b - R x^{(k-1)}),\]</div>
+<p>but — as is often the case — it will be better to avoid matrix inverses by instead solving this easy system.
+This “inverse avoidance” becomes far more important when we get to the Gauss-Seidel method!</p>
+<p>See <a class="reference external" href="#exercise-1">Exercise 1</a>.</p>
+</section>
+<section id="the-underlying-strategy">
+<h2>The underlying strategy<a class="headerlink" href="#the-underlying-strategy" title="Permalink to this headline">#</a></h2>
+<p>To analyse the Jacobi method — answering questions like for which matrices it works, and how quickly it converges — and also to improve on it, it helps to described a key strategy underlying it, which is this:
+approximate the matrix <span class="math notranslate nohighlight">\(A\)</span> by another one <span class="math notranslate nohighlight">\(E\)</span> one that is easier to solve with, chosen so that the discrepacy <span class="math notranslate nohighlight">\(R = A-E\)</span> is small enough. Thus, repeatedly solving the new easier equations <span class="math notranslate nohighlight">\(Ex^{(k)} = b^{(k)}\)</span> plays a similar role to repeatedly solving tangent line approximations in Newton’s method.</p>
+<p>Of course to be of any use, <span class="math notranslate nohighlight">\(E\)</span> must be somewhat close to <span class="math notranslate nohighlight">\(A\)</span>; the remainder <span class="math notranslate nohighlight">\(R\)</span> must be small enough.
+We can make this requirement precise with the use of
+<a class="reference external" href="linear-equations-5-error-bounds-condition-numbers.ipynb#matrix-norms">matrix norms</a>
+introduced in <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html"><span class="doc">Error bounds for linear algebra, condition numbers, matrix norms, etc.</span></a>
+and an upgrade of the contraction mapping theorem seen in <a class="reference internal" href="fixed-point-iteration.html"><span class="doc">Solving Equations by Fixed Point Iteration (of Contraction Mappings)</span></a>.</p>
+<p>Thus consider a general <em>splitting</em> of <span class="math notranslate nohighlight">\(A\)</span> as <span class="math notranslate nohighlight">\(A = E + R\)</span>.
+As above, we rewrite <span class="math notranslate nohighlight">\(Ax = Ex + Rx = b\)</span> as <span class="math notranslate nohighlight">\(Ex = b - Rx\)</span> and thence as <span class="math notranslate nohighlight">\(x = E^{-1}b - (E^{-1}R)x\)</span>.
+(It is alright to use the matrix inverse here, since we are not actually computing it; only using it for a theoretical argument!)
+The fixed point iteration form is thus</p>
+<div class="math notranslate nohighlight">
+\[x^{(k)} = g(x^{(k-1)}) = c - S x^{(k-1)}\]</div>
+<p>where <span class="math notranslate nohighlight">\(c = E^{-1}b\)</span> and <span class="math notranslate nohighlight">\(S = E^{-1}R\)</span>.</p>
+<p>For vector-valued functions we extend the previous <a class="reference internal" href="fixed-point-iteration.html#definition-contraction-mapping">Definition 2.2</a>
+in Section <a class="reference internal" href="fixed-point-iteration.html"><span class="doc">Solving Equations by Fixed Point Iteration (of Contraction Mappings)</span></a> as:</p>
+<div class="proof definition admonition" id="definition-vector-valued-contraction-mapping">
+<p class="admonition-title"><span class="caption-number">Definition 3.7 </span> (Vector-valued contraction mapping)</p>
+<section class="definition-content" id="proof-content">
+<p>For a set <span class="math notranslate nohighlight">\(D\)</span> of vectors in <span class="math notranslate nohighlight">\(\mathbb{R}^n\)</span>, a mapping <span class="math notranslate nohighlight">\(g:D \to D\)</span> is called a <em>contraction</em> or <em>contraction mapping</em> if there is a constant <span class="math notranslate nohighlight">\(C &lt; 1\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\|g(x) - g(y)\| \leq C \|x - y\|\]</div>
+<p>for any <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> in <span class="math notranslate nohighlight">\(D\)</span>.
+We then call <span class="math notranslate nohighlight">\(C\)</span> a <em>contraction constant</em>.</p>
+</section>
+</div><p>Next, the contraction mapping theorem <a class="reference internal" href="fixed-point-iteration.html#a-contraction-mapping-theorem">Theorem 2.1</a> extends to</p>
+<div class="proof theorem admonition" id="vector-valued-contraction-mapping-theorem">
+<p class="admonition-title"><span class="caption-number">Theorem 3.6 </span> (Contraction mapping theorem for vector-valued functions)</p>
+<section class="theorem-content" id="proof-content">
+<ul class="simple">
+<li><p>Any contraction mapping <span class="math notranslate nohighlight">\(g\)</span> on a closed, bounded set <span class="math notranslate nohighlight">\(D \in \mathbb{R}^n\)</span> has exactly one fixed point <span class="math notranslate nohighlight">\(p\)</span> in <span class="math notranslate nohighlight">\(D\)</span>.</p></li>
+<li><p>This can be calculated as the limit <span class="math notranslate nohighlight">\(\displaystyle p = \lim_{k \to \infty} x^{(k)}\)</span> of the iteration sequence given by <span class="math notranslate nohighlight">\(x^{(k)} = g(x^{(k-1)})\)</span> for <em>any</em> choice of the starting point <span class="math notranslate nohighlight">\(x^{(0)} \in D\)</span>.</p></li>
+<li><p>The errors decrease at a guaranteed minimum speed:
+<span class="math notranslate nohighlight">\(\| x^{(k)} - p \| \leq C \| x^{(k-1)} - p \|\)</span>, so <span class="math notranslate nohighlight">\(\| x^{(k)} - p \| \leq C^k  \| x^{(0)} - p \|\)</span>.</p></li>
+</ul>
+</section>
+</div><p>With this, it turns out that the above iteration converges if <span class="math notranslate nohighlight">\(S\)</span> is “small enough” in the sense that <span class="math notranslate nohighlight">\(\|S\| = C &lt; 1\)</span> — and it is enough that this works for <em>any</em> choice of matrix norm!</p>
+<div class="proof theorem admonition" id="theorem-matrix-iteration-convergence">
+<p class="admonition-title"><span class="caption-number">Theorem 3.7 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>If <span class="math notranslate nohighlight">\(S := E^{-1}R = E^{-1}A - I\)</span> has <span class="math notranslate nohighlight">\(\|S\| = C &lt; 1\)</span> for any choice of matrix norm,
+then the iterative scheme <span class="math notranslate nohighlight">\(x^{(k)} = c - S x^{(k-1)}\)</span> with <span class="math notranslate nohighlight">\(c = E^{-1}b\)</span> converges to the solution of
+<span class="math notranslate nohighlight">\(Ax = b\)</span> for any choice of the initial approximation <span class="math notranslate nohighlight">\(x^{(0)}\)</span>.
+(Aside: the zero vector is an obvious and popular choice for <span class="math notranslate nohighlight">\(x^{(0)}\)</span>.)</p>
+<p>Incidentally, since this condition guarantees that there exists a unique solution to <span class="math notranslate nohighlight">\(Ax=b\)</span>,
+it also shows that <span class="math notranslate nohighlight">\(A\)</span> is non-singular.</p>
+</section>
+</div><div class="proof admonition" id="proof">
+<p>Proof. (sketch)</p>
+<p>The main idea is that for <span class="math notranslate nohighlight">\(g(x) = c - S x\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\| g(x) - g(y) \| = \| (c - S x) - (c - S y) \| = \| S(y - x) \| \leq \| S \| \| y-x \| \leq C \| x - y \|,\]</div>
+<p>so with <span class="math notranslate nohighlight">\(C &lt; 1\)</span>, it is a contraction.</p>
+<p>(The omitted more “technical” detail is to find a suitable bounded domain <span class="math notranslate nohighlight">\(D\)</span> that all the iterates x^{(k)} stay inside it.)</p>
+</div>
+<section id="what-does-this-say-about-the-jacobi-method">
+<h3>What does this say about the Jacobi method?<a class="headerlink" href="#what-does-this-say-about-the-jacobi-method" title="Permalink to this headline">#</a></h3>
+<p>For the Jacobi method, <span class="math notranslate nohighlight">\(E = D\)</span> so <span class="math notranslate nohighlight">\(E^{-1}\)</span> is the diagonal matrix with elements <span class="math notranslate nohighlight">\(1/a_{i,i}\)</span> on the main diagonal, zero elsewhere.
+The product <span class="math notranslate nohighlight">\(E^{-1}A\)</span> then multiplies each row <span class="math notranslate nohighlight">\(i\)</span> of <span class="math notranslate nohighlight">\(A\)</span> by <span class="math notranslate nohighlight">\(1/a_{i,i}\)</span>, giving</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+E^{-1}A = \left[ \begin{array}{cccc}
+1 &amp; a_{1,2}/a_{1,1} &amp; a_{1,2}/a_{1,1} &amp; \dots
+\\
+a_{2,1}/a_{2,2} &amp; 1 &amp; a_{2,3}/a_{2,2} &amp; \dots
+\\
+a_{3,1}/a_{3,3} &amp; a_{3,2}/a_{3,3} &amp; 1 &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
+\end{split}\]</div>
+<p>so that subtracting the identity matrix to get <span class="math notranslate nohighlight">\(S\)</span> cancels the ones on the main diagonal:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+S = E^{-1}A - I= \left[ \begin{array}{cccc}
+0 &amp; a_{1,2}/a_{1,1} &amp; a_{1,2}/a_{1,1} &amp; \dots
+\\
+a_{2,1}/a_{2,2} &amp; 0 &amp; a_{2,3}/a_{2,2} &amp; \dots
+\\
+a_{3,1}/a_{3,3} &amp; a_{3,2}/a_{3,3} &amp; 0 &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
+\end{split}\]</div>
+<p>Here is one of many places that using the maximum-norm, a.k.a. <span class="math notranslate nohighlight">\(\infty\)</span>-norm, makes life much easier!
+Recalling that this is given by</p>
+<div class="math notranslate nohighlight">
+\[
+\| A \|_\infty = \max_{i=1}^n \left( \sum_{j=1}^n |a_{i,j}| \right),
+\]</div>
+<ul class="simple">
+<li><p>First, sum the absolute values of elements in each row <span class="math notranslate nohighlight">\(i\)</span>; with the common factor <span class="math notranslate nohighlight">\(1/|a_{i,i}|\)</span>,
+this gives
+<span class="math notranslate nohighlight">\( \left( |a_{i,1}| + |a_{i,2}| + \cdots |a_{i,i-1}| + |a_{i,i+1}| + \cdots |a_{i,n}| \right)/|a_{i,i}| \)</span>.
+<br>
+Such a sum, skipping index <span class="math notranslate nohighlight">\(j=i\)</span>, can be abbreviated as</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\left( \sum_{1 \leq j \leq n, j \neq i}|a_{i,j}| \right) \Big/ |a_{i,i}|\]</div>
+<ul class="simple">
+<li><p>Then get the norm as the maximum of these:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[
+C = \| E^{-1}A \|_\infty = \max_{i=1}^n  \left[ \left( \sum_{1 \leq j \leq n, j \neq i}|a_{i,j}| \right) \Big/ |a_{i,i}| \right]
+\]</div>
+<p>and the contraction condition <span class="math notranslate nohighlight">\(C &lt; 1\)</span> becomes the requirement that each of these <span class="math notranslate nohighlight">\(n\)</span> “row sums” is less than 1:</p>
+<p>Multiplying each of the inequalities by the denominator <span class="math notranslate nohighlight">\(|a_{i,i}|\)</span> gives <span class="math notranslate nohighlight">\(n\)</span> conditions</p>
+<div class="math notranslate nohighlight">
+\[\left( \sum_{1 \leq j \leq n, j \neq i}|a_{i,j}| \right) &lt; |a_{i,i}|\]</div>
+<p>This is strict diagonal dominance, as in <a class="reference internal" href="linear-equations-1-row-reduction.html#definition-strictly-diagonally-dominant">Definition 3.1</a>
+in the section <a class="reference internal" href="linear-equations-1-row-reduction.html"><span class="doc">Row Reduction/Gaussian Elimination</span></a>,
+and as discussed there, one way to think of this is that such a matrix <span class="math notranslate nohighlight">\(A\)</span> is close to its main diagonal <span class="math notranslate nohighlight">\(D\)</span>,
+which is the intuitive condition that the approximation of <span class="math notranslate nohighlight">\(A\)</span> by <span class="math notranslate nohighlight">\(D\)</span> as done in the Jacobi method is “good enough”.</p>
+<p>And indeed, combining this result with <a class="reference internal" href="#theorem-matrix-iteration-convergence">Theorem 3.7</a> gives:</p>
+<div class="proof theorem admonition" id="theorem-jacobi-convergence">
+<p class="admonition-title"><span class="caption-number">Theorem 3.8 </span> (Convergence of the Jacobi method)</p>
+<section class="theorem-content" id="proof-content">
+<p>The Jacobi Method converges if <span class="math notranslate nohighlight">\(A\)</span> is strictly diagonally dominant, for any initial approximation <span class="math notranslate nohighlight">\(x^{(0)}\)</span>.</p>
+<p>Further, the error goes down by at least a factor of <span class="math notranslate nohighlight">\(\| I - D^{-1}A \|\)</span> at each iteration.</p>
+</section>
+</div><p>By the way, other matrix norms give other conditions guaranteeing convergence; perhaps the most useful of these others is that it is also sufficient for <span class="math notranslate nohighlight">\(A\)</span> to be column-wise strictly diagonally dominant as in
+<a class="reference internal" href="linear-equations-1-row-reduction.html#definition-columnwise-strictly-diagonally-dominant">Definition 3.2</a>.</p>
+</section>
+</section>
+<section id="the-gauss-seidel-method">
+<h2>The Gauss-Seidel method<a class="headerlink" href="#the-gauss-seidel-method" title="Permalink to this headline">#</a></h2>
+<p>To recap, two key ingredients for a splitting <span class="math notranslate nohighlight">\(A = E + R\)</span> to be useful are that</p>
+<ul class="simple">
+<li><p>the matrix <span class="math notranslate nohighlight">\(E\)</span> is “easy” to solve with, and</p></li>
+<li><p>it is not too far from <span class="math notranslate nohighlight">\(A\)</span>.</p></li>
+</ul>
+<p>The Jacobi method choice of <span class="math notranslate nohighlight">\(E\)</span> being the main diagonal of <span class="math notranslate nohighlight">\(A\)</span> strongly emphasizes the “easy” part, but we have seen another larger class of matrices for which it is fairly quick and easy to solve <span class="math notranslate nohighlight">\(Ex = b\)</span>: <em>triangular matrices</em>, which can be solved with forward or backward substitution, not needing row reduction.</p>
+<p>The Gauss-Seidel Method takes <span class="math notranslate nohighlight">\(E\)</span> be the lower triangular part of <span class="math notranslate nohighlight">\(A\)</span>, which intuitively leaves more of its entries closer to <span class="math notranslate nohighlight">\(A\)</span> and makes the remainder <span class="math notranslate nohighlight">\(R = A-E\)</span> “smaller”.</p>
+<p>To discuss this and other splittings, we write the matrix as <span class="math notranslate nohighlight">\(A = L + D + U\)</span> where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(D\)</span> is the diagonal of <span class="math notranslate nohighlight">\(A\)</span>, as for Jacobi</p></li>
+<li><p><span class="math notranslate nohighlight">\(L\)</span> is the strictly lower diagonal part of <span class="math notranslate nohighlight">\(A\)</span> (just the elements with <span class="math notranslate nohighlight">\(i &gt; j\)</span>)</p></li>
+<li><p><span class="math notranslate nohighlight">\(U\)</span> is the strictly upper diagonal part of <span class="math notranslate nohighlight">\(A\)</span> (just the elements with <span class="math notranslate nohighlight">\(i &lt; j\)</span>)</p></li>
+</ul>
+<p>That is,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+A =
+\left[ \begin{array}{cccc}
+a_{1,1} &amp; a_{1,2} &amp; a_{1,3} &amp; \dots
+\\
+a_{2,1} &amp; a_{2,2} &amp; a_{2,3} &amp; \dots
+\\
+a_{3,1} &amp; a_{3,2} &amp; a_{3,3} &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
+= \left[ \begin{array}{cccc}
+0 &amp; 0 &amp; 0 &amp; \dots
+\\
+a_{2,1} &amp; 0 &amp; 0 &amp; \dots
+\\
+a_{3,1} &amp; a_{3,2} &amp; 0 &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
++ \left[ \begin{array}{cccc}
+a_{1,1} &amp; 0 &amp; 0 &amp; \dots
+\\
+0 &amp; a_{2,2} &amp; 0 &amp; \dots
+\\
+0 &amp; 0 &amp; a_{3,3} &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
++
+\left[ \begin{array}{cccc}
+0 &amp; a_{1,2} &amp; a_{1,3} &amp; \dots
+\\
+0 &amp; 0 &amp; a_{2,3} &amp; \dots
+\\
+0 &amp; 0 &amp; 0 &amp; \dots
+\\
+\vdots &amp; \vdots &amp; \vdots &amp; \ddots
+\end{array} \right]
+= L + D + U
+\end{split}\]</div>
+<p>Thus <span class="math notranslate nohighlight">\(R = L+U\)</span> for the Jacobi method.</p>
+<p>So now we use <span class="math notranslate nohighlight">\(E = L + D\)</span>, which will be called <span class="math notranslate nohighlight">\(A_L\)</span>, the <em>lower triangular part of <span class="math notranslate nohighlight">\(A\)</span></em>, and the remainder is <span class="math notranslate nohighlight">\(R = U\)</span>.
+The fixed point form becomes</p>
+<div class="math notranslate nohighlight">
+\[A_L x = b - Ux\]</div>
+<p>giving the fixed point iteration</p>
+<div class="math notranslate nohighlight">
+\[A_L x^{(k)} = b - U x^{(k-1)}\]</div>
+<p>Here we definitely do not use the inverse of <span class="math notranslate nohighlight">\(A_L\)</span> when calculating!
+Instead, solve with forward substitution.</p>
+<p>However to analyse convergence, the mathematical form</p>
+<div class="math notranslate nohighlight">
+\[x^{(k)} = A_L^{-1}b - (A_L^{-1}U) x^{(k-1)}\]</div>
+<p>is useful: the iteration map is now <span class="math notranslate nohighlight">\(g(x) = c - S x\)</span> with <span class="math notranslate nohighlight">\(c = (L + D)^{-1} b\)</span> and <span class="math notranslate nohighlight">\(S = (L + D)^{-1} U\)</span>.</p>
+<p>Arguing as above, we see that convergence is guaranteed if <span class="math notranslate nohighlight">\(\| (L + D)^{-1} U\| &lt; 1\)</span>.
+However it is not so easy in general to get a formula for <span class="math notranslate nohighlight">\(\| (L + D)^{-1} U\|\)</span>;
+what one can get is slightly disappointing in that, despite the <span class="math notranslate nohighlight">\(R=U\)</span> here being in some sense “smaller” than the <span class="math notranslate nohighlight">\(R=L+U\)</span> for the Jacobi method, the general convergence guarantee looks no better:</p>
+<div class="proof theorem admonition" id="theorem-gaus-seidel-convergence">
+<p class="admonition-title"><span class="caption-number">Theorem 3.9 </span> (Convergence of the Gasuss-Seidel method)</p>
+<section class="theorem-content" id="proof-content">
+<p>The Gauss-Seidel method converges if <span class="math notranslate nohighlight">\(A\)</span> is strictly diagonally dominant, for any initial approximation <span class="math notranslate nohighlight">\(x^{(0)}\)</span>.</p>
+</section>
+</div><p>However, in practice the convergence rate as given by <span class="math notranslate nohighlight">\(C = C_{GS} = \| (L + D)^{-1} U\|\)</span> is often better than for the
+<span class="math notranslate nohighlight">\(C = C_J = \| D^{-1} (L+U) \|\)</span> for the Jacobi method.</p>
+<p>Sometimes this reduces the number of iterations enough to outweigh the extra computational effort involved in each iteration and make this faster overall than the Jacobi method — but not always.</p>
+<p>See <a class="reference external" href="#exercise-2">Exercise 2</a>.</p>
+</section>
+<section id="a-family-of-test-cases-arising-from-boundary-value-problems-for-differential-equations">
+<h2>A family of test cases, arising from boundary value problems for differential equations<a class="headerlink" href="#a-family-of-test-cases-arising-from-boundary-value-problems-for-differential-equations" title="Permalink to this headline">#</a></h2>
+<p>The <strong>tri-diagonal</strong> matrices <span class="math notranslate nohighlight">\(T\)</span> of the form</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+t_{i,i} &amp;= 1 + 2 h^2
+\\
+t_{i,i+1} = t_{i,i+1} &amp;= -h^2
+\\
+t_{i,j} &amp;= 0, \quad |i-j|&gt; 1
+\end{split}\end{split}\]</div>
+<p>and variants of this arise in the solutions of boundary value problems for ODEs like</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+-u''(x) + K u &amp;= f(x), \quad a \leq x \leq b
+\\
+u(a) = u(b) &amp;= 0
+\end{split}\end{split}\]</div>
+<p>and related problems for partial differential equations.</p>
+<p>Thus these provide useful initial test cases — usually with <span class="math notranslate nohighlight">\(h = (b-a)/n\)</span>.</p>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-1"></a></p>
+<section id="exercise-1-implement-and-test-the-jacobi-method">
+<h3>Exercise 1: Implement and test the Jacobi method<a class="headerlink" href="#exercise-1-implement-and-test-the-jacobi-method" title="Permalink to this headline">#</a></h3>
+<p>Write and test Julia functions for this.</p>
+<p>A) As usual start with a most basic version that does a fixed number of iterations</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>x = jacobiBasic(A, b, n)
+</pre></div>
+</div>
+<p>B) Then refine this to apply an error tolerance, but also avoiding infinite loops by imposing an upper limit on the number of iterations:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>x = jacobi(A, b, errorTolerance, maxIterations)
+</pre></div>
+</div>
+<p>Test this with the matrices of form <span class="math notranslate nohighlight">\(T\)</span> below for several values of <span class="math notranslate nohighlight">\(n\)</span>, increasingly geometrically.
+To be cautious initially, try <span class="math notranslate nohighlight">\(n=2, 4, 8, 16, \dots\)</span></p>
+<p><a name="exercise-2"></a></p>
+</section>
+<section id="exercise-2-implement-and-test-the-gauss-seidel-method-and-compare-to-jacobi">
+<h3>Exercise 2: Implement and test the Gauss-Seidel method, and compare to Jacobi<a class="headerlink" href="#exercise-2-implement-and-test-the-gauss-seidel-method-and-compare-to-jacobi" title="Permalink to this headline">#</a></h3>
+<p>Do the two versions as above and use the same test cases.</p>
+<p>Then compare the speed/cost of the two methods:
+one way to do this is by using Julia’s “wall clock time” function
+<a class="reference external" href="https://docs.julialang.org/en/v1/base/base/#Base.Libc.time-Tuple%7B%7D"><code class="docutils literal notranslate"><span class="pre">time</span></code></a>
+or the macro
+<a class="reference external" href="https://docs.julialang.org/en/v1/manual/profile/#&#64;time"><code class="docutils literal notranslate"><span class="pre">&#64;time</span></code></a>;
+see the linked descriptions in the Julia manual.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="linear-equations-5-error-bounds-condition-numbers.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3.6. </span>Error bounds for linear algebra, condition numbers, matrix norms, etc.</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.8. </span>Faster Methods for Solving <span class="math notranslate nohighlight">\(Ax = b\)</span> for Tridiagonal and Banded matrices, and Strict Diagonal Dominance</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

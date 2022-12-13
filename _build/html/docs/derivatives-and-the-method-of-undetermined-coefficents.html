@@ -1,0 +1,1042 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>5.1. Approximating Derivatives by the Method of Undetermined Coefficients &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5.2. Richardson Extrapolation" href="richardson-extrapolation.html" />
+    <link rel="prev" title="5. Derivatives and Definite Integrals" href="calculus.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/derivatives-and-the-method-of-undetermined-coefficents.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/derivatives-and-the-method-of-undetermined-coefficents.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#method-1-use-taylor-polynomials-in-h-of-degree-p-k-1">
+   Method 1: use Taylor polynomials in
+   <span class="math notranslate nohighlight">
+    \(h\)
+   </span>
+   of degree p+k-1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#degree-of-precision-and-testing-with-monomials">
+   Degree of Precision and testing with monomials
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#method-2-use-monomials-of-degree-up-to-p-k-1">
+   Method 2: use monomials of degree up to p+k-1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2-like-exercise-1-but-using-method-2">
+     Exercise 2: like Exercise 1, but using Method 2
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Approximating Derivatives by the Method of Undetermined Coefficients</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#method-1-use-taylor-polynomials-in-h-of-degree-p-k-1">
+   Method 1: use Taylor polynomials in
+   <span class="math notranslate nohighlight">
+    \(h\)
+   </span>
+   of degree p+k-1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#degree-of-precision-and-testing-with-monomials">
+   Degree of Precision and testing with monomials
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#method-2-use-monomials-of-degree-up-to-p-k-1">
+   Method 2: use monomials of degree up to p+k-1
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2-like-exercise-1-but-using-method-2">
+     Exercise 2: like Exercise 1, but using Method 2
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="approximating-derivatives-by-the-method-of-undetermined-coefficients">
+<h1><span class="section-number">5.1. </span>Approximating Derivatives by the Method of Undetermined Coefficients<a class="headerlink" href="#approximating-derivatives-by-the-method-of-undetermined-coefficients" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 5.1 <em>Numerical Differentiation</em> of <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 4.1 <em>Numerical Differentiation</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Section 4.2 <em>Estimating Derivatives and Richardson Extrapolation</em> of <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<p>We have seen several formulas for approximating a derivative <span class="math notranslate nohighlight">\(Df(x)\)</span> or higher derivative
+<span class="math notranslate nohighlight">\(D^k f(x)\)</span> in terms of several values of the function <span class="math notranslate nohighlight">\(f\)</span>, such as</p>
+<div class="math notranslate nohighlight" id="equation-df-forward-difference">
+<span class="eqno">(5.1)<a class="headerlink" href="#equation-df-forward-difference" title="Permalink to this equation">#</a></span>\[Df(x) \approx D_hf(x) := \frac{f(x+h) - f(x)}{h}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight" id="equation-d2f-centered-diffference">
+<span class="eqno">(5.2)<a class="headerlink" href="#equation-d2f-centered-diffference" title="Permalink to this equation">#</a></span>\[D^2f(x) \approx \delta^2 f(x) := \frac{f(x-h) - 2f(x) + f(x+h)}{h^2}.\]</div>
+<p>In the first case we get an error formula</p>
+<div class="math notranslate nohighlight">
+\[
+D_hf(x) = \frac{f(x+h) - f(x)}{h} = Df(x) + \frac{D^2f(\xi)}{2} h, \quad \xi \text{ between $x$ and $x+h$}
+\]</div>
+<p>by inserting the Taylor formula <span class="math notranslate nohighlight">\(f(x+h) = f(x) + Df(x) + \frac12 {D^2f(\xi)}\)</span>, and thus an “order of accuracy formula”</p>
+<div class="math notranslate nohighlight">
+\[
+D_hf(x) = \frac{f(x+h) - f(x)}{h} = Df(x) + O(h)
+\]</div>
+<p>so that the error is</p>
+<div class="math notranslate nohighlight">
+\[
+D_hf(x) - Df(x) =  \frac12 {D^2f(\xi)} =  O(h).
+\]</div>
+<p>These are linear combinations of values of <span class="math notranslate nohighlight">\(f\)</span> at various points, with the denominator scaling with the k-th power of the mode spacing scale <span class="math notranslate nohighlight">\(h\)</span>, which makes sense given the linearity of derivatives and the way that the k-th derivative scales when one rescales <span class="math notranslate nohighlight">\(f(x)\)</span> to <span class="math notranslate nohighlight">\(f(ck)\)</span>.</p>
+<p>Thus we will make the <em>Ansatz</em> that the k-th derivative <span class="math notranslate nohighlight">\(D^k f(x)\)</span> can be approximated using values at the <span class="math notranslate nohighlight">\(r-l+1\)</span> equally spaced points</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+x + lh, x + (l+1)h, \dots x + rh
+\end{equation*}\]</div>
+<p>where the integers <span class="math notranslate nohighlight">\(l\)</span> and <span class="math notranslate nohighlight">\(r\)</span> can be negative, positive or zero.
+The assumed form then is</p>
+<div class="math notranslate nohighlight">
+\[
+D^k f(x) \approx D_h^k f(x) = \frac{C_l f(x + lh) + C_{l+1} f(x + (l+1)h) + \cdots + C_r f(x + rh)}{h^k} + O(h^p)
+\]</div>
+<p>(The reason for the power <span class="math notranslate nohighlight">\(k\)</span> in the denominator will be seen soon.)</p>
+<p>So we seek to determine the values of the initially undetermined coefficients <span class="math notranslate nohighlight">\(C_i\)</span>,
+by the criterion of giving an error <span class="math notranslate nohighlight">\(O(h^p)\)</span> with the highest possible order <span class="math notranslate nohighlight">\(p\)</span>.
+With <span class="math notranslate nohighlight">\(r-l+1\)</span> coefficients to choose, we generally get <span class="math notranslate nohighlight">\(p = r - l + 1 - k\)</span>, but with symmetry <span class="math notranslate nohighlight">\(l = -r\)</span> and <span class="math notranslate nohighlight">\(k\)</span> even we get one better, <span class="math notranslate nohighlight">\(p = r - l + 2 - k\)</span>, because the order <span class="math notranslate nohighlight">\(p\)</span> must then be even.
+Thus we need the number of points <span class="math notranslate nohighlight">\(r-l+1\)</span> to be more than <span class="math notranslate nohighlight">\(k\)</span>: for example, at least two for a first derivative as already seen.</p>
+<div class="proof example admonition" id="example-basic-forward-difference">
+<p class="admonition-title"><span class="caption-number">Example 5.1 </span> (The basic forward difference approximation)</p>
+<section class="example-content" id="proof-content">
+<div class="math notranslate nohighlight">
+\[Df(x) = \frac{f(x + h) - f(x)}{h} + O(h)\]</div>
+<p>has <span class="math notranslate nohighlight">\(k=1\)</span>, <span class="math notranslate nohighlight">\(l=0\)</span>, <span class="math notranslate nohighlight">\(r=1\)</span>, <span class="math notranslate nohighlight">\(p=1\)</span>.</p>
+</section>
+</div><div class="proof example admonition" id="example-three-point-one-sided-difference">
+<p class="admonition-title"><span class="caption-number">Example 5.2 </span> (A three-point one-sided difference approximation of the first derivative)</p>
+<section class="example-content" id="proof-content">
+<p>This is the case <span class="math notranslate nohighlight">\(k=1\)</span> and can be sought with <span class="math notranslate nohighlight">\(l=0\)</span>, <span class="math notranslate nohighlight">\(r=2\)</span>, as</p>
+<div class="math notranslate nohighlight">
+\[Df(x) = \frac{C_{0} f(x) + C_1 f(x + h) + C_2 f(x + 2h)}{h} + O(h^p)\]</div>
+<p>and the most accurate choice is <span class="math notranslate nohighlight">\(C_0 = -3/2\)</span>, <span class="math notranslate nohighlight">\(C_1 = 2\)</span>, <span class="math notranslate nohighlight">\(C_2 = -1/2\)</span>, again of second order, which is exactly
+<span class="math notranslate nohighlight">\(p = r - l + 1 - k\)</span>, with no “symmetry bonus”:</p>
+<div class="math notranslate nohighlight">
+\[Df(x) \approx \frac{-3 f(x) + 4 f(x + h) - f(x + 2h)}{2 h} + O(h^2).\]</div>
+<p>One can use Taylor’s Theorem to <em>check</em> an approximation like this, and also get information about its accuracy.
+To do this, insert a Taylor series formula with center <span class="math notranslate nohighlight">\(x\)</span>, like</p>
+<div class="math notranslate nohighlight">
+\[f(x+h) = f(x) + Df(x) h + \frac{D^2f(x)}{2} h^2 + \frac{D^3f(x)}{6} h^3 + \cdots\]</div>
+<p>If you are not sure how accurate the result is, you might need to initially be vague about how may terms are needed,
+so I will do it that way and then go back and be more specific once we know more.</p>
+<p>A series for <span class="math notranslate nohighlight">\(f(x+2h)\)</span> is also needed:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+f(x+2h) &amp;= f(x) + Df(x) (2 h) + \frac{D^2f(x)}{2} (2 h)^2 + \frac{D^3f(x)}{6} (2 h)^3 + \cdots
+\\
+&amp;= f(x) + 2 Df(x) h + \frac{D^2f(x)}{2} 4 h^2 + \frac{D^3f(x)}{6} 8 h^3 + \cdots
+\\
+&amp;= f(x) + 2 Df(x) h + 2 D^2f(x) h^2 + \frac{4 D^3f(x)}{3} h^3 + \cdots
+\end{align*}\]</div>
+<p>Insert these into the above three-point formula, and see how close it is to the exact derivative:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+&amp;\frac{-3 f(x) + 4 f(x + h) - f(x + 2h)}{2 h}
+\\&amp;= \frac{-3 f(x) + 4 [f(x) + Df(x) h + \frac{D^2f(x)}{2} h^2 + \frac{D^3f(x)}{6} h^3 + \cdots]
+- [f(x) + 2 Df(x) h + 2 D^2f(x) h^2 + \frac{4 D^3f(x)}{3} h^3 + \cdots]}{2 h}
+\end{align*}\]</div>
+<p>Now gather terms with the same power of <span class="math notranslate nohighlight">\(h\)</span> (which is also gathering terms with the same order of derivative):</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{align*}
+\frac{-3 f(x) + 4 f(x + h) - f(x + 2h)}{2 h}
+&amp;= f(x)\frac{-3 + 4 -1}{2h} + Df(x)\frac{4 -2}{2} + D^2f(x)\frac{4/4 - 2/2}h +  D^3f(x)\frac{4/12 - 4/6}h^2 + \cdots
+\\&amp;= Df(x) - \frac{D^3 f(x)}{3} h^2 + \cdots
+\end{align*}\]</div>
+<p>and it is clear that the omitted terms have higher power of <span class="math notranslate nohighlight">\(h\)</span>: <span class="math notranslate nohighlight">\(h^3\)</span> and up.
+That is, they are <span class="math notranslate nohighlight">\(O(h^3)\)</span>, or more conveniently <span class="math notranslate nohighlight">\(o(h^2)\)</span>.</p>
+<p>Thus we have confirmed that the error in this approximation is</p>
+<div class="math notranslate nohighlight">
+\[Df(x) - \frac{-3 f(x) + 4 f(x + h) - f(x + 2h)}{2 h} = \frac{D^3 f(x)}{3} h^2 + o(h^2) = O(h^2).\]</div>
+</section>
+</div><div class="proof example admonition" id="example-three-point-centered-difference">
+<p class="admonition-title"><span class="caption-number">Example 5.3 </span> (A three-point centered difference approximation of <span class="math notranslate nohighlight">\(D^2 f(x)\)</span>)</p>
+<section class="example-content" id="proof-content">
+<p>This has <span class="math notranslate nohighlight">\(k=2\)</span>, <span class="math notranslate nohighlight">\(l = -1\)</span>, <span class="math notranslate nohighlight">\(r = 1\)</span> and so</p>
+<div class="math notranslate nohighlight">
+\[D^2f(x) \approx \frac{C_{-1} f(x - h) + C_{0} f(x) + C_1 f(x + h)}{h^2}\]</div>
+<p>and it can be found (as discussed below) that the coefficients <span class="math notranslate nohighlight">\(C_{-1} = C_1 = 1\)</span>, <span class="math notranslate nohighlight">\(C_0 = -2\)</span> give the highest order error:
+<span class="math notranslate nohighlight">\(p=2\)</span>; one better than <span class="math notranslate nohighlight">\(p = r - l + 1 - k = 1\)</span> due to symmetry:</p>
+<div class="math notranslate nohighlight">
+\[D^2f(x) = \frac{f(x - h) -2 f(x) + f(x + h)}{h^2} + O(h^2).\]</div>
+</section>
+</div><section id="method-1-use-taylor-polynomials-in-h-of-degree-p-k-1">
+<h2>Method 1: use Taylor polynomials in <span class="math notranslate nohighlight">\(h\)</span> of degree p+k-1<a class="headerlink" href="#method-1-use-taylor-polynomials-in-h-of-degree-p-k-1" title="Permalink to this headline">#</a></h2>
+<p>(so with error terms <span class="math notranslate nohighlight">\(O(h^{p+k})\)</span>.)</p>
+<p>Each of the terms <span class="math notranslate nohighlight">\(f(x + ih)\)</span> in the above formula for the approximation <span class="math notranslate nohighlight">\(D_h^k f(x)\)</span> of the <span class="math notranslate nohighlight">\(k\)</span>-th derivative <span class="math notranslate nohighlight">\(D_k f(x)\)</span>
+can be expanded with the Taylor Formula up to order <span class="math notranslate nohighlight">\(p+k\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[f(x + ih) = f(x) + (ih)Df(x) + (ih)^2/2 D^2f(x) + \cdots + (ih)^j/j! D^jf(x) + \cdots + (ih)^{p+k}/(p+k)! D^{p+k}f(x) + o(h^{p+k})\]</div>
+<p>Then these can be rearranged, putting the terms with the same derivative <span class="math notranslate nohighlight">\(D^j f(x)\)</span> together —
+all of which have the same factor <span class="math notranslate nohighlight">\(h^j\)</span> in the numeriator, and so the same factor <span class="math notranslate nohighlight">\(h^{j-p}\)</span> overall:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+D_h^k f(x)
+&amp;= (C_l + \cdots + C_r)f(x)h^{-k}\\
+&amp;+ (l C_l + \cdots + r C_r)Df(x)h^{1-k}\\
+&amp;+ (l^2 C_l + \cdots + r^2 C_r)D^2f(x)h^{2-k}\\
+&amp; \vdots\\
+&amp;+ (l^j C_l + \cdots + r^j C_r)D^jf(x)h^{j-k}\\
+&amp; \vdots\\
+&amp;+ (l^{p+k} C_l + \cdots + {p+k}^j C_r)D^{p+k}f(x)h^{p}\\
+&amp;+ o(h_p)
+\end{split}\end{split}\]</div>
+<p>The final “small” term <span class="math notranslate nohighlight">\(o(h^{p})\)</span> comes from the terms <span class="math notranslate nohighlight">\(o(h^{p+k})\)</span> in each Taylor’s formula term, each divided by <span class="math notranslate nohighlight">\(h^k\)</span>.</p>
+<p>We want this whole thing to be approximately <span class="math notranslate nohighlight">\(D^k f(x)\)</span>,
+and the strategy is to match the coefficients of the derivatives:</p>
+<ul class="simple">
+<li><p>Matching the coefficients of <span class="math notranslate nohighlight">\(D_h^k f(x)\)</span>,</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[(l^k C_l + \cdots + r^k C_r) D^k f(x)h^{k-k} = (l^k C_l + \cdots + r^k C_r) D^k f(x) = D^k f(x)\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[l^k C_l + \cdots + r^k C_r = 1=\]</div>
+<ul class="simple">
+<li><p>On the other hand, there should be no term with factor <span class="math notranslate nohighlight">\(f(x)h^{-k}\)</span>, so</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[C_l + \cdots + C_r = 0\]</div>
+<ul class="simple">
+<li><p>More generally, for any <span class="math notranslate nohighlight">\(j\)</span> other than <span class="math notranslate nohighlight">\(k\)</span> the coefficients should vanish, so</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[l^j C_l + \cdots + r^j C_r = 0, \quad 0 \leq j \leq p+k \text{ except for } j = k\]</div>
+<p>This last line gives <span class="math notranslate nohighlight">\(p+k\)</span> linear equations in the <span class="math notranslate nohighlight">\(p+k+1\)</span> coefficients <span class="math notranslate nohighlight">\(C_1 , \dots, C_{p+k}\)</span>,
+and then the previous equation gives us a total of <span class="math notranslate nohighlight">\(p+k+1\)</span> equations — as needed for the existence of a unique solution.</p>
+<div class="amsmath math notranslate nohighlight" id="equation-4f6e875e-0e15-4b3f-aa2e-9009851585e2">
+<span class="eqno">(5.3)<a class="headerlink" href="#equation-4f6e875e-0e15-4b3f-aa2e-9009851585e2" title="Permalink to this equation">#</a></span>\[\begin{align}
+C_l + \cdots + C_r &amp;= 0\\
+l^j C_l + \cdots + r^jC_r &amp;= 0, j \neq k\\
+l^k C_l + \cdots + r^kC_r &amp;= 1\\
+\end{align}\]</div>
+<p>And indeed it can be verified that the resulting matrix for this system of equations is non-singular, and so there is a unique solution for the coefficients <span class="math notranslate nohighlight">\(C_l \dots C_r\)</span>.</p>
+<p>See <a class="reference external" href="#exercise-1">Exercise 1</a>.</p>
+</section>
+<section id="degree-of-precision-and-testing-with-monomials">
+<h2>Degree of Precision and testing with monomials<a class="headerlink" href="#degree-of-precision-and-testing-with-monomials" title="Permalink to this headline">#</a></h2>
+<p>This concept relates to a simpler way of determining the coefficients.</p>
+<p>The <strong>degree of precision</strong> of an approximation formula (of a derivative or integral) is the highest degree <span class="math notranslate nohighlight">\(d\)</span> such that the formula is exact for all polynomials of degree up to <span class="math notranslate nohighlight">\(d\)</span>.
+For example it can be checked that in the examples above, the degrees of precision are 1, 2, and 3 respectively.
+All three conform to a general pattern:</p>
+<div class="proof theorem admonition" id="theorem-1">
+<p class="admonition-title"><span class="caption-number">Theorem 5.1 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>The degree of precision is <span class="math notranslate nohighlight">\(d = p + k - 1\)</span>, so in the typical case with no “symmetry bonus” <span class="math notranslate nohighlight">\(d = r - l\)</span></p>
+<p>This is confirmed by the above derivation: for <span class="math notranslate nohighlight">\(f\)</span> any polynomial of degree <span class="math notranslate nohighlight">\(p+k-1\)</span> or less,
+the Taylor polynomials of degree at most <span class="math notranslate nohighlight">\(p+k-1\)</span> used there have no error.</p>
+<p>Thus for example, the minimal symmetric aproximation of a fourth derivative,
+which must have even order <span class="math notranslate nohighlight">\(p=2\)</span>, will have degree of precision 5.</p>
+</section>
+</div></section>
+<section id="method-2-use-monomials-of-degree-up-to-p-k-1">
+<h2>Method 2: use monomials of degree up to p+k-1<a class="headerlink" href="#method-2-use-monomials-of-degree-up-to-p-k-1" title="Permalink to this headline">#</a></h2>
+<p>From the above degree of precision result, one can determine the coefficients by requiring degree of precision <span class="math notranslate nohighlight">\(p+k-1\)</span>, and for this it is enough to require exactness for each of the simple monomial functions <span class="math notranslate nohighlight">\(1\)</span>, <span class="math notranslate nohighlight">\(x\)</span>, <span class="math notranslate nohighlight">\(x^2\)</span>, and so on up to <span class="math notranslate nohighlight">\(x^{p+k-1}\)</span>.</p>
+<p>Also, this only needs to be tested at <span class="math notranslate nohighlight">\(x=0\)</span>, since “translating” the variables does not effect the result.</p>
+<p>This is probably the simplest method in practice.</p>
+<div class="proof example admonition" id="example-three-point-one-sided-difference-method-2">
+<p class="admonition-title"><span class="caption-number">Example 5.4 </span></p>
+<section class="example-content" id="proof-content">
+<p>Let us revisit <a class="reference internal" href="#example-three-point-one-sided-difference">Example 5.2</a>.
+The goal is to get exactness in</p>
+<div class="math notranslate nohighlight">
+\[\frac{C_{0} f(x) + C_1 f(x + h) + C_2 f(x + 2h)}{h} = Df(x)\]</div>
+<p>for the monomials <span class="math notranslate nohighlight">\(f(x) = 1\)</span>, <span class="math notranslate nohighlight">\(f(x) = x\)</span>, and so on, to the highest power possible,
+and this only needs to be checked at <span class="math notranslate nohighlight">\(x=0\)</span>.</p>
+<p>First, <span class="math notranslate nohighlight">\(f(x) = 1\)</span>, so <span class="math notranslate nohighlight">\(Df(0) = 0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\frac{C_{0} \times 1 + C_1 \times 1 + C_2 \times 1}{h} = 0,\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[C_{0} + C_1 + C_2 = 0\]</div>
+<p>Next, <span class="math notranslate nohighlight">\(f(x) = x\)</span>, so <span class="math notranslate nohighlight">\(Df(0) = 1\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\frac{C_{0} f(0) + C_1 f(h) + C_2 f(2h)}{h} = \frac{C_{0} 0 + C_1 h + C_2 2h}{h} = C_1 + 2C_2 = 1\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[C_1 + 2 C_2 = 1\]</div>
+<p>We need at least three equations for the three unknown coefficients, so continue with <span class="math notranslate nohighlight">\(f(x) = x^2\)</span>, <span class="math notranslate nohighlight">\(Df(0) = 0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\frac{C_{0} f(0) + C_1 f(h) + C_2 f(2h)}{h} = \frac{C_{0} 0 + C_1 h^2 + C_2 (2h)^2}{h} = (C_1 + 4 C_2)h = 0\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[C_1 + 4 C_2 = 0\]</div>
+<p>We can solve these by elimination; for example:</p>
+<ul class="simple">
+<li><p>The last equation gives <span class="math notranslate nohighlight">\(C_1 = -4C_2\)</span></p></li>
+<li><p>The previous one then gives <span class="math notranslate nohighlight">\(-4C_2 + 2C_2 = 1\)</span>, so <span class="math notranslate nohighlight">\(C_2 = -1/2\)</span> and thus <span class="math notranslate nohighlight">\(C_1 = -4C_2 = 2\)</span>.</p></li>
+<li><p>The first equation then gives <span class="math notranslate nohighlight">\(C_0 = -C_1 - C_2 = -3/2\)</span>
+all as claimed above.</p></li>
+</ul>
+<p>So far the degree of precision has been shown to be at least 2.
+In some cases it is better, so let us check by looking at <span class="math notranslate nohighlight">\(f(x) = x^3\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(Df(x) = 0\)</span>, whereas</p>
+<div class="math notranslate nohighlight">
+\[\frac{-3 f(x) + 4 f(x + h) - f(x + 2h)}{2 h}
+= \frac{-3 0 + 4 h^3 - (2h)^3}{2 h}
+= \frac{ -2 h^3}{2 h}
+= -4 h^2, \neq 0\]</div>
+<p>So, no luck this time (that typically requires some symmetry),
+but this calculation does indicate in a relatively simple way that the error is <span class="math notranslate nohighlight">\(O(h^2)\)</span>.</p>
+</section>
+</div><div class="proof remark admonition" id="check-with-taylor`">
+<p class="admonition-title"><span class="caption-number">Remark 5.1 </span></p>
+<section class="remark-content" id="proof-content">
+<p>If you want to verify more rigorously the order of accuracy of a formula devised by this method,
+one can use the “checking” procedure with Taylor polynomials and their error terms as done in <a class="reference internal" href="#example-three-point-one-sided-difference">Example 5.2</a> above.</p>
+</section>
+</div></section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-1"></a></p>
+<section id="exercise-1">
+<h3>Exercise 1<a class="headerlink" href="#exercise-1" title="Permalink to this headline">#</a></h3>
+<p>A) Derive the formula in <a class="reference internal" href="#example-basic-forward-difference">Example 5.1</a>.</p>
+<p>Do this by setting up the three equations as above for the coefficients <span class="math notranslate nohighlight">\(C_0\)</span>, <span class="math notranslate nohighlight">\(C_1\)</span> and <span class="math notranslate nohighlight">\(C_2\)</span>, and solving them.
+Do this “by hand”, to get exact fractions as the answers;
+use the two Taylor series formulas, but now take advantage of what we saw above: that the error starts at the terms in
+<span class="math notranslate nohighlight">\(D^3f(x)\)</span>.
+So use the forms</p>
+<div class="math notranslate nohighlight">
+\[f(x+h) = f(x) + Df(x) h + \frac{D^2f(x)}{2} h^2 + \frac{D^3f(x)}{6} h^3 + O(h^4)\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[f(x+2h) = f(x) + 2 Df(x) h + 2 D^2f(x) h^2 + \frac{4 D^3f(x)}{3} h^3 + O(h^4)\]</div>
+<p>B) Verify the result in <a class="reference internal" href="#example-three-point-centered-difference">Example 5.3</a>.</p>
+<p>Again, do this by hand, and exploit the symmetry.
+Note that it works a bit better than expected, due to the symmetry.</p>
+<p><a name="exercise-2"></a></p>
+</section>
+<section id="exercise-2-like-exercise-1-but-using-method-2">
+<h3>Exercise 2: like Exercise 1, but using Method 2<a class="headerlink" href="#exercise-2-like-exercise-1-but-using-method-2" title="Permalink to this headline">#</a></h3>
+<p>A) Verify the result in <a class="reference internal" href="#example-basic-forward-difference">Example 5.1</a>, this time by Method 2.</p>
+<p>That is, impose the condition of giving the exact value for the derivative at <span class="math notranslate nohighlight">\(x=0\)</span> for the monomial <span class="math notranslate nohighlight">\(f(x) = 1\)</span>,
+then the same for <span class="math notranslate nohighlight">\(f(x) = x\)</span>, and so on until there are enough equations to determine a unique solution for the coefficients.</p>
+<p>B) Verify the result in <a class="reference internal" href="#example-three-point-centered-difference">Example 5.3</a>, by Method 2.</p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="calculus.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">5. </span>Derivatives and Definite Integrals</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="richardson-extrapolation.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">5.2. </span>Richardson Extrapolation</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

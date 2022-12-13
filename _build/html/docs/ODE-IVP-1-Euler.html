@@ -1,0 +1,1590 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>7.2. Euler’s Method &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7.3. Runge-Kutta Methods" href="ODE-IVP-2-Runge-Kutta.html" />
+    <link rel="prev" title="7.1. Background and Some Examples" href="ODE-IVP-0-background-examples.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/ODE-IVP-1-Euler.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/ODE-IVP-1-Euler.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#examples">
+   Examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-tangent-line-method-a-k-a-euler-s-method">
+   The Tangent Line Method, a.k.a. Euler’s Method
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-ode-integration-an-integration">
+     Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-integration
+      </span>
+     </code>
+     , an integration
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-ode-simplest-genuine-some-exponential-functions">
+     Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-simplest-genuine
+      </span>
+     </code>
+     , some exponential functions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-ode-nonlinear-solutions-that-blow-up">
+     Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-nonlinear
+      </span>
+     </code>
+     : solutions that blow up
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-solving-for-ode-stiff-a-stiff-ode">
+     Solving for Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-stiff
+      </span>
+     </code>
+     , a stiff ODE
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#variable-time-step-sizes-h-i-just-a-preview">
+     Variable Time Step Sizes
+     <span class="math notranslate nohighlight">
+      \(h_i\)
+     </span>
+     (just a preview)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-analysis-for-the-canonical-test-case-u-k-u">
+     Error Analysis for the Canonical Test Case,
+     <span class="math notranslate nohighlight">
+      \(u' = k u\)
+     </span>
+     .
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#global-error-and-local-truncation-error">
+     Global Error and Local (Truncation) Error
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-propagation-in-u-k-u-k-geq-0">
+     Error propagation in
+     <span class="math notranslate nohighlight">
+      \(u' = k u\)
+     </span>
+     ,
+     <span class="math notranslate nohighlight">
+      \(k \geq 0\)
+     </span>
+     .
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bounding-the-local-truncation-errors">
+     Bounding the local truncation errors …
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#and-using-this-to-complete-the-bound-on-the-global-truncation-error">
+     … and using this to complete the bound on the global truncation error
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-more-general-error-bound">
+     A more general error bound
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#there-is-much-room-for-improvement">
+     There is much room for improvement
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-propagation-for-ode-integration">
+     Error propagation for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-integration
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-propagation-for-ode-simplest-genuine">
+     Error propagation for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-simplest-genuine
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Euler’s Method</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#examples">
+   Examples
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-tangent-line-method-a-k-a-euler-s-method">
+   The Tangent Line Method, a.k.a. Euler’s Method
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-ode-integration-an-integration">
+     Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-integration
+      </span>
+     </code>
+     , an integration
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-ode-simplest-genuine-some-exponential-functions">
+     Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-simplest-genuine
+      </span>
+     </code>
+     , some exponential functions
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-ode-nonlinear-solutions-that-blow-up">
+     Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-nonlinear
+      </span>
+     </code>
+     : solutions that blow up
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solving-for-solving-for-ode-stiff-a-stiff-ode">
+     Solving for Solving for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-stiff
+      </span>
+     </code>
+     , a stiff ODE
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#variable-time-step-sizes-h-i-just-a-preview">
+     Variable Time Step Sizes
+     <span class="math notranslate nohighlight">
+      \(h_i\)
+     </span>
+     (just a preview)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-analysis-for-the-canonical-test-case-u-k-u">
+     Error Analysis for the Canonical Test Case,
+     <span class="math notranslate nohighlight">
+      \(u' = k u\)
+     </span>
+     .
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#global-error-and-local-truncation-error">
+     Global Error and Local (Truncation) Error
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-propagation-in-u-k-u-k-geq-0">
+     Error propagation in
+     <span class="math notranslate nohighlight">
+      \(u' = k u\)
+     </span>
+     ,
+     <span class="math notranslate nohighlight">
+      \(k \geq 0\)
+     </span>
+     .
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#bounding-the-local-truncation-errors">
+     Bounding the local truncation errors …
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#and-using-this-to-complete-the-bound-on-the-global-truncation-error">
+     … and using this to complete the bound on the global truncation error
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-more-general-error-bound">
+     A more general error bound
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#there-is-much-room-for-improvement">
+     There is much room for improvement
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-propagation-for-ode-integration">
+     Error propagation for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-integration
+      </span>
+     </code>
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-propagation-for-ode-simplest-genuine">
+     Error propagation for
+     <code class="xref prf prf-ref docutils literal notranslate">
+      <span class="pre">
+       ode-simplest-genuine
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="euler-s-method">
+<h1><span class="section-number">7.2. </span>Euler’s Method<a class="headerlink" href="#euler-s-method" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Sections 6.1.1 <em>Euler’s Method</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 5.2 <em>Euler’s Method</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Sections 7.1 and 7.2 in <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="examples">
+<h2>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">#</a></h2>
+<p>A lot of useful intuition comes from the first four examples in
+<a class="reference internal" href="ODE-IVPs.html"><span class="doc">the chapter introduction</span></a>:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-integration">Example 7.1</a> <span class="math notranslate nohighlight">\(\displaystyle du/dt = f(t)\)</span> (Integration),</p></li>
+<li><p><a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-simplest-genuine">Example 7.2</a> <span class="math notranslate nohighlight">\(\displaystyle du/dt = k u\)</span> (the simplest “genuine” ODE),</p></li>
+<li><p><a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-nonlinear">Example 7.3</a> <span class="math notranslate nohighlight">\(\displaystyle du/dt = u^2\)</span> (a nonlinear ODE)
+and</p></li>
+<li><p><a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-stiff">Example 7.4</a> <span class="math notranslate nohighlight">\(\displaystyle du/dt = -\sin t -k(u - \cos t)\)</span> (with fast and slow time scales).</p></li>
+</ul>
+<p><a name="eulers-method"></a></p>
+</section>
+<section id="the-tangent-line-method-a-k-a-euler-s-method">
+<h2>The Tangent Line Method, a.k.a. Euler’s Method<a class="headerlink" href="#the-tangent-line-method-a-k-a-euler-s-method" title="Permalink to this headline">#</a></h2>
+<p>Once we know <span class="math notranslate nohighlight">\(u(t)\)</span> (or a good approx4imation) at some time <span class="math notranslate nohighlight">\(t\)</span>, we also know the value of <span class="math notranslate nohighlight">\(u'(t) = f(t, u(t))\)</span> there; in particular, we know that <span class="math notranslate nohighlight">\(u(a) = u_0\)</span> and so <span class="math notranslate nohighlight">\(u'(a) = f(a, u_0)\)</span>.</p>
+<p>This allows us to approx4imate <span class="math notranslate nohighlight">\(u\)</span> for slightly larger values of the argument (which I will call “time”) using its tangent line:</p>
+<div class="math notranslate nohighlight">
+\[ u(a+h) \approx4 u(a) + u'(a) h = u_0 + f(a, u_0) h  \text{ for &quot;small&quot; $h$} \]</div>
+<p>and more generally</p>
+<div class="math notranslate nohighlight">
+\[ u(t+h) \approx4 u(t) + f(t, u(t)) h \text{ for &quot;small&quot; $h$} \]</div>
+<p>This leads to the simplest approx4imation: choose a step size <span class="math notranslate nohighlight">\(h\)</span> determining equally spaced times <span class="math notranslate nohighlight">\(t_i = a + i h\)</span> and define — recursively — a sequence of approx4imations <span class="math notranslate nohighlight">\(U_i \approx4 u(t_i)\)</span> with</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+U_0 &amp;= u_0
+\\
+U_{i+1} &amp;= U_i + h f(t_i, U_i))
+\end{split}\end{split}\]</div>
+<p>If we choose a number of time steps <span class="math notranslate nohighlight">\(n\)</span> and set <span class="math notranslate nohighlight">\(h = (b-a)/n\)</span> for <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span>,
+the second equation is needed for <span class="math notranslate nohighlight">\(0 \leq i &lt; n\)</span>, ending with <span class="math notranslate nohighlight">\(U_n \approx4 u(t_n) = u(b)\)</span>.</p>
+<p>This “two-liner” does not need a pseudo-code description; instead, we can go directly to a rudimentary Julia function for Euler’s Method:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Solve du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># Note: &quot;n&quot; counts steps, so there are n+1 values for t.</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>See <a class="reference external" href="#exercise-1">Exercise 1</a>.</p>
+<section id="solving-for-ode-integration-an-integration">
+<h3>Solving for <a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-integration">Example 7.1</a>, an integration<a class="headerlink" href="#solving-for-ode-integration-an-integration" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># For integration of -sin(t): The exact solution is cos(t) + u_0</span>
+<span class="n">f1</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">);</span>
+<span class="n">u1</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">)</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">u_0</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># A helper function for rounding some output to four significant digits</span>
+<span class="n">approx4</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">3</span><span class="o">/</span><span class="mi">4</span><span class="o">*</span><span class="nb">pi</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">20</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>  
+<span class="n">u</span> <span class="o">=</span> <span class="n">u1</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = cos(x) + </span><span class="si">$</span><span class="p">(</span><span class="n">u_0</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_11_0.png" src="../_images/ODE-IVP-1-Euler_11_0.png" />
+</div>
+</div>
+</section>
+<section id="solving-for-ode-simplest-genuine-some-exponential-functions">
+<h3>Solving for <a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-simplest-genuine">Example 7.2</a>, some exponential functions<a class="headerlink" href="#solving-for-ode-simplest-genuine-some-exponential-functions" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># For solving du/dt = k u: The exact solution is u_0 exp(k t).</span>
+<span class="n">f2</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="n">k</span><span class="o">*</span><span class="n">u</span><span class="p">;</span>
+<span class="c"># The parameter k may be defined later, so long as that is done before this functions are used.</span>
+<span class="n">u2</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">=</span> <span class="n">u_0</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">a</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># You could experiment by changing these values here;</span>
+<span class="c"># for now I instead redefine them below.</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">0.8</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">40</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u2</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = </span><span class="si">$u_0</span><span class="s"> exp(</span><span class="si">$k</span><span class="s"> t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_14_0.png" src="../_images/ODE-IVP-1-Euler_14_0.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># You could experiment by changing these values here.</span>
+<span class="n">k</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">2.0</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">(</span><span class="n">t10</span><span class="p">,</span> <span class="n">U10</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="p">(</span><span class="n">t20</span><span class="p">,</span> <span class="n">U20</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">t20</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u2</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is y = </span><span class="si">$u_0</span><span class="s"> exp(</span><span class="si">$k</span><span class="s"> t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t10</span><span class="p">,</span> <span class="n">U10</span><span class="p">,</span> <span class="s">&quot;.:r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">10</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t20</span><span class="p">,</span> <span class="n">U20</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">20</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_15_0.png" src="../_images/ODE-IVP-1-Euler_15_0.png" />
+</div>
+</div>
+</section>
+<section id="solving-for-ode-nonlinear-solutions-that-blow-up">
+<h3>Solving for <a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-nonlinear">Example 7.3</a>: solutions that blow up<a class="headerlink" href="#solving-for-ode-nonlinear-solutions-that-blow-up" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f3</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="n">u</span><span class="o">^</span><span class="mi">2</span>
+<span class="c"># The solution is u(t) = 1/((a + 1/u_0) - t), = 1/(T-t) with T = a + 1/u_0</span>
+<span class="n">u3</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">((</span><span class="n">a</span> <span class="o">+</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">u_0</span><span class="p">)</span> <span class="o">-</span> <span class="n">t</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">0.9</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="p">(</span><span class="n">t100</span><span class="p">,</span> <span class="n">U100</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f3</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="p">(</span><span class="n">t200</span><span class="p">,</span> <span class="n">U200</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f3</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">t200</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u3</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">)</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="n">u_0</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = 1/(</span><span class="si">$T</span><span class="s"> - t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t100</span><span class="p">,</span> <span class="n">U100</span><span class="p">,</span> <span class="s">&quot;.:r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">100</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t200</span><span class="p">,</span> <span class="n">U200</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="mi">200</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_18_0.png" src="../_images/ODE-IVP-1-Euler_18_0.png" />
+</div>
+</div>
+<p>There is clearly a problem when <span class="math notranslate nohighlight">\(t\)</span> reaches 1; let us explore that:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">0.999</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f3</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="c"># More t values are needed to get a good graph of the exact solution near the vertical asymptote:</span>
+<span class="n">tplot</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u3</span><span class="o">.</span><span class="p">(</span><span class="n">tplot</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="n">u_0</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = 1/(</span><span class="si">$T</span><span class="s"> - t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">tplot</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_20_0.png" src="../_images/ODE-IVP-1-Euler_20_0.png" />
+</div>
+</div>
+<p>Clearly Euler’s method can never produce the vertical asymptote.</p>
+<p>The best we can do is improve accuracy by using more, smaller time steps:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">b</span><span class="o">=</span> <span class="mf">0.999</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10_000</span><span class="p">;</span>  <span class="c"># Julia note: underscores can be used in numbers for readability, like commas (or spaces in some countries)</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f3</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">tplot</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u3</span><span class="o">.</span><span class="p">(</span><span class="n">tplot</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">)</span>
+<span class="n">T</span> <span class="o">=</span> <span class="n">a</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="n">u_0</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = 1/(</span><span class="si">$T</span><span class="s"> - t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">tplot</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_22_0.png" src="../_images/ODE-IVP-1-Euler_22_0.png" />
+</div>
+</div>
+</section>
+<section id="solving-for-solving-for-ode-stiff-a-stiff-ode">
+<h3>Solving for Solving for <a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-stiff">Example 7.4</a>, a stiff ODE<a class="headerlink" href="#solving-for-solving-for-ode-stiff-a-stiff-ode" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f4</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="o">-</span><span class="n">sin</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">-</span> <span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">u</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">));</span>
+<span class="c"># The parameter k may be defined later, so long as that is done before this function is used.</span>
+<span class="c"># The general solution is u(t) = u(t; a, u_0) = cos t + (u_0 - cos(a)) e^(k (a-t))</span>
+<span class="n">u4</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="o">=</span> <span class="n">cos</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">u_0</span> <span class="o">-</span> <span class="n">cos</span><span class="p">(</span><span class="n">a</span><span class="p">))</span> <span class="o">*</span> <span class="n">exp</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">t</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>With enough steps (small enough step size <span class="math notranslate nohighlight">\(h\)</span>), all is well:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span>  <span class="c"># One period</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mf">40.0</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">400</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f4</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u4</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = cos t + </span><span class="si">$</span><span class="p">(</span><span class="n">u_0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="s"> exp(-</span><span class="si">$k</span><span class="s"> t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution for k=</span><span class="si">$k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_26_0.png" src="../_images/ODE-IVP-1-Euler_26_0.png" />
+</div>
+</div>
+<p>However, with large steps (still small enough to handle the <span class="math notranslate nohighlight">\(\cos t\)</span> part),
+there is a catastrophic failure, with growing oscillations.</p>
+<p>As we will see, these are a characteristic feature of <em>instability</em>.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">n</span> <span class="o">=</span> <span class="mi">124</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f4</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u4</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = cos t + </span><span class="si">$</span><span class="p">(</span><span class="n">u_0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="s"> exp(-</span><span class="si">$k</span><span class="s"> t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution for k=</span><span class="si">$k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_28_0.png" src="../_images/ODE-IVP-1-Euler_28_0.png" />
+</div>
+</div>
+<p>To show that the <span class="math notranslate nohighlight">\(k\)</span> part is the problem, reduce <span class="math notranslate nohighlight">\(k\)</span> while leaving the rest unchanged:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mf">10.0</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f4</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u4</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;The exact solution is u = cos t + </span><span class="si">$</span><span class="p">(</span><span class="n">u_0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="s"> exp(-</span><span class="si">$k</span><span class="s"> t)&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Exact solution for k=</span><span class="si">$k</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer for h=</span><span class="si">$</span><span class="p">(</span><span class="n">approx4</span><span class="p">((</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_30_0.png" src="../_images/ODE-IVP-1-Euler_30_0.png" />
+</div>
+</div>
+</section>
+<section id="variable-time-step-sizes-h-i-just-a-preview">
+<h3>Variable Time Step Sizes <span class="math notranslate nohighlight">\(h_i\)</span> (just a preview)<a class="headerlink" href="#variable-time-step-sizes-h-i-just-a-preview" title="Permalink to this headline">#</a></h3>
+<p>It is sometime useful to adjust the time step size; for example reducing it when the derivative is larger,
+(as happens in Example 3 above).
+This gives a slight variant, now expressed in pseudo-code:</p>
+<p>Input: <span class="math notranslate nohighlight">\(f\)</span>, <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, <span class="math notranslate nohighlight">\(n\)</span> <br>
+<span class="math notranslate nohighlight">\(t_0 = a\)</span> <br>
+<span class="math notranslate nohighlight">\(U_0 = u_0\)</span> <br>
+for i from 1 to n <br>
+<span class="math notranslate nohighlight">\(\quad\)</span> Choose <span class="math notranslate nohighlight">\(h_i\)</span> somehow <br>
+<span class="math notranslate nohighlight">\(\quad t_{i} = t_{i-1} + h_i\)</span> <br>
+<span class="math notranslate nohighlight">\(\quad U_{i} = U_{i-1} + h_i f(t_{i-1}, U_{i-1})\)</span> <br>
+end</p>
+<p>In a later section, we will see how to estimate errors within an algorithm,
+and then how to use such error estimates to guide the choice of step size.</p>
+</section>
+<section id="error-analysis-for-the-canonical-test-case-u-k-u">
+<h3>Error Analysis for the Canonical Test Case, <span class="math notranslate nohighlight">\(u' = k u\)</span>.<a class="headerlink" href="#error-analysis-for-the-canonical-test-case-u-k-u" title="Permalink to this headline">#</a></h3>
+<p>A great amount of intuition about numerical methods for solving ODE IVPs comes from that “simplest nontrivial example”, number 2 above.
+We can solve it with constant step size <span class="math notranslate nohighlight">\(h\)</span>, and thus study its errors and accuracy.
+The recursion relation is now</p>
+<div class="math notranslate nohighlight">
+\[U_{i} = U_{i-1} + h k U_{i-1} = U_{i-1} (1 + hk),\]</div>
+<p>with solution</p>
+<div class="math notranslate nohighlight">
+\[U_i = u_0 (1 + hk)^i\]</div>
+<p>For comparison, the exact solution of this ODE IVP is</p>
+<div class="math notranslate nohighlight">
+\[u(t_i) = u_0 e^{k(t_i - a)} = u_0 e^{k ih} = u_0 (e^{kh})^i\]</div>
+<p>So each is a geometric series: the difference is that the <em>growth factor</em> is <span class="math notranslate nohighlight">\(G = (1 + hk)\)</span> for Euler’s method,
+vs <span class="math notranslate nohighlight">\(g = e^{kh} = 1 + hk + (hk)^2/2 + \cdots = 1 + hk + O(h^2)\)</span> for the ODE.</p>
+<p>Ths deviation at each time step is <span class="math notranslate nohighlight">\(O(h^2)\)</span>, suggesting that by the end <span class="math notranslate nohighlight">\(t=b\)</span>, at step <span class="math notranslate nohighlight">\(n\)</span>, the error will be
+<span class="math notranslate nohighlight">\(O(n h^2) = O\left(\displaystyle\frac{b-a}{h} h^2\right) = O(h)\)</span>.</p>
+<p>This is in fact what happens, but to verify that, we must deal with the challenge that once an error enters at one step, it is potentially amplified at each subsequent step, so the errors introduced at each step do not simply get summed like they did with definite integrals.</p>
+</section>
+<section id="global-error-and-local-truncation-error">
+<h3>Global Error and Local (Truncation) Error<a class="headerlink" href="#global-error-and-local-truncation-error" title="Permalink to this headline">#</a></h3>
+<p>Ultimately, the error we need to understand is the <strong>global error</strong>: at step <span class="math notranslate nohighlight">\(i\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[ E_i = u(t_i) - U_i \]</div>
+<p>We will approach this by first considering the new error added at each step, the <strong>local truncation error</strong> (or <strong>discretization error</strong>).</p>
+<p>At the first step this is the same as above:</p>
+<div class="math notranslate nohighlight">
+\[ e_1 = u(t_1) - U_1 = u(a+h) - U_1 \]</div>
+<p>However at later steps we compare the results <span class="math notranslate nohighlight">\(U_{i+1}\)</span> to what the solution would be if it were exact at the start of that step: that is, if <span class="math notranslate nohighlight">\(U_i\)</span> were exact.</p>
+<p>Using the notation <span class="math notranslate nohighlight">\(u(t; t_i, U_i)\)</span> introduced <a href="#IVP_notation">above</a> for the solution of the ODE with initial condition <span class="math notranslate nohighlight">\(u(t_i) = U_i\)</span>, the <strong>location truncation error</strong> at step <span class="math notranslate nohighlight">\(i\)</span> is the discrepancy at time <span class="math notranslate nohighlight">\(t_{i+1}\)</span> between what Euler’s method and the exact solution give when both start at that point <span class="math notranslate nohighlight">\((t_i, U_i)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ e_i = u(t; t_i, U_i) - U_{i+1} \]</div>
+</section>
+<section id="error-propagation-in-u-k-u-k-geq-0">
+<h3>Error propagation in <span class="math notranslate nohighlight">\(u' = k u\)</span>, <span class="math notranslate nohighlight">\(k \geq 0\)</span>.<a class="headerlink" href="#error-propagation-in-u-k-u-k-geq-0" title="Permalink to this headline">#</a></h3>
+<p>After one step, <span class="math notranslate nohighlight">\(E_1 = u(t_1) - U_1 = e_1\)</span>.</p>
+<p>At step 2,</p>
+<div class="math notranslate nohighlight">
+\[ E_2 = u(t_2) - U_2 = (u(t_2) - u(t_2, t_1, U_1) + (u(t_2, t_1, U_1) - U_2)
+= (u(t_2) - u(t_2, t_1, U_1) + e_2 \]</div>
+<p>The first term is the difference at <span class="math notranslate nohighlight">\(t=t_2\)</span> of two solutions with values at <span class="math notranslate nohighlight">\(t = t_1\)</span> being <span class="math notranslate nohighlight">\(u(t_1)\)</span> and <span class="math notranslate nohighlight">\(U_1\)</span> respectively. As the ODE is linear and homogeneous, this is the solution of the same ODE with value at <span class="math notranslate nohighlight">\(t=t_1\)</span> being <span class="math notranslate nohighlight">\(u(t_1) - U_1\)</span>, which is <span class="math notranslate nohighlight">\(e_1\)</span>:
+that solution is <span class="math notranslate nohighlight">\(e_1 e^{y(t - t_1}\)</span>, so at <span class="math notranslate nohighlight">\(t=t_2\)</span> it is <span class="math notranslate nohighlight">\(e_1 e^{kh}\)</span>.
+Thus the global error after two steps is</p>
+<div class="math notranslate nohighlight">
+\[ E_2 = e_2 + (e^{kh})e_1: \]</div>
+<p>the error from the previous step has been amplified by the growth factor <span class="math notranslate nohighlight">\(g = e^{kh}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ E_2 = e_2 + g e_1: \]</div>
+<p>This continues, so that</p>
+<div class="math notranslate nohighlight">
+\[ E_3 = e_3 + g E_1 = e_3 + g (e_2 + g e_1) = e_3 + ge_2 + g^2 e_1 \]</div>
+<p>and so on, leading to</p>
+<p>$<span class="math notranslate nohighlight">\( E_i = e_i + g e_{i-1} + g^2 e_{i-2} + \cdots + g^{i-1} e_{1} \)</span>$.</p>
+</section>
+<section id="bounding-the-local-truncation-errors">
+<h3>Bounding the local truncation errors …<a class="headerlink" href="#bounding-the-local-truncation-errors" title="Permalink to this headline">#</a></h3>
+<p>To get a bound on the global error from the formula above, we first need a bound on the local truncation errors <span class="math notranslate nohighlight">\(e_i\)</span>.</p>
+<p>Taylor’s theorem gives <span class="math notranslate nohighlight">\(e^{kh} = 1 + kh + e^{k \xi} (kh)^2/2\)</span>, <span class="math notranslate nohighlight">\(0 &lt; \xi &lt; k h\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[
+e_i = U_i e^{kh} - U_i (1 + kh) = U_i (e^{k \xi} h^2/2)
+\]</div>
+<p>and thus</p>
+<div class="math notranslate nohighlight">
+\[|e_i| \leq |U_i| \frac{e^{kh}}{2} h^2\]</div>
+<p>Also, since <span class="math notranslate nohighlight">\(1 + kh &lt; e^{kh}\)</span>,
+<span class="math notranslate nohighlight">\(|U_i| &lt; |u(t_i)| = |u_0| e^{k(t_i - a)},\)</span>
+and we only need this to the beginning of the last step, <span class="math notranslate nohighlight">\(i \leq n-1\)</span>, for which</p>
+<div class="math notranslate nohighlight">
+\[
+|U_i| &lt; |u_0| e^{k(b - h - a)}
+\]</div>
+<p>Thus</p>
+<div class="math notranslate nohighlight">
+\[
+|e_i| \leq \frac{|u_0| e^{k(b - h - a)} e^{kh}}{2} h^2 = \frac{|u_0 e^{k(b - a)}|}{2} h^2
+\]</div>
+<p>That is,</p>
+<div class="math notranslate nohighlight">
+\[ |e_i| \leq C h^2 \text{ where } C := \frac{|u_0 e^{k(b - a)}|}{2} \]</div>
+</section>
+<section id="and-using-this-to-complete-the-bound-on-the-global-truncation-error">
+<h3>… and using this to complete the bound on the global truncation error<a class="headerlink" href="#and-using-this-to-complete-the-bound-on-the-global-truncation-error" title="Permalink to this headline">#</a></h3>
+<p>Using this bound on the local errors <span class="math notranslate nohighlight">\(e_i\)</span> in the above sum for the global error <span class="math notranslate nohighlight">\(E_i\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[ | E_i | \leq C h^2 (1 + g + \cdots g^{i-1}) = C \frac{g^i - 1}{g-1} h^2 \]</div>
+<p>Since <span class="math notranslate nohighlight">\(g^i = e^{k h i} = e^{k (t_i - a)}\)</span> and the denominator <span class="math notranslate nohighlight">\(g - 1 = e^{kh} - 1 &gt; k h\)</span>,
+we get</p>
+<div class="math notranslate nohighlight">
+\[
+| E_i | \leq  C \frac{e^{k (t_i - a)} - 1}{k h} h^2
+\leq \frac{|u_0 e^{k(b - a)}|}{2} \frac{e^{k (t_i - a)} - 1}{k} h, = O(h)
+\]</div>
+<p>Note that this global error formula is bulilt from three factors:</p>
+<ul class="simple">
+<li><p>The first is the constant
+<span class="math notranslate nohighlight">\(\displaystyle \frac{|u_0 e^{k(b - a)}|}{2}\)</span>
+which is roughly half of the maximum value of the exact solution over the interval <span class="math notranslate nohighlight">\([a, b]\)</span>.</p></li>
+<li><p>The second
+<span class="math notranslate nohighlight">\(\displaystyle \frac{e^{k (t_i - a)} - 1}{k}\)</span>
+depends on <span class="math notranslate nohighlight">\(t\)</span>, and</p></li>
+<li><p>The third is <span class="math notranslate nohighlight">\(h\)</span>, showing the overall order of accuracy: the overall absolute error is <span class="math notranslate nohighlight">\(O(h)\)</span>, so first order.</p></li>
+</ul>
+</section>
+<section id="a-more-general-error-bound">
+<h3>A more general error bound<a class="headerlink" href="#a-more-general-error-bound" title="Permalink to this headline">#</a></h3>
+<p>A very similar result applies to the solution <span class="math notranslate nohighlight">\(u(t; a, u_0)\)</span> of the more general initial value problem</p>
+<div class="math notranslate nohighlight">
+\[ \frac{du}{dt} = f(t, u), \quad u(a) = u_0 \]</div>
+<p>so long as the function <span class="math notranslate nohighlight">\(f\)</span> is “somewhat well-behaved” in that it satisfies a so-called <em>Lipschitz Condition</em>:
+that there is some constant <span class="math notranslate nohighlight">\(K\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[ \left| \frac{\partial F}{\partial u}(t, u) \right| \leq K  \]</div>
+<p>for the relevant time values <span class="math notranslate nohighlight">\(a \leq t \leq b\)</span>.</p>
+<p>(<strong>Aside:</strong> As you might have seen in a course on differential equations, such a Lipschitz condition is necessary to even guarantee that the initial value problem has a unique solution, so it is a quite reasonable requirement.)</p>
+<p>Then this constant <span class="math notranslate nohighlight">\(K\)</span> plays the part of the exponential growth factor <span class="math notranslate nohighlight">\(k\)</span> above:</p>
+<p>first one shows that the local trunction error is bounded by</p>
+<div class="math notranslate nohighlight">
+\[ |e_i| \leq C h^2 \text{ where now } C := \frac{|u_0 e^{K(b - a)}|}{2}; \]</div>
+<p>then calculating as above bounds the global truncation error with</p>
+<div class="math notranslate nohighlight">
+\[
+| E_i | \leq \frac{|u_0 e^{K(b - a)}|}{2} \frac{e^{K (t_i - a)} - 1}{k} h, = O(h)
+\]</div>
+</section>
+<section id="there-is-much-room-for-improvement">
+<h3>There is much room for improvement<a class="headerlink" href="#there-is-much-room-for-improvement" title="Permalink to this headline">#</a></h3>
+<p>As with definite integrals, this is not very impressive, so in the next section on
+<a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html"><span class="doc">Runge-Kutta Methods</span></a>
+we will explore several widely used methods that improve to second order and then fourth order accuracy.
+Later, we will see how to get even higher orders.</p>
+<p>But first, we can illustrate how this exponential growth of errors looks in some examples, and coapr the the better behaved errors in definite integrals.</p>
+<p>This will be done by looking at the effect of a small change in the initial value, to simulate an error that arises there.</p>
+</section>
+<section id="error-propagation-for-ode-integration">
+<h3>Error propagation for <a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-integration">Example 7.1</a><a class="headerlink" href="#error-propagation-for-ode-integration" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mi">2</span><span class="nb">pi</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c"># Original value</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>But now “perturb” the initial value in all cases by this much:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">delta_u_0</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_perturbed</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="o">+</span><span class="n">delta_u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u1</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;The solution before perturbing </span><span class="si">$u</span><span class="s">(0)$ was </span><span class="si">$u</span><span class="s"> = \cos(x)$&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Original exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer before perturbation&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_perturbed</span><span class="p">,</span> <span class="s">&quot;r:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer after perturbation&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_45_0.png" src="../_images/ODE-IVP-1-Euler_45_0.png" />
+</div>
+</div>
+<p>This just shifts all the <span class="math notranslate nohighlight">\(u\)</span> values up by the perturbation of <span class="math notranslate nohighlight">\(u_0\)</span>.</p>
+</section>
+<section id="error-propagation-for-ode-simplest-genuine">
+<h3>Error propagation for <a class="reference internal" href="ODE-IVP-0-background-examples.html#ode-simplest-genuine">Example 7.2</a><a class="headerlink" href="#error-propagation-for-ode-simplest-genuine" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">k</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">a</span> <span class="o">=</span> <span class="mf">0.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">1.0</span>  <span class="c"># Original value</span>
+<span class="n">delta_u_0</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_perturbed</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f2</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span> <span class="o">+</span> <span class="n">delta_u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+<span class="n">u</span> <span class="o">=</span> <span class="n">u2</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="sa">L</span><span class="s">&quot;The solution before perturbing </span><span class="si">$u</span><span class="s">(0)$ was </span><span class="si">$u</span><span class="s"> = {u_0} \, \exp({k} \, t)$&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Original exact solution&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:b&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer before perturbation&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_perturbed</span><span class="p">,</span> <span class="s">&quot;.:r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Euler&#39;s answer after perturbation&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_48_0.png" src="../_images/ODE-IVP-1-Euler_48_0.png" />
+</div>
+</div>
+<p>Graphing the error shows its exponential growth:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span> <span class="o">-</span> <span class="n">U_perturbed</span><span class="p">,</span> <span class="s">&quot;.:&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/ODE-IVP-1-Euler_50_0.png" src="../_images/ODE-IVP-1-Euler_50_0.png" />
+</div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-1"></a></p>
+<section id="exercise-1">
+<h3>Exercise 1<a class="headerlink" href="#exercise-1" title="Permalink to this headline">#</a></h3>
+<p>Show that for the integration case <span class="math notranslate nohighlight">\(f(t, u) = f(t)\)</span>,
+<a class="reference external" href="#eulers-method">Euler’s Method</a>
+is the same as the Composite Left-hand Endpoint Rule,
+as in the section <a class="reference internal" href="integrals-2-composite-rules.html"><span class="doc">Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules</span></a></p>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="ODE-IVP-0-background-examples.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">7.1. </span>Background and Some Examples</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="ODE-IVP-2-Runge-Kutta.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7.3. </span>Runge-Kutta Methods</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

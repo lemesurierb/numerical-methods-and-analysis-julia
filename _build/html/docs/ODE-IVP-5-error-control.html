@@ -1,0 +1,1466 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>7.6. Error Control and Variable Step Sizes &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="7.7. An Introduction to Multistep Methods" href="ODE-IVP-6-multi-step-methods-introduction.html" />
+    <link rel="prev" title="7.5. Systems of ODEs and Higher Order ODEs" href="ODE-IVP-4-system-higher-order-equations.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/ODE-IVP-5-error-control.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/ODE-IVP-5-error-control.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-basic-ode-initial-value-problem">
+   The Basic ODE Initial Value Problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-control-by-varying-the-time-step-size-h-i">
+   Error Control by Varying the Time Step Size
+   <span class="math notranslate nohighlight">
+    \(h_i\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-crude-error-estimate-for-euler-s-method-richardson-extrapolation">
+   A crude error estimate for Euler’s Method: Richardson Extrapolation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-size-choice">
+     Step size choice
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-tolerance">
+     Error tolerance
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-crude-approach-to-reducing-the-step-size-when-needed">
+     A crude approach to reducing the step size when needed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#increasing-the-step-size-when-desirable">
+     Increasing the step size when desirable
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#another-strategy-for-getting-error-estimates-two-related-runge-kutta-methods">
+   Another strategy for getting error estimates: two (related) Runge-Kutta methods
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-explicit-trapezoid-method-with-error-control">
+   The explicit trapezoid method with error control
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-size-adjustment">
+     Step size adjustment
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#fourth-order-accurate-methods-with-error-control-runge-kutta-felberg-and-some-newer-refinements">
+   Fourth order accurate methods with error control: Runge-Kutta-Felberg and some newer refinements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ode-solvers-in-julia-package-differentialequations">
+   ODE solvers in Julia package
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DifferentialEquations
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-using-package-differentialequations">
+     Example using package
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DifferentialEquations
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2">
+     Exercise 2
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-3">
+     Exercise 3
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#partial-solution-to-exercise-2">
+       Partial Solution to Exercise 2
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Error Control and Variable Step Sizes</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-basic-ode-initial-value-problem">
+   The Basic ODE Initial Value Problem
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-control-by-varying-the-time-step-size-h-i">
+   Error Control by Varying the Time Step Size
+   <span class="math notranslate nohighlight">
+    \(h_i\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#a-crude-error-estimate-for-euler-s-method-richardson-extrapolation">
+   A crude error estimate for Euler’s Method: Richardson Extrapolation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-size-choice">
+     Step size choice
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#error-tolerance">
+     Error tolerance
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#a-crude-approach-to-reducing-the-step-size-when-needed">
+     A crude approach to reducing the step size when needed
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#increasing-the-step-size-when-desirable">
+     Increasing the step size when desirable
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#another-strategy-for-getting-error-estimates-two-related-runge-kutta-methods">
+   Another strategy for getting error estimates: two (related) Runge-Kutta methods
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#the-explicit-trapezoid-method-with-error-control">
+   The explicit trapezoid method with error control
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#step-size-adjustment">
+     Step size adjustment
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#fourth-order-accurate-methods-with-error-control-runge-kutta-felberg-and-some-newer-refinements">
+   Fourth order accurate methods with error control: Runge-Kutta-Felberg and some newer refinements
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#ode-solvers-in-julia-package-differentialequations">
+   ODE solvers in Julia package
+   <code class="docutils literal notranslate">
+    <span class="pre">
+     DifferentialEquations
+    </span>
+   </code>
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-using-package-differentialequations">
+     Example using package
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       DifferentialEquations
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#exercises">
+   Exercises
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-1">
+     Exercise 1
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-2">
+     Exercise 2
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#exercise-3">
+     Exercise 3
+    </a>
+    <ul class="nav section-nav flex-column">
+     <li class="toc-h4 nav-item toc-entry">
+      <a class="reference internal nav-link" href="#partial-solution-to-exercise-2">
+       Partial Solution to Exercise 2
+      </a>
+     </li>
+    </ul>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="error-control-and-variable-step-sizes">
+<h1><span class="section-number">7.6. </span>Error Control and Variable Step Sizes<a class="headerlink" href="#error-control-and-variable-step-sizes" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 6.5 <em>Variable Step-Size Methods</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 5.5 <em>Error Control and the Runge-Kutta-Fehlberg Method</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Section 7.3 in <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="the-basic-ode-initial-value-problem">
+<h2>The Basic ODE Initial Value Problem<a class="headerlink" href="#the-basic-ode-initial-value-problem" title="Permalink to this headline">#</a></h2>
+<p>We consider again the initial value problem</p>
+<div class="math notranslate nohighlight">
+\[ \frac{d u}{d t} = f(t, u) \quad a \leq t \leq b, \quad u(a) = u_0 \]</div>
+<p>We now allow the possibility that <span class="math notranslate nohighlight">\(u\)</span> and <span class="math notranslate nohighlight">\(f\)</span> are vector-valued as in the section
+<a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html"><span class="doc">Systems of ODEs and Higher Order ODEs</span></a>,
+but omitting the tilde notation <span class="math notranslate nohighlight">\(\tilde u\)</span>, <span class="math notranslate nohighlight">\(\tilde f\)</span>.</p>
+</section>
+<section id="error-control-by-varying-the-time-step-size-h-i">
+<h2>Error Control by Varying the Time Step Size <span class="math notranslate nohighlight">\(h_i\)</span><a class="headerlink" href="#error-control-by-varying-the-time-step-size-h-i" title="Permalink to this headline">#</a></h2>
+<p>Recall the variable step-size version of Euler’s method:</p>
+<div class="proof algorithm admonition" id="euler-variable-h">
+<p class="admonition-title"><span class="caption-number">Algorithm 7.4 </span></p>
+<section class="algorithm-content" id="proof-content">
+<p>Input: <span class="math notranslate nohighlight">\(f\)</span>, <span class="math notranslate nohighlight">\(a\)</span>, <span class="math notranslate nohighlight">\(b\)</span>, <span class="math notranslate nohighlight">\(n\)</span> <br></p>
+<p><span class="math notranslate nohighlight">\(t_0 = a\)</span>
+<br>
+<span class="math notranslate nohighlight">\(U_0 = u_0\)</span>
+<br>
+<span class="math notranslate nohighlight">\(h = (b-a)/n\)</span>
+<br>
+for i in <span class="math notranslate nohighlight">\([0, n)\)</span>:
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> Choose step size <span class="math notranslate nohighlight">\(h_i\)</span> somehow!
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <span class="math notranslate nohighlight">\(t_{i+1} = t_i + h_i\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\qquad\)</span> <span class="math notranslate nohighlight">\(U_{i+1} = U_i + h_i f(t_i, U_i)\)</span>
+<br>
+end</p>
+</section>
+</div><p>We now consider how to choose each step size, by estimating the error in each step,
+and aiming to have error per unit time below some limit like <span class="math notranslate nohighlight">\(\epsilon/(b-a)\)</span>, so that the global error is no more than about <span class="math notranslate nohighlight">\(\epsilon\)</span>.</p>
+<p>As usual, the theoretical error bounds like <span class="math notranslate nohighlight">\(O(h_i^2)\)</span> for a single step of Euler’s method are not enough for quantitative tasks like choosing <span class="math notranslate nohighlight">\(h_i\)</span>,
+but they do motivate more practical estimates.</p>
+</section>
+<section id="a-crude-error-estimate-for-euler-s-method-richardson-extrapolation">
+<h2>A crude error estimate for Euler’s Method: Richardson Extrapolation<a class="headerlink" href="#a-crude-error-estimate-for-euler-s-method-richardson-extrapolation" title="Permalink to this headline">#</a></h2>
+<p>Starting at a point (t, u(t)), we can estimate the error in Euler’s method approximato at a slightly later time <span class="math notranslate nohighlight">\(t_i + h\)</span> by using two approximations of <span class="math notranslate nohighlight">\(U(t + h)\)</span>:</p>
+<ul class="simple">
+<li><p>The value given by a step of Euler’s method with step size <span class="math notranslate nohighlight">\(h\)</span>: call this <span class="math notranslate nohighlight">\(U^{h}\)</span></p></li>
+<li><p>The value given by taking two steps of Euler’s method each with step size <span class="math notranslate nohighlight">\(h/2\)</span>: call this <span class="math notranslate nohighlight">\(U_2^{h/2}\)</span>,
+because it involves 2 steps of size <span class="math notranslate nohighlight">\(h/2\)</span>.</p></li>
+</ul>
+<p>The first order accuracy of Euler’s method gives <span class="math notranslate nohighlight">\(e_h = u(t+h) - U^{h} \approx 2(u(t+h) - U_2^{h/2})\)</span>,
+so that</p>
+<div class="math notranslate nohighlight">
+\[e_h \approx \frac{U_2^{h/2} - U^{h}}{2}\]</div>
+<section id="step-size-choice">
+<h3>Step size choice<a class="headerlink" href="#step-size-choice" title="Permalink to this headline">#</a></h3>
+<p>What do we do with this error information?</p>
+<p>The first obvious ideas are:</p>
+<ul class="simple">
+<li><p>Accept this step if <span class="math notranslate nohighlight">\(e_h\)</span> is small enough, taking <span class="math notranslate nohighlight">\(h_i = h\)</span>, <span class="math notranslate nohighlight">\(t_{i+1} = t_i + h_i\)</span>, and <span class="math notranslate nohighlight">\(U_{i+1} = U^h\)</span>, but</p></li>
+<li><p>reject it and try again with a smaller <span class="math notranslate nohighlight">\(h\)</span> value otherwise; maybe halving <span class="math notranslate nohighlight">\(h\)</span>; but there are more sophisticated options too.</p></li>
+</ul>
+<p>See <a class="reference internal" href="eigenproblems.html#exercise-1"><span class="std std-ref">Exercise 1</span></a>.</p>
+</section>
+<section id="error-tolerance">
+<h3>Error tolerance<a class="headerlink" href="#error-tolerance" title="Permalink to this headline">#</a></h3>
+<p>One simple criterion for accuracy is that the estimated error in this step be no more than some overall upper limit on the error in each time step, <span class="math notranslate nohighlight">\(T\)</span>.
+That is, accept the step size <span class="math notranslate nohighlight">\(h\)</span> if</p>
+<div class="math notranslate nohighlight">
+\[|e_h| \leq T\]</div>
+</section>
+<section id="a-crude-approach-to-reducing-the-step-size-when-needed">
+<h3>A crude approach to reducing the step size when needed<a class="headerlink" href="#a-crude-approach-to-reducing-the-step-size-when-needed" title="Permalink to this headline">#</a></h3>
+<p>If this error tolerance is not met, we must choose a new step size <span class="math notranslate nohighlight">\(h'\)</span>, and we can predict roughly its error behavior using the known order natue of the error in Euler’s method: scaling dowen to <span class="math notranslate nohighlight">\(h' = s h\)</span>, the error in a single step scales with <span class="math notranslate nohighlight">\(h^2\)</span> (in general it scales with <span class="math notranslate nohighlight">\(h^{p+1}\)</span> for a method of order <span class="math notranslate nohighlight">\(p\)</span>), and so to reduce the error by the needed factor <span class="math notranslate nohighlight">\(\displaystyle \frac{e_h}{T}\)</span> one needs approximately</p>
+<div class="math notranslate nohighlight">
+\[ s^2 = \frac{T}{|e_h|} \]</div>
+<p>and so using <span class="math notranslate nohighlight">\(e_h \approx \tilde{e}_h = |U^{h/2} - U^{h}|\)</span> suggests using</p>
+<div class="math notranslate nohighlight">
+\[ s = \left( \frac{T}{|U^{h/2} - U^{h}|} \right)^{1/2} \]</div>
+<p>However this new step size might have error that is still slightly too large, leading to a second failure.
+Another is that one might get into an infinite loop of step size reduction.</p>
+<p>So refinements of this choice must be considered.</p>
+</section>
+<section id="increasing-the-step-size-when-desirable">
+<h3>Increasing the step size when desirable<a class="headerlink" href="#increasing-the-step-size-when-desirable" title="Permalink to this headline">#</a></h3>
+<p>If we simply follow the above aproach, the step size, once reduced, will never be increased.
+This could lead to great inefficiency, through using an unecessarily small step size just because at an earlier part of the time domain, accuracy required very small steps.</p>
+<p>Thus, after a successful time step, one might consider increasing <span class="math notranslate nohighlight">\(h\)</span> for the next step.
+This could be done using exactly the above formula, but again there are risks, so again refinement of this choice must be considered.</p>
+<p>One problem is that if the step size gets too large, the error estimate can become unreliable; another is that one might need some minimum “temporal resolution”, for nice graphs and such.</p>
+<p>Both suggest imposing an upper limit on the step size <span class="math notranslate nohighlight">\(h\)</span>.</p>
+</section>
+</section>
+<section id="another-strategy-for-getting-error-estimates-two-related-runge-kutta-methods">
+<h2>Another strategy for getting error estimates: two (related) Runge-Kutta methods<a class="headerlink" href="#another-strategy-for-getting-error-estimates-two-related-runge-kutta-methods" title="Permalink to this headline">#</a></h2>
+<p>The recurring strategy of estimating errors by the difference of two different approximations — one expected to be far better than the other — can be used in a nice way here.
+I will first illustrate with the simplest version, using Euler’s Mathod and the Explicit Trapezoid Method.</p>
+<p>Recall that the increment in Euler’s Method from time <span class="math notranslate nohighlight">\(t\)</span> to time <span class="math notranslate nohighlight">\(t+h\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[K_1 = h f(t, U)\]</div>
+<p>whereas for the Explict Trapezoid Method it is <span class="math notranslate nohighlight">\((K_1 + K_2)/2\)</span>, as given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+K_1 &amp;= h f(t, U)
+\\
+K_2 &amp;= h f(t+h, U + K_1)
+\end{split}\end{split}\]</div>
+<p>Thus we can use the difference, <span class="math notranslate nohighlight">\(|K_1 - (K_1 + K_2)/2| = |(K_1 - K_2)/2|\)</span> as an error estimate.
+In fact to be cautious, one often drops the factor of <span class="math notranslate nohighlight">\(1/2\)</span>, so using approximation <span class="math notranslate nohighlight">\(\tilde{e}_h = |K_1 - K_2|\)</span>.</p>
+<p>One has to be careful: this estimates the error in Euler’s Method, and one has to use it that way:
+using the less accurate value <span class="math notranslate nohighlight">\(K_1\)</span> as the update.</p>
+<p>A basic algorithm for the time step starting with <span class="math notranslate nohighlight">\(t_i, U_i\)</span> is</p>
+<div class="proof algorithm admonition" id="choose-step-size-1">
+<p class="admonition-title"><span class="caption-number">Algorithm 7.5 </span></p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(K_1 \leftarrow h f(t_i, U_i)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_2 \leftarrow h f(t_i + h, U_i + K_1)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(e_h \leftarrow |K_1 - K_2|\)</span>
+<br>
+<span class="math notranslate nohighlight">\(s \leftarrow \sqrt{T/e_h}\)</span>
+<br>
+if <span class="math notranslate nohighlight">\(e_h &lt; T\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad U_{i+1} = U_i + K_1\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad t_{i+1} = t_i + h\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> Increase <span class="math notranslate nohighlight">\(h\)</span> for the <em>next</em> time step:
+<br>
+<span class="math notranslate nohighlight">\(\quad h \leftarrow s h\)</span>
+<br>
+else: <span class="math notranslate nohighlight">\(\quad\)</span> (not good enough: reduce <span class="math notranslate nohighlight">\(h\)</span> and try again)
+<br>
+<span class="math notranslate nohighlight">\(\quad h \leftarrow s h\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> Start again from <span class="math notranslate nohighlight">\(K_1 = \dots\)</span>
+<br>
+end</p>
+</section>
+</div><p>However, in practice one needs:</p>
+<ul class="simple">
+<li><p>An upper limit <span class="math notranslate nohighlight">\(h_{max}\)</span> on the step size <span class="math notranslate nohighlight">\(h\)</span>, partly because error estimates become unreliable if <span class="math notranslate nohighlight">\(h\)</span> gets too large,
+and also becuase subsequent use of the results (like graphs) might need sufficiently “fine” data.</p></li>
+<li><p>A lower limit <span class="math notranslate nohighlight">\(h_{max}\)</span> on <span class="math notranslate nohighlight">\(h\)</span>, to avoid infinite loops and such.</p></li>
+<li><p>Since we are using only an approximation <span class="math notranslate nohighlight">\(\tilde{e}_h\)</span> of <span class="math notranslate nohighlight">\(e_h\)</span>, and out of general caution,
+it is typical to include a “safety factor” of about <span class="math notranslate nohighlight">\(0.8\)</span> or <span class="math notranslate nohighlight">\(0.9\)</span>, when computing the <em>next</em> time step: reducing the step size scale factor to <span class="math notranslate nohighlight">\(S = 0.9 \sqrt{T/e_h}\)</span>.</p></li>
+</ul>
+<p>Incorporating these refinements:</p>
+<div class="proof algorithm admonition" id="choose-step-size-2">
+<p class="admonition-title"><span class="caption-number">Algorithm 7.6 </span></p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(K_1 = h f(t_i, U_i)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_2 = h f(t_i+h, U_i + K_1)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(e_{h} = |K_1 - K_2|\)</span>
+<br>
+<span class="math notranslate nohighlight">\(s = 0.9\sqrt{T/e_h}\)</span>
+<br>
+if <span class="math notranslate nohighlight">\(e_h &lt; T\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad U_{i+1} = U_i + K_1\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad t_{i+1} = t_i + h\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> Increase <span class="math notranslate nohighlight">\(h\)</span> for the <em>next</em> time step:
+<br>
+<span class="math notranslate nohighlight">\(\quad h \leftarrow \min(0.9 s h, h_{max})\)</span>
+<br>
+else: <span class="math notranslate nohighlight">\(\quad\)</span> (not good enough; reduce <span class="math notranslate nohighlight">\(h\)</span> and try again)
+<br>
+<span class="math notranslate nohighlight">\(\quad h \leftarrow \max(0.9 s h, h_{min})\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> Start again from <span class="math notranslate nohighlight">\(K_1 = \dots\)</span>
+<br>
+end</p>
+</section>
+</div><p>See <a class="reference internal" href="eigenproblems.html#exercise-2"><span class="std std-ref">Exercise 2</span></a>.</p>
+<p><a name="etmec"></a></p>
+</section>
+<section id="the-explicit-trapezoid-method-with-error-control">
+<h2>The explicit trapezoid method with error control<a class="headerlink" href="#the-explicit-trapezoid-method-with-error-control" title="Permalink to this headline">#</a></h2>
+<p>In practice, one usually needs at least second order accuracy, and one approach to that is using computing a “candidates” for the next time step with a second order accurate Runge-Kutta method and also a third order accurate one, the latter used only to get an error estimate for the former.</p>
+<p>Perhaps the simplest of these is based on adding error estimation to the Explicit Trapezoid Rule.
+Omitting the step size adjustment for now, the main ingredients are:</p>
+<div class="proof algorithm admonition" id="trapezoid-step-size">
+<p class="admonition-title"><span class="caption-number">Algorithm 7.7 </span></p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(K_1 = h f(t, U)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_2 = h f(t + h, U + K_1)\)</span>
+<br>
+(So far, as for the explicit trapezoid method)</p>
+<p><span class="math notranslate nohighlight">\(K_3 = h f(t + h/2, U + (K_1 + K_2)/4)\)</span>
+<br>
+(a midpoint approximation, using the above)</p>
+<p><span class="math notranslate nohighlight">\(\delta_2 = (K_1 + K_2)/2\)</span>
+<br>
+(The order 2 increment as for the explicit trapezoid method)</p>
+<p><span class="math notranslate nohighlight">\(\delta_3 = (K_1 + 4 K_3 + K_2)/6\)</span>
+<br>
+(An order 3 increment — note the resemblance to Simpson’s Rule for integration.
+This is only used to get the final error estimate below)</p>
+<p><span class="math notranslate nohighlight">\(e_h = |\delta_2 - \delta_3 |, \, = |K_1 -2 K_3 + K_2|/3\)</span></p>
+</section>
+</div><p>Again, if this step is accepted, one uses the explicit trapezoid rule step: <span class="math notranslate nohighlight">\(U_{i+1} = U_i + \delta_2\)</span>.</p>
+<section id="step-size-adjustment">
+<h3>Step size adjustment<a class="headerlink" href="#step-size-adjustment" title="Permalink to this headline">#</a></h3>
+<p>The scale factor <span class="math notranslate nohighlight">\(s\)</span> for step size adjustment must be modified for a method order <span class="math notranslate nohighlight">\(p\)</span> (with <span class="math notranslate nohighlight">\(p=2\)</span> now):</p>
+<ul class="simple">
+<li><p>Changing step size by a factor <span class="math notranslate nohighlight">\(s\)</span> will change the error <span class="math notranslate nohighlight">\(e_h\)</span> in a single time step by a factor of about <span class="math notranslate nohighlight">\(s^{p+1}\)</span>.</p></li>
+<li><p>Thus, we want a new step with this rescaled error of about <span class="math notranslate nohighlight">\(s^{p+1} e_h\)</span> roughly matching the tolerance <span class="math notranslate nohighlight">\(T\)</span>.
+Equating would give <span class="math notranslate nohighlight">\(s^{p+1} e_h = T\)</span>, so <span class="math notranslate nohighlight">\(s = (T/e_h))^{1/(p+1)}\)</span>,
+but as noted above, since we are using only an approximation <span class="math notranslate nohighlight">\(\tilde{e}_h\)</span> of <span class="math notranslate nohighlight">\(e_h\)</span>
+it is typical to include a “safety factor” of about <span class="math notranslate nohighlight">\(0.9\)</span>, so something like</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[s = 0.9 \left( \frac{T}{|\tilde{e}_h|} \right)^{1/(p+1)}\]</div>
+<p>Thus for this second order accurate method, we then get</p>
+<div class="math notranslate nohighlight">
+\[s = 0.9 \left( \frac{3 T}{|K_1 -2 K_3 + K_2|} \right)^{1/3}\]</div>
+<p><strong>A variant: relative error control</strong></p>
+<p>One final refinement: it is more common in software to impose a <em>relative error</em> bound: aiming for <span class="math notranslate nohighlight">\(|e_h/u(t)| \leq T\)</span>,
+or <span class="math notranslate nohighlight">\(|e_h| \leq T|u(t)|\)</span>.
+Approximating <span class="math notranslate nohighlight">\(u(t)\)</span> by <span class="math notranslate nohighlight">\(U_i\)</span>, this changes the step size rescaling guideline to</p>
+<div class="math notranslate nohighlight">
+\[s = 0.9 \left| \frac{T U_i}{\tilde{e}_h} \right|^{1/(p+1)}\]</div>
+<p>See <a class="reference internal" href="eigenproblems.html#exercise-3"><span class="std std-ref">Exercise 3</span></a></p>
+</section>
+</section>
+<section id="fourth-order-accurate-methods-with-error-control-runge-kutta-felberg-and-some-newer-refinements">
+<h2>Fourth order accurate methods with error control: Runge-Kutta-Felberg and some newer refinements<a class="headerlink" href="#fourth-order-accurate-methods-with-error-control-runge-kutta-felberg-and-some-newer-refinements" title="Permalink to this headline">#</a></h2>
+<p>The details involve some messy coefficients; see the references above for those.</p>
+<p>The basic idea is to devise a fifth order accurate Runge-Kutta method such that we can also get a fourth order accurate method from the same colection of <em>stages</em> <span class="math notranslate nohighlight">\(K_i\)</span> values.
+One catch is that any such fifth order method requires six stages (not five as you might have guessed).</p>
+<p>The first such method, still widely used, is the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta%E2%80%93Fehlberg_method">Runge-Kutta-Felberg Method</a>
+published by Erwin Fehlberg in 1970:</p>
+<div class="proof algorithm admonition" id="rkf">
+<p class="admonition-title"><span class="caption-number">Algorithm 7.8 </span> (RUnge-Kutta-Fehlberg)</p>
+<section class="algorithm-content" id="proof-content">
+<p><span class="math notranslate nohighlight">\(K_1 = h f(t, U)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_2 = f(t + \frac{1}{4}h, U + K_1/4)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_3 = f(t + \frac{3}{8} h, U + \frac{3}{32} K_1 + \frac{9}{32} K_2)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_4 = f(t + \frac{12}{13} h, U + \frac{1932}{2197} K_1 - \frac{7200}{2197} K_2 + \frac{7296}{2197} K_3)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_5 = f(t + h, U + \frac{439}{216} K_1 - 8  K_2 + \frac{3680}{2565} K_3  - \frac{845}{4104} K_4)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(K_6 = f(t + \frac{1}{2}h, U - \frac{8}{27} K_1 + 2 K_2 - \frac{3544}{513} K_3 + \frac{1859}{4104} K_4 - \frac{11}{40} K_5)\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\delta_4 = \frac{25}{216} K_1 + \frac{1408}{2565} K_3 + \frac{2197}{4104} K_4 - \frac{1}{5} K_5\)</span>
+<br>
+(The order 4 increment that will actually be used)</p>
+<p><span class="math notranslate nohighlight">\(\delta_5 = \frac{16}{135} K_1 + \frac{6656}{12825} K_3 + \frac{28561}{56430} K_4 - \frac{9}{50} K_5  + \frac{2}{55} K_6\)</span>
+<br>
+(The order 5 increment, used only to get the following error estimate)</p>
+<p><span class="math notranslate nohighlight">\(\tilde{e}_h = \frac{1}{360} K_1 - \frac{128}{4275} K_3 + \frac{2197}{75240} K_4 + \frac{1}{50} K_5  + \frac{2}{55} K_6\)</span></p>
+</section>
+</div><p>This method is typically used with the relative error control mentioned above, and since the order is <span class="math notranslate nohighlight">\(p=4\)</span>,
+the recommended step-size rescaling factor is</p>
+<div class="math notranslate nohighlight">
+\[s = 0.9 \left| \frac{T U_i}{\tilde{e}_h} \right|^{1/5},
+= 0.9 \left| \frac{T U_i}{\frac{1}{360} K_1 - \frac{128}{4275} K_3 + \frac{2197}{75240} K_4 + \frac{1}{50} K_5  + \frac{2}{55} K_6} \right|^{1/5},
+\]</div>
+</section>
+<section id="ode-solvers-in-julia-package-differentialequations">
+<h2>ODE solvers in Julia package <code class="docutils literal notranslate"><span class="pre">DifferentialEquations</span></code><a class="headerlink" href="#ode-solvers-in-julia-package-differentialequations" title="Permalink to this headline">#</a></h2>
+<p>Newer software often uses variants such as the
+method of <a class="reference external" href="https://en.wikipedia.org/wiki/Dormand%E2%80%93Prince_method">Dormand–Prince method</a> published in 1980
+or that of Tsitouras published in 2011.</p>
+<p>These (and many others) are available in the Julia package <code class="docutils literal notranslate"><span class="pre">DifferentialEquations</span></code> as <code class="docutils literal notranslate"><span class="pre">DP5</span></code> and <code class="docutils literal notranslate"><span class="pre">Tsit45</span></code> respectively.</p>
+<section id="example-using-package-differentialequations">
+<h3>Example using package <code class="docutils literal notranslate"><span class="pre">DifferentialEquations</span></code><a class="headerlink" href="#example-using-package-differentialequations" title="Permalink to this headline">#</a></h3>
+<p>To be added.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="exercises">
+<h2>Exercises<a class="headerlink" href="#exercises" title="Permalink to this headline">#</a></h2>
+<p><a name="exercise-1"></a></p>
+<section id="exercise-1">
+<h3>Exercise 1<a class="headerlink" href="#exercise-1" title="Permalink to this headline">#</a></h3>
+<p>Write a formula for <span class="math notranslate nohighlight">\(U_h\)</span> and <span class="math notranslate nohighlight">\(e_h\)</span> if one starts from the point <span class="math notranslate nohighlight">\((t_i, U_i)\)</span>, so that <span class="math notranslate nohighlight">\((t_i + h, U^h)\)</span> is the proposed value for the next point <span class="math notranslate nohighlight">\((t_{i+1}, U_{i+1})\)</span> in the approximate solution — but only if <span class="math notranslate nohighlight">\(e_h\)</span> is small enough!</p>
+<p><a name="exercise-2"></a></p>
+</section>
+<section id="exercise-2">
+<h3>Exercise 2<a class="headerlink" href="#exercise-2" title="Permalink to this headline">#</a></h3>
+<p>Implement <a class="reference internal" href="#choose-step-size-2">Algorithm 7.6</a>, and test on the two familiar examples</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+du/dt &amp;= Ku
+\\
+&amp;\text{and}
+\\
+du/dt &amp;= K(\cos(t) - u) - \sin(t)
+\end{split}
+\end{split}\]</div>
+<p>(<span class="math notranslate nohighlight">\(K=1\)</span> is enough.)</p>
+<p><a name="exercise-3"></a></p>
+</section>
+<section id="exercise-3">
+<h3>Exercise 3<a class="headerlink" href="#exercise-3" title="Permalink to this headline">#</a></h3>
+<p>Implement <a class="reference external" href="#etmec">the explicit trapezoid method with error control</a>
+as sketched out in <a class="reference internal" href="#trapezoid-step-size">Algorithm 7.7</a>,
+and test on the two familiar examples</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{split}
+du/dt &amp;= K u
+\\
+&amp;\text{and}
+\\
+du/dt &amp;= K(\cos(t) - u) - \sin(t)
+\end{split}
+\end{split}\]</div>
+<p>(<span class="math notranslate nohighlight">\(K = 1\)</span> is enough.)</p>
+<section id="partial-solution-to-exercise-2">
+<h4>Partial Solution to Exercise 2<a class="headerlink" href="#partial-solution-to-exercise-2" title="Permalink to this headline">#</a></h4>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+<span class="k">using</span> <span class="n">LinearAlgebra</span><span class="o">:</span> <span class="n">norm</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">import</span> <span class="n">Base</span><span class="o">:</span> <span class="n">round</span>
+<span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="o">=</span> <span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">sigdigits</span><span class="o">=</span><span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod_errorcontrol</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">errortolerance</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">h_min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">h_max</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">steps_max</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t_i</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="n">U_i</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="n">t_i</span><span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">U_i</span><span class="p">]</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">h_max</span>  <span class="c"># Start optimistically!</span>
+    <span class="k">while</span> <span class="n">t_i</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="o">&amp;&amp;</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="n">steps_max</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">h</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">t_i</span><span class="p">,</span> <span class="n">U_i</span><span class="p">)</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">h</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">t_i</span> <span class="o">+</span> <span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">U_i</span> <span class="o">+</span> <span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">errorestimate</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">K_1</span> <span class="o">-</span> <span class="n">K_2</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">errortolerance</span><span class="o">/</span><span class="n">errorestimate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">errorestimate</span> <span class="o">&lt;=</span> <span class="n">errortolerance</span>  <span class="c"># Success!</span>
+            <span class="n">t_i</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">U_i</span> <span class="o">+=</span> <span class="n">K_1</span>
+            <span class="n">append!</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t_i</span><span class="p">)</span>
+            <span class="n">append!</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">U_i</span><span class="p">)</span>
+            <span class="c"># Adjust step size up, but not too big</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">h</span><span class="p">,</span> <span class="n">h_max</span><span class="p">)</span>
+        <span class="k">else</span>  <span class="c"># Innacurate; reduce step size and try again</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">h</span><span class="p">,</span> <span class="n">h_min</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">demomode</span>
+                <span class="n">println</span><span class="p">(</span><span class="s">&quot;t_i=</span><span class="si">$t_i</span><span class="s">: Decreasing step size to </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s"> and trying again.&quot;</span><span class="p">)</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="c"># A refinement not mentioned above; the next step should not overshoot t=b:</span>
+        <span class="k">if</span> <span class="n">t_i</span> <span class="o">+</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="n">b</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">t_i</span>
+        <span class="k">end</span>
+        <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+    <span class="c"># Note: if the step count ran out, this does not reach t=b, but at least it is correct as far as it goes</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="n">K</span><span class="o">*</span><span class="n">u</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">u_0</span> <span class="o">=</span> <span class="mf">2.0</span>
+<span class="n">K</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">u</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">=</span> <span class="n">u_0</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">K</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">a</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">errortolerance</span> <span class="o">=</span> <span class="mf">1e-2</span>
+<span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod_errorcontrol</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">errortolerance</span><span class="o">=</span><span class="n">errortolerance</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">time_end</span> <span class="o">-</span> <span class="n">time_start</span>
+
+<span class="n">steps</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">U</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">h_ave</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">steps</span>
+<span class="n">U_exact</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">U_error</span> <span class="o">=</span> <span class="n">U_exact</span> <span class="o">-</span> <span class="n">U</span>
+<span class="n">U_max</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">U_error</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;With error tolerance </span><span class="si">$errortolerance</span><span class="s">, this took </span><span class="si">$steps</span><span class="s"> time steps, of average length </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">h_ave</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The maximum absolute error is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">U_max</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The maximum absolute error per time step is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">U_max</span><span class="o">/</span><span class="n">steps</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The time taken to solve was </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Solution to du/dt=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="s">u, u(</span><span class="si">$a</span><span class="s">)=</span><span class="si">$u_0</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in the above&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_error</span><span class="p">,</span> <span class="s">&quot;.:&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>t_i=1.0: Decreasing step size to 0.09 and trying again.
+
+With error tolerance 0.01, this took 36 time steps, of average length 0.05556
+The maximum absolute error is 0.8311
+The maximum absolute error per time step is 0.02309
+The time taken to solve was 0.1013 seconds
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-5-error-control_37_1.png" src="../_images/ODE-IVP-5-error-control_37_1.png" />
+<img alt="../_images/ODE-IVP-5-error-control_37_2.png" src="../_images/ODE-IVP-5-error-control_37_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">errortolerance</span> <span class="o">=</span> <span class="mf">1e-3</span>
+<span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod_errorcontrol</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">errortolerance</span><span class="o">=</span><span class="n">errortolerance</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">time_end</span> <span class="o">-</span> <span class="n">time_start</span>
+
+<span class="n">steps</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">U</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">h_ave</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">steps</span>
+<span class="n">U_exact</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">U_error</span> <span class="o">=</span> <span class="n">U_exact</span> <span class="o">-</span> <span class="n">U</span>
+<span class="n">U_max</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">U_error</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;With error tolerance </span><span class="si">$errortolerance</span><span class="s">, this took </span><span class="si">$steps</span><span class="s"> time steps, of average length </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">h_ave</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The maximum absolute error is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">U_max</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The maximum absolute error per time step is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">U_max</span><span class="o">/</span><span class="n">steps</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The time taken to solve was </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Solution to du/dt=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="s">u, u(</span><span class="si">$a</span><span class="s">)=</span><span class="si">$u_0</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="s">&quot;.:&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in the above&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_error</span><span class="p">,</span> <span class="s">&quot;.:&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>t_i=1.0: Decreasing step size to 0.02846 and trying again.
+
+With error tolerance 0.001, this took 119 time steps, of average length 0.01681
+The maximum absolute error is 0.2648
+The maximum absolute error per time step is 0.002225
+The time taken to solve was 0.000737 seconds
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-5-error-control_38_1.png" src="../_images/ODE-IVP-5-error-control_38_1.png" />
+<img alt="../_images/ODE-IVP-5-error-control_38_2.png" src="../_images/ODE-IVP-5-error-control_38_2.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">errortolerance</span> <span class="o">=</span> <span class="mf">1e-4</span>
+<span class="n">time_start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span> <span class="o">=</span> <span class="n">eulermethod_errorcontrol</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">errortolerance</span><span class="o">=</span><span class="n">errortolerance</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">time_end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+<span class="n">time_elapsed</span> <span class="o">=</span> <span class="n">time_end</span> <span class="o">-</span> <span class="n">time_start</span>
+
+<span class="n">steps</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">U</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+<span class="n">h_ave</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">steps</span>
+<span class="n">U_exact</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">U_error</span> <span class="o">=</span> <span class="n">U_exact</span> <span class="o">-</span> <span class="n">U</span>
+<span class="n">U_max</span> <span class="o">=</span> <span class="n">norm</span><span class="p">(</span><span class="n">U_error</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">)</span>
+<span class="n">println</span><span class="p">()</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;With error tolerance </span><span class="si">$errortolerance</span><span class="s">, this took </span><span class="si">$steps</span><span class="s"> time steps, of average length </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">h_ave</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The maximum absolute error is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">U_max</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The maximum absolute error per time step is </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">U_max</span><span class="o">/</span><span class="n">steps</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The time taken to solve was </span><span class="si">$</span><span class="p">(</span><span class="n">round</span><span class="p">(</span><span class="n">time_elapsed</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span><span class="s"> seconds&quot;</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Solution to du/dt=</span><span class="si">$</span><span class="p">(</span><span class="n">K</span><span class="p">)</span><span class="s">u, u(</span><span class="si">$a</span><span class="s">)=</span><span class="si">$u_0</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&quot;Error in the above&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U_error</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>t_i=1.0: Decreasing step size to 0.009 and trying again.
+
+With error tolerance 0.0001, this took 380 time steps, of average length 0.005263
+The maximum absolute error is 0.08398
+The maximum absolute error per time step is 0.000221
+The time taken to solve was 0.00068 seconds
+</pre></div>
+</div>
+<img alt="../_images/ODE-IVP-5-error-control_39_1.png" src="../_images/ODE-IVP-5-error-control_39_1.png" />
+<img alt="../_images/ODE-IVP-5-error-control_39_2.png" src="../_images/ODE-IVP-5-error-control_39_2.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="ODE-IVP-4-system-higher-order-equations.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">7.5. </span>Systems of ODEs and Higher Order ODEs</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="ODE-IVP-6-multi-step-methods-introduction.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">7.7. </span>An Introduction to Multistep Methods</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

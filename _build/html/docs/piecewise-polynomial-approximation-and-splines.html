@@ -1,0 +1,1074 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.5. Least-Squares Fitting to Data" href="least-squares-fitting.html" />
+    <link rel="prev" title="4.3. Choosing the collocation points: the Chebyshev method" href="polynomial-collocation-chebychev.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/piecewise-polynomial-approximation-and-splines.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/piecewise-polynomial-approximation-and-splines.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#spline-interpolation">
+   Spline Interpolation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#clamped-splines-and-error-bounds">
+   Clamped Splines and Error Bounds
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-bounds-for-approximation-with-clamped-splines">
+   Error Bounds for Approximation with Clamped Splines
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#hermite-cubic-approximation">
+   Hermite Cubic Approximation
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#spline-interpolation">
+   Spline Interpolation
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#clamped-splines-and-error-bounds">
+   Clamped Splines and Error Bounds
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-bounds-for-approximation-with-clamped-splines">
+   Error Bounds for Approximation with Clamped Splines
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#hermite-cubic-approximation">
+   Hermite Cubic Approximation
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="piecewise-polynomial-approximating-functions-splines-and-hermite-cubics">
+<h1><span class="section-number">4.4. </span>Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics<a class="headerlink" href="#piecewise-polynomial-approximating-functions-splines-and-hermite-cubics" title="Permalink to this headline">#</a></h1>
+<p>Co-authored with Stephen Roberts of the Australian National University.</p>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Sections 3.6, 6.2, 6.4 of <span id="id1">[<a class="reference internal" href="bibliography.html#id3" title="David Kincaid and Ward Chenney. Numerical Analysis. Brooks/Cole, 1990.">Kincaid and Chenney, 1990</a>]</span>.</p></li>
+<li><p>Section 3.4 <em>Cubic Splines</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Sections 3.5 <em>Cubic Spline Interpolation</em> and 3.4 <em>Hermite Interpolation</em> of <span id="id3">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Sections 6.1 and 6.2 of Chapter 6 <em>Spline Functions</em> <span id="id4">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<p>The idea of approximating a function (or interpolating between a set of data
+points) with a function that is piecewise polynomial takes its simplest form
+using <em>continuous piecewise linear functions</em>.
+Indeed, this is the method most commonly used to produce a graph from a large set of data points:
+for example, the command <code class="docutils literal notranslate"><span class="pre">plot</span></code> from <code class="docutils literal notranslate"><span class="pre">matplotlib.pyplot</span></code> (for Python) or <code class="docutils literal notranslate"><span class="pre">PyPlot</span></code> (for Julia) does it.</p>
+<p>The idea is simply to draw straight lines between each successive data point.
+It is worth analysing this simple method before considering more accurate approaches.</p>
+<p>Consider a set of <span class="math notranslate nohighlight">\(n+1\)</span> points <span class="math notranslate nohighlight">\((x_0,y_0),(x_1,y_1),\dots ,(x_n,y_n)\)</span> again,
+this time requiring the <span class="math notranslate nohighlight">\(x\)</span> values to be in increasing order. Then define
+the linear functions</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+L_i(x)=y_i+(x-x_i)\frac{y_{i+1}-y_i}{x_{i+1}-x_i},\quad x_i\leq x\leq
+x_{i+1},\quad 0\leq i&lt;n 
+\end{equation*}\]</div>
+<p>These can be joined together into a continuous function</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+L(x)=L_i(x)\text{ for }x_i\leq x\leq x_{i+1} 
+\end{equation*}\]</div>
+<p>with the values <span class="math notranslate nohighlight">\(L(x_i)=y_i\)</span> at all nodes, so that the definition is consistent at the points where the domains join,
+also guaranteeing continuity.</p>
+<section id="spline-interpolation">
+<span id="id5"></span><h2>Spline Interpolation<a class="headerlink" href="#spline-interpolation" title="Permalink to this headline">#</a></h2>
+<p><strong>Reference:</strong> Section 6.4 of <span id="id6">[<a class="reference internal" href="bibliography.html#id3" title="David Kincaid and Ward Chenney. Numerical Analysis. Brooks/Cole, 1990.">Kincaid and Chenney, 1990</a>]</span>.</p>
+<p>If a piecewise linear approximation is approximated that passes through a given set of <span class="math notranslate nohighlight">\(n+1\)</span> points or <strong>knots</strong></p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+(t_0,y_0),\dots ,(t_n,y_n)
+\end{equation*}\]</div>
+<p>and is linear in each of the <span class="math notranslate nohighlight">\(n\)</span> interval between them, the “smoothest” curve that one can get is the continuous one given by using linear
+interpolation between each consecutive pair of points.
+Less smooth functions are possible, for example the piecewise constant approximation where <span class="math notranslate nohighlight">\(L(x)=y_i\)</span> for <span class="math notranslate nohighlight">\(x_i\leq x&lt;x_{i+1}\)</span>.</p>
+<p>The general strategy of spline interpolation is to approximate with a piecewise polynomial function, with some fixed degree <span class="math notranslate nohighlight">\(k\)</span> for the
+polynomials, and is as smooth as possible at the joins between different polynomials.
+Smoothness is measured by the number of continuous derivatives that the function has, which is only in question at the knots of course.</p>
+<p>The traditional and most important case is that of <strong>cubic splines interpolants</strong>,
+which have the form</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+S(x)=S_i(x),\quad t_i\leq x\leq t_{i+1},\quad 0\leq i&lt;n 
+\end{equation*}\]</div>
+<p>where each <span class="math notranslate nohighlight">\(S_i(x)\)</span> is a cubic and the interpolation conditions are</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+S_i(t_i)=y_i,\quad S_i(t_{i+1})=y_{i+1},\qquad 0\leq i&lt;n 
+\end{equation*}\]</div>
+<p>These conditions automatically give continuity, but leave many degrees of freedom to impose more smoothness.
+Each cubic is described by four coefficients and so there are <span class="math notranslate nohighlight">\(4n\)</span> in all, and the interpolation conditions give only <span class="math notranslate nohighlight">\(2n\)</span> conditions.
+There are <span class="math notranslate nohighlight">\(n-1\)</span> knots where different cubics join, so requiring <span class="math notranslate nohighlight">\(S\)</span> to have continuous first and second derivatives imposes <span class="math notranslate nohighlight">\(2(n-1)\)</span> further conditions for a total of <span class="math notranslate nohighlight">\(4n-2\)</span>.
+This is the best smoothness possible without <span class="math notranslate nohighlight">\(S(x)\)</span> becoming a single cubic, and leaves two degrees of freedom.
+These will be dealt with later, but one approach is imposing zero second derivatives at each end of the interval.</p>
+<p>Thus we have the equations</p>
+<div class="math notranslate nohighlight">
+\[S_{i-1}^{\prime }(t_i) = S^{\prime }(t_i)\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[S_{i-1}^{\prime \prime }(t_i) = S^{\prime \prime }(t_i),\]</div>
+<p><span class="math notranslate nohighlight">\(1\leq i\leq n-1\)</span>.</p>
+<p>The brute force method would be to write something like</p>
+<div class="math notranslate nohighlight">
+\[S_i(x)=a_ix^3+b_ix^2+c_ix+d_i\]</div>
+<p>which would leave to a set of <span class="math notranslate nohighlight">\(4n\)</span> simultaneous linear equations for these <span class="math notranslate nohighlight">\(4n\)</span> unknowns once the two missing conditions have been chosen.</p>
+<p>This could then be solved numerically, but the size and cost of the problem can be considerably reduced, to a tridiagonal system of <span class="math notranslate nohighlight">\(n-1\)</span> equations.</p>
+<p>Start by considering the second derivative of <span class="math notranslate nohighlight">\(S(x)\)</span>, which must be continuous and piecewise linear.
+Its values at the knots can be called <span class="math notranslate nohighlight">\(x_i=S_i^{\prime \prime }(t_i)\)</span> and the lengths of the interval called
+<span class="math notranslate nohighlight">\(h_i=x_{i+1}-x_i\)</span> so that</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+S_i^{\prime \prime }(x)=\frac{z_i}{h_i}(t_{i+1}-x)+\frac{z_{i+1}}{h_i}(x-t_i)
+\end{equation*}\]</div>
+<p>Integrating twice,</p>
+<div class="math notranslate nohighlight">
+\[ S_i(x)=\frac{z_i}{6h_i}(t_{i+1}-x)^3+\frac{z_{i+1}}{6h_i} (x-t_i)^3+C_i(t_{i+1}-x)+D_i(x-t_i) \]</div>
+<p>The interpolation conditions then determine <span class="math notranslate nohighlight">\(C_i\)</span> and <span class="math notranslate nohighlight">\(D_i\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-spline-evaluate">
+<span class="eqno">(4.9)<a class="headerlink" href="#equation-spline-evaluate" title="Permalink to this equation">#</a></span>\[S_i(x) = \frac{z_i}{6h_i}(t_{i+1}-x)^3+\frac{z_{i+1}}{6h_i}(x-t_i)^3 
++ \left( \frac{y_i}{h_i}-\frac{z_ih_i}6\right) (t_{i+1}-x)+\left( \frac{y_{i+1}}{h_i}-\frac{z_{i+1}h_i}6\right) (x-t_i)
+\]</div>
+<p>In effect, three quarters of the equations have been solved explicitly,
+leaving only the <span class="math notranslate nohighlight">\(z_i\)</span> to be determined using the remaining condition of the continuity of <span class="math notranslate nohighlight">\(S^{\prime }(x)\)</span>.</p>
+<p>Differentiating the above expression and evaluating at the appropriate points gives the expressions</p>
+<div class="math notranslate nohighlight" id="equation-spline-1">
+<span class="eqno">(4.10)<a class="headerlink" href="#equation-spline-1" title="Permalink to this equation">#</a></span>\[S_i^{\prime }(t_i) = -\frac{h_i}3z_i-\frac{h_i}6z_{i+1}-\frac{y_i}{h_i}+ \frac{y_{i+1}}{h_i}
+\]</div>
+<div class="math notranslate nohighlight" id="equation-spline-2">
+<span class="eqno">(4.11)<a class="headerlink" href="#equation-spline-2" title="Permalink to this equation">#</a></span>\[S_{i-1}^{\prime }(t_i) = -\frac{h_{i-1}}6z_{i-1}+\frac{h_{i-1}}3z_i-\frac{y_{i-1}}{h_{i-1}}+\frac{y_i}{h_{i-1}}
+\]</div>
+<p>Equating these at the internal knots (and simplifying a bit) gives</p>
+<div class="math notranslate nohighlight" id="equation-derivative-match">
+<span class="eqno">(4.12)<a class="headerlink" href="#equation-derivative-match" title="Permalink to this equation">#</a></span>\[
+h_{i-1}z_{i-1}+2(h_i+h_{i-1})z_i+h_iz_{i+1}=\frac 6{h_i}(y_{i+1}-y_i)-\frac
+6{h_{i-1}}(y_i-y_{i-1})
+\]</div>
+<p>These are <span class="math notranslate nohighlight">\(n-1\)</span> linear equations in the <span class="math notranslate nohighlight">\(n+1\)</span> unknowns <span class="math notranslate nohighlight">\(z_i\)</span>, so various different cubic spline interpolants can be constructed by adding two extra conditions in the form of two more linear equations.
+The traditional way is the one mentioned above: require the second derivative to vanish at the two endpoints.
+That is</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+S^{\prime\prime}(t_0) = S^{\prime\prime}(t_n) = 0 
+\end{equation*}\]</div>
+<p>which gives a <strong>natural spline</strong>.</p>
+<p>In terms of the <span class="math notranslate nohighlight">\(z_i\)</span> this gives the trivial equations <span class="math notranslate nohighlight">\(z_0 = z_n = 0\)</span>.
+Thus these two unknowns can be eliminated from the equations in <a class="reference internal" href="#equation-derivative-match">(4.12)</a> giving the following tridiagonal system:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+&amp;&amp;\left[ 
+\begin{array}{cccc}
+2(h_0+h_1) &amp; {h_1} &amp;  &amp;  \\ 
+h_1 &amp; 2(h_1+h_2) &amp; \ddots  &amp;  \\ 
+&amp; \ddots  &amp; \ddots  &amp; h_{n-2} \\ 
+&amp;  &amp; h_{n-2} &amp; 2(h_{n-2}+h_{n-1})
+\end{array}
+\right] \left[ 
+\begin{array}{c}
+z_1 \\ 
+z_2 \\ 
+\vdots  \\ 
+z_{n-1}
+\end{array}
+\right]  \\
+&amp;=&amp;\left[ 
+\begin{array}{c}
+6((y_2-y_1)/h_1-(y_1-y_0)/{h_0}) \\ 
+6((y_3-y_2)/{h_2}-(y_2-y_1)/{h_1}) \\ 
+\vdots  \\ 
+6((y_n-y_{n-1})/{h_{n-1}}-(y_{n-1}-y_{n-2})/{h_{n-2}}))
+\end{array}
+\right] 
+\end{eqnarray*}\]</div>
+<p>Solving tridiagonal systems is far more efficient if it can be done without pivoting by the method seen earlier,
+and this is a good method if the matrix is diagonally dominant.</p>
+<p>That is true here: recalling that the <span class="math notranslate nohighlight">\(t_i\)</span> are in increasing order, each <span class="math notranslate nohighlight">\(h_i\)</span> is positive,
+so each diagonal element is at least twice the sum of the absolute values of all other elements in the same row.
+This result incidentally also shows that the equations have a unique solution,
+which means that the natural cubic spline exists and is determined uniquely by the data,
+requiring about <span class="math notranslate nohighlight">\(O(n)\)</span> operations.</p>
+<p>Evaluation of <span class="math notranslate nohighlight">\(S(x)\)</span> is then done by finding the <span class="math notranslate nohighlight">\(i\)</span> such that <span class="math notranslate nohighlight">\(t_i \leq x &lt; t_{i+1}\)</span>
+and then evaluating the appropriate case in <a class="reference internal" href="#equation-spline-evaluate">(4.9)</a>.</p>
+</section>
+<section id="clamped-splines-and-error-bounds">
+<span id="clampled-splines"></span><h2>Clamped Splines and Error Bounds<a class="headerlink" href="#clamped-splines-and-error-bounds" title="Permalink to this headline">#</a></h2>
+<p><strong>Reference:</strong> Section 3.6 of <span id="id7">[<a class="reference internal" href="bibliography.html#id3" title="David Kincaid and Ward Chenney. Numerical Analysis. Brooks/Cole, 1990.">Kincaid and Chenney, 1990</a>]</span>.</p>
+<p>Though the algorithm for natural cubic spline interpolation is widely available in software
+[TO DO: add Numpy/Julia references]
+it is worth knowing the details.
+In particular, it is then easy to consider minor changes, like different conditions at the end points.</p>
+<p>Recall that the <strong>natural</strong> or <strong>free</strong> spline has the boundary conditions</p>
+<div class="math notranslate nohighlight" id="equation-natural">
+<span class="eqno">(4.13)<a class="headerlink" href="#equation-natural" title="Permalink to this equation">#</a></span>\[
+S^{\prime\prime}(t_0) = S^{\prime\prime}(t_n) = 0
+\]</div>
+<p>When the spline is to be used to approximate a function <span class="math notranslate nohighlight">\(f(x)\)</span> one useful
+alternative choice of boundary conditions is to specify the derivative of
+the spline function to match that of <span class="math notranslate nohighlight">\(f\)</span> at the endpoints:</p>
+<div class="math notranslate nohighlight" id="equation-clamped">
+<span class="eqno">(4.14)<a class="headerlink" href="#equation-clamped" title="Permalink to this equation">#</a></span>\[S^{\prime}(t_0) = f^{\prime}(t_0), \qquad S^{\prime}(t_n) = f^{\prime}(t_n)\]</div>
+<p>This is called a <strong>clamped spline</strong>.</p>
+<p>When the function <span class="math notranslate nohighlight">\(f\)</span> or its derivatives are not known, they can be approximated from the data itself.
+Thus a generalisation of the last condition is</p>
+<div class="math notranslate nohighlight" id="equation-modified">
+<span class="eqno">(4.15)<a class="headerlink" href="#equation-modified" title="Permalink to this equation">#</a></span>\[S^{\prime}(t_0) = d_0, \qquad S^{\prime}(t_n) = d_n\]</div>
+<p>for some approximations of the derivatives.</p>
+<p>The subject of approximating a function’s derivative using a finite collection of values of the function will be taken up soon in more detail,
+but the simplest approach is to use the difference quotient from the definition of the derivative.
+This gives</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+d_0 &amp;:=&amp; \frac{y_1-y_0}{h_0} = \frac{f(t_1)-f(t_0)}{t_1-t_0} \\
+d_n &amp;:=&amp; \frac{y_n-y_{n-1}}{h_{n-1}} = \frac{f(t_n)-f(t_{n-1})}{t_n-t_{n-1}}
+\end{eqnarray*}\]</div>
+<p>as one choice for the approximate derivatives.</p>
+<p>The cubic splines given by using some such approximate derivatives will be called <strong>modified clamped spline</strong>.</p>
+<p>These new conditions require a revision of the previous algorithm,
+but one benefit is that there is a better result guaranteeing the accuracy of the approximation.</p>
+<p>To derive the new equations and algorithm for [modified] clamped splines return to
+the equations <a class="reference internal" href="#equation-spline-1">(4.10)</a> and <a class="reference internal" href="#equation-spline-2">(4.11)</a> used to derive the equation <a class="reference internal" href="#equation-derivative-match">(4.12)</a> that
+defines the tridiagonal system of <span class="math notranslate nohighlight">\(n-1\)</span> equations for the second derivatives <span class="math notranslate nohighlight">\(z_1,\dots ,z_{n-1}\)</span>.</p>
+<p>Instead of eliminating the two unknowns <span class="math notranslate nohighlight">\(z_0\)</span> and <span class="math notranslate nohighlight">\(z_n\)</span>, we can add two more linear equations by using those equations
+<a class="reference internal" href="#equation-spline-1">(4.10)</a> and <a class="reference internal" href="#equation-spline-2">(4.11)</a> respectively at <span class="math notranslate nohighlight">\(t_0\)</span> and <span class="math notranslate nohighlight">\(t_n\)</span> [i.e. for <span class="math notranslate nohighlight">\(i=0\)</span> and <span class="math notranslate nohighlight">\(i=n\)</span>]
+and equating to the values to whatever <span class="math notranslate nohighlight">\(d_0\)</span> and <span class="math notranslate nohighlight">\(d_n\)</span> we are using:</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+S^{\prime }(t_0) &amp;=&amp;S_0^{\prime }(t_0) \\
+&amp;=&amp;-\frac{h_0}3z_0-\frac{h_0}6z_1-\frac{y_0}{h_0}+\frac{y_1}{h_0} \\
+&amp;=&amp;d_0 \\
+S^{\prime }(t_n) &amp;=&amp;S_{n-1}^{\prime }(t_n) \\
+&amp;=&amp;\frac{h_{n-1}}6z_{n-1}+\frac{h_{n-1}}3z_n-\frac{y_{n-1}}{h_{n-1}}+\frac{%
+y_n}{h_{n-1}} \\
+&amp;=&amp;d_n
+\end{eqnarray*}\]</div>
+<p>In conjunction with equation <a class="reference internal" href="#equation-derivative-match">(4.12)</a>, this gives the new tridiagonal system</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+&amp;&amp;\left[ 
+\begin{array}{ccccc}
+2{h_0} &amp; {h_0} &amp;  &amp;  &amp;  \\ 
+h_0 &amp; 2(h_0+h_1) &amp; h_1 &amp;  &amp;  \\ 
+&amp; \ddots  &amp; \ddots  &amp; \ddots  &amp;  \\ 
+&amp;  &amp; h_{n-2} &amp; 2(h_{n-2}+h_{n-1}) &amp; h_{n-1} \\ 
+&amp;  &amp;  &amp; {h_{n-1}} &amp; 2{h_{n-1}}
+\end{array}
+\right] \left[ 
+\begin{array}{c}
+z_0 \\ 
+z_1 \\ 
+\vdots  \\ 
+z_{n-1} \\ 
+z_n
+\end{array}
+\right]  \\
+&amp;=&amp;\left[ 
+\begin{array}{c}
+6\left( (y_1-y_0)/h_0-d_0\right)  \\ 
+6((y_2-y_1)/h_1-(y_1-y_0)/h_1) \\ 
+\vdots  \\ 
+6((y_n-y_{n-1})/h_{n-1}-(y_{n-1}-y_{n-2})/h_{n-2}) \\ 
+6\left( d_n-(y_n-y_{n-1})/h_{n-1}\right) 
+\end{array}
+\right] 
+\end{eqnarray*}\]</div>
+<p>As in the case of the tridiagonal system for natural splines, the rows of the matrix also satisfy the condition of diagonal dominance,
+so again this system has a unique solution that can be computed accurately with only <span class="math notranslate nohighlight">\(O(n)\)</span> operations and no pivoting.</p>
+</section>
+<section id="error-bounds-for-approximation-with-clamped-splines">
+<span id="clamped-spline-error-bounds"></span><h2>Error Bounds for Approximation with Clamped Splines<a class="headerlink" href="#error-bounds-for-approximation-with-clamped-splines" title="Permalink to this headline">#</a></h2>
+<p>If the exact derivatives mentioned in <a class="reference internal" href="#equation-clamped">(4.14)</a> are available, the errors are bounded as follows</p>
+<div class="proof theorem admonition" id="error-bounds-clamped-splines">
+<p class="admonition-title"><span class="caption-number">Theorem 4.5 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>Suppose that <span class="math notranslate nohighlight">\(f(x)\)</span> is four times continuously differentiable on the interval <span class="math notranslate nohighlight">\([a,b]\)</span>,
+with <span class="math notranslate nohighlight">\(\max_{a\leq x\leq b}|f^{(4)}(x)|\leq M\)</span>.
+Then the clamped cubic spline approximation <span class="math notranslate nohighlight">\(S(x)\)</span> using the points
+<span class="math notranslate nohighlight">\(a=t_0&lt;t_1&lt;\dots &lt;t_n=b\)</span> and <span class="math notranslate nohighlight">\(y_i=f(t_i)\)</span> satisfies</p>
+<div class="math notranslate nohighlight">
+\[|f(x)-S(x)|\leq M\frac 5{384}\left( \max_{0\leq i\leq n-1}h_i\right) ^4\]</div>
+<p>for every point <span class="math notranslate nohighlight">\(x\in [a,b]\)</span>.</p>
+</section>
+</div><p>There is also an error bound of the same “fourth order” form for the natural cubic spline-
+that is, one of the form of some constant depending on  <span class="math notranslate nohighlight">\(f\)</span> times the fourth power of <span class="math notranslate nohighlight">\(\max_{0\leq i\leq n-1}h_i\)</span>.
+However it is far more complicated to describe:
+see page 138 of <a class="reference external" href="../doc/references.html#Burden-Faires">Burden and Faires</a> for more comments on this.</p>
+<p>When we have studied methods for approximating derivatives,
+it will be possible to establish error bounds for modified clamped splines with various approximations for the derivatives at the endpoints,
+so that they depend only on the values of <span class="math notranslate nohighlight">\(f\)</span> at the knots.
+With care, these more practical approximations can also be made fourth order accurate.</p>
+</section>
+<section id="hermite-cubic-approximation">
+<span id="hermite-cubic-appromimation"></span><h2>Hermite Cubic Approximation<a class="headerlink" href="#hermite-cubic-approximation" title="Permalink to this headline">#</a></h2>
+<p><strong>Reference:</strong> Section 6.2 of <span id="id8">[<a class="reference internal" href="bibliography.html#id3" title="David Kincaid and Ward Chenney. Numerical Analysis. Brooks/Cole, 1990.">Kincaid and Chenney, 1990</a>]</span>.</p>
+<p>Hermite interpolation in general consists in finding a polynomial <span class="math notranslate nohighlight">\(H(x)\)</span> to approximate a function <span class="math notranslate nohighlight">\(f(x)\)</span> by giving a set of points
+<span class="math notranslate nohighlight">\(t_0,\dots ,t_n\)</span> and requiring that the value of the polynomial and its first few derivatives match that of the original function.</p>
+<p>The simplest case that is not simply polynomial interpolation or Taylor polynomial approximation is where there are two points, and first
+derivatives are required to match.
+This gives four conditions</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+H(t_0) &amp;=&amp;f(t_0)=y_0,H^{\prime }(t_0)=f^{\prime }(t_0)=y_0^{\prime } \\
+H(t_1) &amp;=&amp;f(t_1)=y_1,H^{\prime }(t_1)=f^{\prime }(t_1)=y_0^{\prime }
+\end{eqnarray*}\]</div>
+<p>and counting constants suggests that there should be a unique cubic <span class="math notranslate nohighlight">\(h\)</span> with these properties.
+From now on, I will use “cubic” to include the degenerate cases that are actually quadratics and so on.</p>
+<p>To determine this cubic it is convenient to put it in the form</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+H(x)=a+b(x-t_0)+(x-t_0)^2[c+d(x-t_{i+1})]
+\end{equation*}\]</div>
+<p>and let <span class="math notranslate nohighlight">\(h=t_1-t_0\)</span>: then applying the four conditions in turn gives</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+a &amp;=&amp;y_0,\qquad b=y_0^{\prime } \\
+c &amp;=&amp;\frac{y_1-y_0}{h^2}-\frac{y_0^{\prime }}h,\qquad d=\frac{y_1^{\prime
+}-y_0^{\prime }}{3h^2}-\frac{2(y_1-y_0)}{3h^3}
+\end{eqnarray*}\]</div>
+<p>With more points, one could look for higher order polynomials,
+but it is useful in some cases to construct a piecewise cubic approximation,
+with the cubic between each consecutive pair of nodes determined only by the value of the function and its derivative at those nodes.
+Thus the piecewise Hermite cubic approximation to <span class="math notranslate nohighlight">\(f\)</span> on the interval <span class="math notranslate nohighlight">\([a,b]\)</span> for the points
+<span class="math notranslate nohighlight">\(a=t_0&lt;t_1&lt;\dots &lt;t_n\)</span> is given by a set of <span class="math notranslate nohighlight">\(n\)</span> cubics</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+H(x)=H_i(x)=a_i+b_i(x-t_i)+(x-t_i)^2[c_i+d_i(x-t_{i+1})],\quad t_i\leq
+x&lt;t_{i+1} 
+\end{equation*}\]</div>
+<p>with</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{eqnarray*}
+a_i &amp;=&amp;y_i,\qquad b_i=y_i^{\prime } \\
+c_i &amp;=&amp;\frac{y_{i+1}-y_i}{h_i^2}-\frac{y_i^{\prime }}{h_i} \\
+d_i &amp;=&amp;\frac{y_{i+1}^{\prime }-y_i^{\prime }}{3h_i^2}-\frac{2(y_{i+1}-y_i)}{3h_i^3}
+\end{eqnarray*}\]</div>
+<p>where <span class="math notranslate nohighlight">\(y_i:=f(t_i)\)</span>, <span class="math notranslate nohighlight">\(y_i^{\prime }:=f^{\prime }(t_i)\)</span> and <span class="math notranslate nohighlight">\(h_i:=t_{i+1}-t_i\)</span>.
+Most often, the points are equally spaced so that</p>
+<div class="amsmath math notranslate nohighlight">
+\[\begin{equation*}
+h_i-h:=(b-a)/n. 
+\end{equation*}\]</div>
+<p>There is an error formula for this (which is also an error formula for a clamped spline in the case <span class="math notranslate nohighlight">\(n=1\)</span>)</p>
+<div class="proof theorem admonition" id="error-bounds-hermite-cubics">
+<p class="admonition-title"><span class="caption-number">Theorem 4.6 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>For <span class="math notranslate nohighlight">\(x\in [t_t,t_{i+1}]\)</span></p>
+<div class="math notranslate nohighlight">
+\[f(x)-H(x)=\frac{f^{(4)}(\xi )}{4!}[(x-t_i)(x-t_{i+1})]^2\]</div>
+<p>where <span class="math notranslate nohighlight">\(\xi \in [t_t,t_{i+1}]\)</span> Thus if <span class="math notranslate nohighlight">\(|f^{(4)}(x)|\leq M_i\)</span> for <span class="math notranslate nohighlight">\(x \in [t_t,t_{i+1}]\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\left| f(x)-H(x)\right| \leq \frac{M_i}{384}h_i^4\]</div>
+</section>
+</div><div class="proof admonition" id="proof">
+<p>Proof. See page 311 of <span id="id9">[<a class="reference internal" href="bibliography.html#id3" title="David Kincaid and Ward Chenney. Numerical Analysis. Brooks/Cole, 1990.">Kincaid and Chenney, 1990</a>]</span>.</p>
+</div>
+<p>Thus the accuracy is about as good as for clamped splines:
+the trade off is that the Hermite approximation is less smooth (only one continuous derivative at the nodes), but the error is “localised”.
+That is, if the fourth derivative of <span class="math notranslate nohighlight">\(f\)</span> is large or non-existent in one interval,
+the accuracy of the Hermite approximation only suffers in that interval, not over the whole domain.</p>
+<p>However this comparison is a bit unfair, as the Hermite approximation uses the extra information about the derivatives of <span class="math notranslate nohighlight">\(f\)</span>.
+This is also often impractical: either the derivatives are not known, or there is no known function <span class="math notranslate nohighlight">\(f\)</span> but only a collection of values <span class="math notranslate nohighlight">\(y_i\)</span>.</p>
+<p>To overcome this problem, the derivatives needed in the above formulas can be approximated from the <span class="math notranslate nohighlight">\(y_i\)</span> as was done for modified clamped splines.
+To do this properly, it is worth taking a thorough look at methods for approximating derivatives and bounding the accuracy of such approximations.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="polynomial-collocation-chebychev.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">4.3. </span>Choosing the collocation points: the Chebyshev method</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="least-squares-fitting.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">4.5. </span>Least-Squares Fitting to Data</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

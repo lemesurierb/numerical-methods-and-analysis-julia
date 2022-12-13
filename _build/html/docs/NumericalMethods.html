@@ -1,0 +1,1815 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>9.3. Module NumericalMethods &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="9.2. Notes on the Julia Language" href="julia-language-notes.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/NumericalMethods.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/NumericalMethods.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#root-finding">
+   Root-finding
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#newton-s-method">
+     Newton’s method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-secant-method">
+     The secant method
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#linear-algebra-and-simultaneous-equations">
+   Linear Algebra and Simultaneous Equations
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#row-reduction">
+     Row Reduction
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#backward-substitution">
+     Backward substitution
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solve-a-linear-system-no-pivoting">
+     Solve a linear system (no pivoting)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#lu-factorization">
+     LU factorization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#forward-substitution">
+     Forward substitution
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plu-factorization">
+     PLU factorization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#forward-substitution-with-pivoting">
+     Forward substitution with pivoting
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#collocation-and-data-fitting">
+   Collocation and Data Fitting
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#polynomial-collocation">
+     Polynomial collocation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#least-squares-polynomial-approximation">
+     Least squares polynomial approximation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#evaluate-a-polynomial">
+     Evaluate a polynomial
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#derivatives-and-definite-integrals">
+   Derivatives and Definite Integrals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#minimization">
+   Minimization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#differential-equations">
+   Differential Equations
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#euler-s-method">
+     Euler’s method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-explicit-trapezoid-method">
+     The explicit trapezoid method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-explicit-midpoint-method">
+     The explicit midpoint method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-runge-kutta-method">
+     The Runge-Kutta method
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#some-auxilliary-functions">
+   Some auxilliary functions
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#helper-function-printmatrix">
+     Helper function
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       printmatrix
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#for-some-examples-in-chapter-ode-ivps">
+   For some examples in Chapter
+   <span class="xref std std-doc">
+    ODE-IVPs
+   </span>
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Module NumericalMethods</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#root-finding">
+   Root-finding
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#newton-s-method">
+     Newton’s method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-secant-method">
+     The secant method
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#linear-algebra-and-simultaneous-equations">
+   Linear Algebra and Simultaneous Equations
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#row-reduction">
+     Row Reduction
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#backward-substitution">
+     Backward substitution
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#solve-a-linear-system-no-pivoting">
+     Solve a linear system (no pivoting)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#lu-factorization">
+     LU factorization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#forward-substitution">
+     Forward substitution
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#plu-factorization">
+     PLU factorization
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#forward-substitution-with-pivoting">
+     Forward substitution with pivoting
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#collocation-and-data-fitting">
+   Collocation and Data Fitting
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#polynomial-collocation">
+     Polynomial collocation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#least-squares-polynomial-approximation">
+     Least squares polynomial approximation
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#evaluate-a-polynomial">
+     Evaluate a polynomial
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#derivatives-and-definite-integrals">
+   Derivatives and Definite Integrals
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#minimization">
+   Minimization
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#differential-equations">
+   Differential Equations
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#euler-s-method">
+     Euler’s method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-explicit-trapezoid-method">
+     The explicit trapezoid method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-explicit-midpoint-method">
+     The explicit midpoint method
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-runge-kutta-method">
+     The Runge-Kutta method
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#some-auxilliary-functions">
+   Some auxilliary functions
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#helper-function-printmatrix">
+     Helper function
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       printmatrix
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#for-some-examples-in-chapter-ode-ivps">
+   For some examples in Chapter
+   <span class="xref std std-doc">
+    ODE-IVPs
+   </span>
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="module-numericalmethods">
+<h1><span class="section-number">9.3. </span>Module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code><a class="headerlink" href="#module-numericalmethods" title="Permalink to this headline">#</a></h1>
+<p>The following code cells are the content of file <code class="docutils literal notranslate"><span class="pre">NumericalMethods.jl</span></code>, used to define the module <code class="docutils literal notranslate"><span class="pre">NumericalMethods</span></code></p>
+<p>This file exists for two reasons:</p>
+<ol class="simple">
+<li><p>It can be convenient to gather the cells defining various functions for the module in a notebook like this one,
+which allows documentation, and then convert to the the “.jl” file with the JupterLab command
+<br><code class="docutils literal notranslate"><span class="pre">File</span> <span class="pre">&gt;</span> <span class="pre">Save</span> <span class="pre">and</span> <span class="pre">Export</span> <span class="pre">Notebook</span> <span class="pre">As</span> <span class="pre">...</span> <span class="pre">&gt;</span> <span class="pre">Executable</span> <span class="pre">Script</span></code>
+This gathers the contents of the code cells, ignorig any markdown cells.</p></li>
+<li><p>This description of the module’s definitions can be used as a section in a Jupyter Book.</p></li>
+</ol>
+<p>Usage is:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>include(&quot;NumericalMethods.jl&quot;)
+</pre></div>
+</div>
+<p>then</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>using .NumericalMethods
+</pre></div>
+</div>
+<p>or for a particular function, like</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>import .NumericalMethods: newtonmethod
+</pre></div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># Module `NumericalMethods`</span>
+
+<span class="c"># Version of 2022-11-13</span>
+
+<span class="c"># The following code cells are the content of file `NumericalMethods.jl`, used to define the module `NumericalMethods`</span>
+
+<span class="c"># The notebook file version exists for two reasons:</span>
+<span class="c">#</span>
+<span class="c"># 1. It can be convenient to gather the cells defining various functions for the module in a notebook like this one,</span>
+<span class="c">#    which allows documentation, and then convert to the the &quot;.jl&quot; file with the JupterLab command</span>
+<span class="c">#    `File &gt; Save and Export Notebook As ... &gt; Executable Script`</span>
+<span class="c">#</span>
+<span class="c"># This gathers the contents of the code cells, ignorig any markdown cells.</span>
+
+<span class="c"># 2. This description of the module&#39;s definitions can be used as a section in a Jupyter Book.</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">module</span> <span class="n">NumericalMethods</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="root-finding"></a></p>
+<section id="root-finding">
+<h2>Root-finding<a class="headerlink" href="#root-finding" title="Permalink to this headline">#</a></h2>
+<p><a name="newtons-method"></a></p>
+<section id="newton-s-method">
+<h3>Newton’s method<a class="headerlink" href="#newton-s-method" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">newtonmethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">Df</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">maxiterations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Basic usage is:</span>
+    <span class="c"># (rootApproximation, errorEstimate, iterations) = newton(f, Df, x0, errorTolerance)</span>
+    <span class="c"># There is an optional input parameter &quot;demomode&quot; which controls whether to</span>
+    <span class="c"># - println intermediate results (for &quot;study&quot; purposes), or to</span>
+    <span class="c"># - work silently (for &quot;production&quot; use).</span>
+    <span class="c"># The default is silence.</span>
+
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Solving by Newton&#39;s Method.&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;maxiterations = </span><span class="si">$maxiterations</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;errortolerance = </span><span class="si">$errortolerance</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x0</span>
+    <span class="k">global</span> <span class="n">errorestimate</span>  <span class="c"># make it global to this function; without this it would be local to the &quot;for&quot; loop.</span>
+    <span class="k">for</span> <span class="n">iteration</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">maxiterations</span>
+        <span class="n">fx</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">Dfx</span> <span class="o">=</span> <span class="n">Df</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c"># Note: a careful, robust code would check for the possibility of division by zero here,</span>
+        <span class="c"># but for now I just want a simple presentation of the basic mathematical idea.</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="n">fx</span><span class="o">/</span><span class="n">Dfx</span>
+        <span class="n">x</span> <span class="o">-=</span> <span class="n">dx</span>  <span class="c"># Aside: this is shorthand for &quot;x = x - dx&quot;</span>
+        <span class="n">errorestimate</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">dx</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;At iteration </span><span class="si">$iteration</span><span class="s">, x = </span><span class="si">$x</span><span class="s"> with estimated error </span><span class="si">$errorestimate</span><span class="s"> and backward error </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">errorestimate</span> <span class="o">&lt;=</span> <span class="n">errortolerance</span>
+            <span class="k">if</span> <span class="n">demomode</span>
+                <span class="n">println</span><span class="p">(</span><span class="s">&quot;Done!&quot;</span><span class="p">)</span>
+            <span class="k">end</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">errorestimate</span><span class="p">,</span> <span class="n">iteration</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c"># Note: if we get to here (no &quot;return&quot; above), it completed maxIterations iterations without satisfying the accuracy target,</span>
+    <span class="c"># but we still return the information that we have.</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">errorestimate</span><span class="p">,</span> <span class="n">maxiterations</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="secant-method"></a></p>
+</section>
+<section id="the-secant-method">
+<h3>The secant method<a class="headerlink" href="#the-secant-method" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">secantmethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">errortolerance</span><span class="p">;</span> <span class="n">maxiterations</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Solve f(x)=0 in the interval [a, b] by the Secant Method.</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">print</span><span class="p">(</span><span class="s">&quot;Solving by the Secant Method.&quot;</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="c"># Some more descriptive names</span>
+    <span class="n">x_older</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="n">x_more_recent</span> <span class="o">=</span> <span class="n">b</span>
+    <span class="n">f_x_older</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_older</span><span class="p">)</span>
+    <span class="n">f_x_more_recent</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_more_recent</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">iteration</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">maxiterations</span>
+        <span class="k">global</span> <span class="n">x_new</span><span class="p">,</span> <span class="n">errorestimate</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Iteration </span><span class="si">$</span><span class="p">(</span><span class="n">iteration</span><span class="p">)</span><span class="s">:&quot;</span><span class="p">)</span>
+        <span class="k">end</span><span class="p">;</span>
+        <span class="n">x_new</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_older</span> <span class="o">*</span> <span class="n">f_x_more_recent</span> <span class="o">-</span> <span class="n">f_x_older</span> <span class="o">*</span> <span class="n">x_more_recent</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">f_x_more_recent</span> <span class="o">-</span> <span class="n">f_x_older</span><span class="p">)</span>
+        <span class="n">f_x_new</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">x_older</span><span class="p">,</span> <span class="n">x_more_recent</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">x_more_recent</span><span class="p">,</span> <span class="n">x_new</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">f_x_older</span><span class="p">,</span> <span class="n">f_x_more_recent</span><span class="p">)</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_x_more_recent</span><span class="p">,</span> <span class="n">f_x_new</span><span class="p">)</span>
+        <span class="n">errorestimate</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">x_older</span> <span class="o">-</span> <span class="n">x_more_recent</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;The latest pair of approximations are </span><span class="si">$x_older</span><span class="s"> and </span><span class="si">$x_more_recent</span><span class="s">,&quot;</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;where the function&#39;s values are </span><span class="si">$f_x_older</span><span class="s"> and </span><span class="si">$f_x_more_recent</span><span class="s"> respectively.&quot;</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;The new approximation is </span><span class="si">$x_new</span><span class="s"> with estimated error </span><span class="si">$errorestimate</span><span class="s"> and backward error </span><span class="si">$</span><span class="p">(</span><span class="n">abs</span><span class="p">(</span><span class="n">f_x_new</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span><span class="p">;</span>
+        <span class="k">if</span> <span class="n">errorestimate</span> <span class="o">&lt;</span> <span class="n">errortolerance</span>
+            <span class="k">break</span>
+        <span class="k">end</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="c"># Whether we got here due to accuracy of running out of iterations,</span>
+    <span class="c"># return the information we have, including an error estimate:</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x_new</span><span class="p">,</span>  <span class="n">errorestimate</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="linear-algebra"></a></p>
+</section>
+</section>
+<section id="linear-algebra-and-simultaneous-equations">
+<h2>Linear Algebra and Simultaneous Equations<a class="headerlink" href="#linear-algebra-and-simultaneous-equations" title="Permalink to this headline">#</a></h2>
+<p><a name="row-reduction"></a></p>
+<section id="row-reduction">
+<h3>Row Reduction<a class="headerlink" href="#row-reduction" title="Permalink to this headline">#</a></h3>
+<p>(with no pivoting)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="c"># To avoid modifying the matrix and vector specified as input,</span>
+    <span class="c"># they are copied to new arrays, with the function copy().</span>
+    <span class="c"># Warning: it does not work to say &quot;U = A&quot; and &quot;c = b&quot;;</span>
+    <span class="c"># this makes these names synonyms, referring to the same stored data.</span>
+
+    <span class="n">U</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>  <span class="c"># not &quot;U=A&quot;, which makes U and A synonyms</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="c"># compute all the L values for column k:</span>
+            <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>  <span class="c"># Beware the case where U[k,k] is 0</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+                <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">end</span>
+            <span class="c"># Put in the zeros below the main diagonal in column k of U;</span>
+            <span class="c"># this is not important for calculations, since those elements of U are not used in backward substitution,</span>
+            <span class="c"># but it helps for displaying results and for checking the results via residuals.</span>
+            <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+            
+            <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-=</span> <span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span>
+            <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="backward-substitution"></a></p>
+</section>
+<section id="backward-substitution">
+<h3>Backward substitution<a class="headerlink" href="#backward-substitution" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">x</span><span class="p">[</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">c</span><span class="p">[</span><span class="k">end</span><span class="p">]</span><span class="o">/</span><span class="n">U</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;x_</span><span class="si">$n</span><span class="s"> = </span><span class="si">$</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">n</span><span class="p">])</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="o">:-</span><span class="mi">1</span><span class="o">:</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;i=</span><span class="si">$i</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">sum</span><span class="p">(</span><span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">]</span> <span class="o">.*</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">])</span> <span class="p">)</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">print</span><span class="p">(</span><span class="s">&quot;x_</span><span class="si">$i</span><span class="s"> = </span><span class="si">$</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">x</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="solve-linear-system"></a></p>
+</section>
+<section id="solve-a-linear-system-no-pivoting">
+<h3>Solve a linear system (no pivoting)<a class="headerlink" href="#solve-a-linear-system-no-pivoting" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">rowreduce</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span><span class="o">...</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="lu-factorization"></a></p>
+</section>
+<section id="lu-factorization">
+<h3>LU factorization<a class="headerlink" href="#lu-factorization" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">lu_factorize</span><span class="p">(</span><span class="n">A</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Compute the Doolittle LU factorization of A.</span>
+    <span class="c"># Sums like $\sum_{s=1}^{k-1} l_{k,s} u_{s,j}$ are done as matrix products;</span>
+    <span class="c"># in the above case, row matrix L[k, 1:k-1] by column matrix U[1:k-1,j] gives the sum for a give j,</span>
+    <span class="c"># and row matrix L[k, 1:k-1] by matrix U[1:k-1,k:n] gives the relevant row vector.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># First component of the array&#39;s size; size(A) returns &quot;(rows, columns)&quot;</span>
+    <span class="c"># Initialize U as a zero matrix;</span>
+    <span class="c"># correct below the main diagonal, with the other entries to be computed and filled below.</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="c"># Initialize L as a zero matrix;</span>
+    <span class="c"># correct above the main diagonal, with the other entries to be computed and filled in below.</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="c"># Column and row 1 are special:</span>
+    <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span>
+    <span class="n">L</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">L</span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="mi">2</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;After step k=1&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;U=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;L=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+        <span class="c"># Julia note: it is necessary to use indices &quot;[k]&quot; and so on to get a one-row matrix instead of a vector.</span>
+        <span class="n">U</span><span class="p">[[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[[</span><span class="n">k</span><span class="p">],</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">A</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="p">,</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="p">)</span><span class="o">/</span><span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;After step k=</span><span class="si">$k</span><span class="s">&quot;</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;U=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;L=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+        <span class="k">end</span><span class="p">;</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="c"># The last row is also special: nothing to do for L</span>
+    <span class="n">L</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">U</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span> <span class="o">-</span> <span class="n">sum</span><span class="p">(</span><span class="n">L</span><span class="p">[[</span><span class="n">n</span><span class="p">],</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;After step k=</span><span class="si">$n</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;U=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">L</span><span class="p">,</span> <span class="n">U</span><span class="p">]</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="forward-substitution"></a></p>
+</section>
+<section id="forward-substitution">
+<h3>Forward substitution<a class="headerlink" href="#forward-substitution" title="Permalink to this headline">#</a></h3>
+<p>(without pivoting)</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">forwardsubstitution</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="c"># Solve L c = b for c.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">sum</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="n">i</span><span class="o">:</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="p">])</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="k">return</span> <span class="n">c</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="plu-factorization"></a></p>
+</section>
+<section id="plu-factorization">
+<h3>PLU factorization<a class="headerlink" href="#plu-factorization" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">plu</span><span class="p">(</span><span class="n">A</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Compute the Doolittle PA=LU factorization of A —</span>
+    <span class="c"># but with the permutation recorded as permutation vector, not as the permutation matrix P.</span>
+    <span class="c"># Sums like $\sum_{s=1}^{k-1} l_{k,s} u_{s,j}$ are done as matrix products;</span>
+    <span class="c"># in the above case, row matrix L[k, 1:k-1] by column matrix U[1:k-1,j] gives the sum for a give j,</span>
+    <span class="c"># and row matrix L[k, 1:k-1] by matrix U[1:k-1,k:n] gives the relevant row vector.</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># gives the number of rows in the 2D array.</span>
+    <span class="nb">π</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="kt">Int</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Julia can use Greek letters (and in fact, UNICODE):</span>
+    <span class="c"># to insert character π, type \pi, hit tab, and select &quot;π&quot; from the menu.</span>
+    <span class="c"># Or just call it &quot;perm&quot; or such.</span>
+    <span class="nb">π</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">)</span>
+    <span class="c"># Julia language note: function &quot;collect&quot; converts the abstract entity &quot;1:n&quot; into an array of numbers.</span>
+    
+    <span class="c"># Initialize U as the zero matrix;</span>
+    <span class="c"># correct below the main diagonal, with the other entries to be computed below.</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="c"># Initialize L as zeros;</span>
+    <span class="c"># correct above the main diagonal, with the other entries to be computed below,</span>
+    <span class="c"># including the ones on the diagonal.</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;k=</span><span class="si">$k</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="c"># Find the pivot element in column k:</span>
+        <span class="n">pivotrow</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="n">abs_u_ik_max</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="n">abs_u_ik</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">abs_u_ik</span> <span class="o">&gt;</span> <span class="n">abs_u_ik_max</span>
+                <span class="n">pivotrow</span> <span class="o">=</span> <span class="n">row</span>
+                <span class="n">abs_u_ik_max</span> <span class="o">=</span> <span class="n">abs_u_ik</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">pivotrow</span> <span class="o">&gt;</span> <span class="n">k</span> <span class="c"># swap rows, virtually</span>
+            <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Swap row </span><span class="si">$k</span><span class="s"> with row </span><span class="si">$pivotrow</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">end</span>
+            <span class="p">(</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">π</span><span class="p">[</span><span class="n">pivotrow</span><span class="p">])</span> <span class="o">=</span> <span class="p">(</span><span class="nb">π</span><span class="p">[</span><span class="n">pivotrow</span><span class="p">],</span> <span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">else</span>
+            <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;No row swap needed.&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span>
+        <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">]</span> <span class="o">⋅</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="p">)</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>
+            <span class="c"># Julia note: To enter the centered dot notation for the dot product, type &quot;\cdot&quot; and then hit the tab key.</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;permuted A is:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+                <span class="n">println</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="o">:</span><span class="p">])</span>
+            <span class="k">end</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Intermediate L is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Intermediate U is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c"># The last row (index &quot;end&quot;) is special: nothing to do for L except put in the 1 on the &quot;permuted main diagonal&quot;</span>
+    <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">U</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="k">end</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">⋅</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;After the final step, k=</span><span class="si">$</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;L is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;U is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="nb">π</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="forward-substitution-pivoting"></a></p>
+</section>
+<section id="forward-substitution-with-pivoting">
+<h3>Forward substitution with pivoting<a class="headerlink" href="#forward-substitution-with-pivoting" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">forwardsubstitution</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="nb">π</span><span class="p">)</span>
+    <span class="c"># Version 2: with permutation of rows</span>
+    <span class="c"># Solve L c = b for c, with permutation of the rows of L and of b.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="p">]</span> <span class="o">⋅</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">c</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="collocation"></a></p>
+</section>
+</section>
+<section id="collocation-and-data-fitting">
+<h2>Collocation and Data Fitting<a class="headerlink" href="#collocation-and-data-fitting" title="Permalink to this headline">#</a></h2>
+<p><a name="polynomial-collocation"></a></p>
+<section id="polynomial-collocation">
+<h3>Polynomial collocation<a class="headerlink" href="#polynomial-collocation" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="c"># Version 1: exact collocation.</span>
+    <span class="c"># Compute the coeffients c_i of the polynomial of lowest degree that collocates the points (x[i], y[i]).</span>
+    <span class="c"># These are returned in an array c of the same length as x and y, even if the degree is less than the normal length(x)-1,</span>
+    <span class="c"># in which case the array has some trailing zeroes.</span>
+    <span class="c"># The polynomial is thus p(x) = c[1] + c[2]x + ... c[d+1] x^d where d =length(x)-1, the nominal degree.</span>
+    <span class="n">n_nodes</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">degree</span> <span class="o">=</span> <span class="n">n_nodes</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">V</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n_nodes</span><span class="p">,</span><span class="n">n_nodes</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">degree</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">degree</span>
+             <span class="n">V</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span><span class="o">^</span><span class="n">j</span>  <span class="c"># Shift the array indices up by one, since Julia counts from 1, not 0.</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">V</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="polyfit-least-squares"></a></p>
+</section>
+<section id="least-squares-polynomial-approximation">
+<h3>Least squares polynomial approximation<a class="headerlink" href="#least-squares-polynomial-approximation" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">polyfit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Version 2: least squares fitting.</span>
+    <span class="c"># Compute the coeffients c_i of the polynomial of degree n that give the best least squares fit to data (x[i], y[i]).</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="mi">2</span><span class="n">n</span>
+        <span class="n">m</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">.^</span><span class="n">k</span><span class="p">)</span>  <span class="c"># Here and below, shift the indices up by one, since Julia counts from 1, not 0.</span>
+    <span class="k">end</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span> 
+             <span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">0</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">sum</span><span class="p">(</span><span class="n">x</span><span class="o">.^</span><span class="n">k</span> <span class="o">.*</span> <span class="n">y</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">solvelinearsystem</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">c</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="polyval"></a></p>
+</section>
+<section id="evaluate-a-polynomial">
+<h3>Evaluate a polynomial<a class="headerlink" href="#evaluate-a-polynomial" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">polyval</span><span class="p">(</span><span class="n">x</span><span class="p">;</span> <span class="n">coeffs</span><span class="p">)</span>  <span class="c"># coeffs has to be a keyword argument in order that only x gets vectorized</span>
+    <span class="c"># Evaluate the polynomial with coefficients in c (as given by polyfit, for example).</span>
+    <span class="c"># If x is an array, the usage becomes y = polyval.(c, x)</span>
+    <span class="c"># for each element of array x.</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">coeffs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">length</span><span class="p">(</span><span class="n">coeffs</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">+=</span> <span class="n">coeffs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="n">x</span><span class="o">^</span><span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">y</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="derivatives-definite-integrals"></a></p>
+</section>
+</section>
+<section id="derivatives-and-definite-integrals">
+<h2>Derivatives and Definite Integrals<a class="headerlink" href="#derivatives-and-definite-integrals" title="Permalink to this headline">#</a></h2>
+<p><a name="minimization"></a></p>
+</section>
+<section id="minimization">
+<h2>Minimization<a class="headerlink" href="#minimization" title="Permalink to this headline">#</a></h2>
+<p><a name="differential-equations"></a></p>
+</section>
+<section id="differential-equations">
+<h2>Differential Equations<a class="headerlink" href="#differential-equations" title="Permalink to this headline">#</a></h2>
+<p><a name="eulermethod"></a></p>
+<section id="euler-s-method">
+<h3>Euler’s method<a class="headerlink" href="#euler-s-method" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="c"># Solve du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># Note: &quot;n&quot; counts steps, so there are n+1 values for t.</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="eulermethod_errorcontrol"></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod_errorcontrol</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">errortolerance</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span> <span class="n">h_min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">h_max</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">steps_max</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="n">steps</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">t_i</span> <span class="o">=</span> <span class="n">a</span>
+    <span class="n">U_i</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="p">[</span><span class="n">t_i</span><span class="p">]</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="p">[</span><span class="n">U_i</span><span class="p">]</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">h_max</span>  <span class="c"># Start optimistically!</span>
+    <span class="k">while</span> <span class="n">t_i</span> <span class="o">&lt;</span> <span class="n">b</span> <span class="o">&amp;&amp;</span> <span class="n">steps</span> <span class="o">&lt;</span> <span class="n">steps_max</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">h</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">t_i</span><span class="p">,</span> <span class="n">U_i</span><span class="p">)</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">h</span><span class="o">*</span><span class="n">f</span><span class="p">(</span><span class="n">t_i</span> <span class="o">+</span> <span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">U_i</span> <span class="o">+</span> <span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">errorestimate</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">K_1</span> <span class="o">-</span> <span class="n">K_2</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">errortolerance</span><span class="o">/</span><span class="n">errorestimate</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">errorestimate</span> <span class="o">&lt;=</span> <span class="n">errortolerance</span>  <span class="c"># Success!</span>
+            <span class="n">t_i</span> <span class="o">+=</span> <span class="n">h</span>
+            <span class="n">U_i</span> <span class="o">+=</span> <span class="n">K_1</span>
+            <span class="n">append!</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">t_i</span><span class="p">)</span>
+            <span class="n">append!</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">U_i</span><span class="p">)</span>
+            <span class="c"># Adjust step size up, but not too big</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">min</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">h</span><span class="p">,</span> <span class="n">h_max</span><span class="p">)</span>
+        <span class="k">else</span>  <span class="c"># Innacurate; reduce step size and try again</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">h</span><span class="p">,</span> <span class="n">h_min</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">demomode</span>
+                <span class="n">println</span><span class="p">(</span><span class="s">&quot;t_i=</span><span class="si">$t_i</span><span class="s">: Decreasing step size to </span><span class="si">$</span><span class="p">(</span><span class="n">about</span><span class="p">(</span><span class="n">h</span><span class="p">))</span><span class="s"> and trying again.&quot;</span><span class="p">)</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="c"># A refinement not mentioned above; the next step should not overshoot t=b:</span>
+        <span class="k">if</span> <span class="n">t_i</span> <span class="o">+</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="n">b</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">t_i</span>
+        <span class="k">end</span>
+        <span class="n">steps</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+    <span class="c"># Note: if the step count ran out, this does not reach t=b, but at least it is correct as far as it goes</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="eulermethod_system"></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">eulermethod_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># TO DO: one could use multiple dispatch to keep the name &quot;eulermethod&quot;.</span>
+    <span class="c"># The conversion for the system version is mainly &quot;U[i] -&gt; U[i,:]&quot;</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c"># The following three lines and the one in the for loop below change for the system version</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>  <span class="c"># Only for system version</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">U</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>  <span class="c"># For the system version</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">U</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="explicittrapezoid"></a></p>
+</section>
+<section id="the-explicit-trapezoid-method">
+<h3>The explicit trapezoid method<a class="headerlink" href="#the-explicit-trapezoid-method" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">explicittrapezoid</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Use the Explict Trapezoid Method (a.k.a Improved Euler) to solve</span>
+    <span class="c">#     du/dt = f(t, u)</span>
+    <span class="c"># for t in [a, b], with initial value u(a) = u_0</span>
+    
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># Note: &quot;n&quot; counts steps, so there are n+1 values for t.</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="n">K_2</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="explicittrapezoid_system"></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">explicittrapezoid_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the Explict Trapezoid Method (a.k.a Improved Euler) to solve the system</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0 </span>
+    <span class="c"># The conversion for the system version is mainly &quot;u[i] -&gt; u[i,:]&quot;</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="n">K_2</span><span class="p">)</span><span class="o">/</span><span class="mf">2.0</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="explicitmidpoint"></a></p>
+</section>
+<section id="the-explicit-midpoint-method">
+<h3>The explicit midpoint method<a class="headerlink" href="#the-explicit-midpoint-method" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">explicitmidpoint</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Use the Explicit Midpoint Method (a.k.a Modified Euler) to solve</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># Note: &quot;n&quot; counts steps, so there are n+1 values for t.</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">K_2</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="explicitmidpoint_system"></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">explicitmidpoint_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the Explict Midpoint Method (a.k.a Modified Euler) to solve the system</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0 </span>
+    <span class="c"># The conversion for the system version is mainly &quot;u[i] -&gt; u[i,:]&quot;</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="n">K_2</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="rungekutta"></a></p>
+</section>
+<section id="the-runge-kutta-method">
+<h3>The Runge-Kutta method<a class="headerlink" href="#the-runge-kutta-method" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rungekutta</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">;</span> <span class="n">n</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Use the (classical) Runge-Kutta Method to solve</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c"># Note: &quot;n&quot; counts steps, so there are n+1 values for t.</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">length</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_3</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_4</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">K_3</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_3</span> <span class="o">+</span> <span class="n">K_4</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span>
+    <span class="k">end</span><span class="p">;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p><a name="rungekutta_system"></a></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">rungekutta_system</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="c"># Use the (classical) Runge-Kutta Method to solve</span>
+    <span class="c">#    du/dt = f(t, u) for t in [a, b], with initial value u(a) = u_0</span>
+    <span class="c"># The conversion for the system version is mainly &quot;u[i] -&gt; u[i,:]&quot;</span>
+
+    <span class="n">h</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="o">-</span><span class="n">a</span><span class="p">)</span><span class="o">/</span><span class="n">n</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">n_unknowns</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">u_0</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_unknowns</span><span class="p">)</span>
+    <span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">K_1</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">])</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_2</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_3</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_2</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">K_4</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">t</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="n">h</span><span class="p">,</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span><span class="o">+</span><span class="n">K_3</span><span class="p">)</span><span class="o">*</span><span class="n">h</span>
+        <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="o">:</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">K_1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_2</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">K_3</span> <span class="o">+</span> <span class="n">K_4</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="some-auxilliary-functions">
+<h2>Some auxilliary functions<a class="headerlink" href="#some-auxilliary-functions" title="Permalink to this headline">#</a></h2>
+<p>For examples, presentation of results, etc.</p>
+<p><a name="printmatrix"></a></p>
+<section id="helper-function-printmatrix">
+<h3>Helper function <code class="docutils literal notranslate"><span class="pre">printmatrix</span></code><a class="headerlink" href="#helper-function-printmatrix" title="Permalink to this headline">#</a></h3>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="c"># A helper function to &quot;pretty print&quot; matrices</span>
+    <span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">)</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+    <span class="n">print</span><span class="p">(</span><span class="s">&quot;[ &quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">rows</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="o">&gt;</span> <span class="mi">1</span>
+            <span class="n">print</span><span class="p">(</span><span class="s">&quot;  &quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">cols</span>
+            <span class="n">print</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">],</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="n">rows</span><span class="p">;</span>
+            <span class="n">println</span><span class="p">()</span>
+        <span class="k">else</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;]&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># A helper function for rounding some output to three significant digits</span>
+<span class="n">approx3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">3</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="c"># A helper function for rounding some output to four significant digits</span>
+<span class="n">approx4</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">round</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigdigits</span><span class="o">=</span><span class="mi">4</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="for-some-examples-in-chapter-ode-ivps">
+<h2>For some examples in Chapter <a class="reference internal" href="ODE-IVPs.html"><span class="doc">Initial Value Problems for Ordinary Differential Equations</span></a><a class="headerlink" href="#for-some-examples-in-chapter-ode-ivps" title="Permalink to this headline">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_mass_spring</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">=</span> <span class="p">[</span> <span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="o">-</span><span class="p">(</span><span class="n">K</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">D</span><span class="o">/</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="n">u</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">];</span>
+
+<span class="k">function</span> <span class="n">y_mass_spring</span><span class="p">(</span><span class="n">t</span><span class="p">;</span> <span class="n">t_0</span><span class="p">,</span> <span class="n">u_0</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+    <span class="p">(</span><span class="n">y_0</span><span class="p">,</span> <span class="n">v_0</span><span class="p">)</span> <span class="o">=</span> <span class="n">u_0</span>
+    <span class="n">discriminant</span> <span class="o">=</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span>
+    <span class="k">if</span> <span class="n">discriminant</span> <span class="o">&lt;</span> <span class="mi">0</span>  <span class="c"># underdamped</span>
+        <span class="n">omega</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span> <span class="o">-</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">y_0</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="p">(</span><span class="n">v_0</span> <span class="o">+</span> <span class="n">y_0</span><span class="o">*</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">))</span><span class="o">/</span><span class="n">omega</span>
+        <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span> <span class="n">A</span><span class="o">*</span><span class="n">cos</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">sin</span><span class="p">(</span><span class="n">omega</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">)))</span>
+    <span class="k">elseif</span> <span class="n">discriminant</span> <span class="o">&gt;</span> <span class="mi">0</span>  <span class="c"># overdamped</span>
+        <span class="n">Delta</span> <span class="o">=</span> <span class="n">sqrt</span><span class="p">(</span><span class="n">discriminant</span><span class="p">)</span>
+        <span class="n">lambda_plus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">D</span> <span class="o">+</span> <span class="n">Delta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">lambda_minus</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="n">D</span> <span class="o">-</span> <span class="n">Delta</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">M</span><span class="o">*</span><span class="p">(</span><span class="n">v_0</span> <span class="o">-</span> <span class="n">lambda_minus</span> <span class="o">*</span> <span class="n">y_0</span><span class="p">)</span><span class="o">/</span><span class="n">Delta</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">y_0</span> <span class="o">-</span> <span class="n">A</span>
+        <span class="k">return</span> <span class="n">A</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda_plus</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda_minus</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span>
+    <span class="k">else</span>
+        <span class="n">lambda</span> <span class="o">=</span> <span class="o">-</span><span class="n">D</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="n">M</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">y_0</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">v_0</span> <span class="o">-</span> <span class="n">A</span> <span class="o">*</span> <span class="n">lambda</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">A</span> <span class="o">+</span> <span class="n">B</span><span class="o">*</span><span class="n">t</span><span class="p">)</span><span class="o">*</span><span class="n">exp</span><span class="p">(</span><span class="n">lambda</span><span class="o">*</span><span class="p">(</span><span class="n">t</span><span class="o">-</span><span class="n">t_0</span><span class="p">))</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+
+<span class="k">function</span> <span class="n">damping</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">D</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;Undamped&quot;</span><span class="p">)</span>
+    <span class="k">else</span>
+        <span class="n">discriminant</span> <span class="o">=</span> <span class="n">D</span><span class="o">^</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">4</span><span class="n">K</span><span class="o">*</span><span class="n">M</span>
+        <span class="k">if</span> <span class="n">discriminant</span> <span class="o">&lt;</span> <span class="mi">0</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Underdamped&quot;</span><span class="p">)</span>
+        <span class="k">elseif</span> <span class="n">discriminant</span> <span class="o">&gt;</span> <span class="mi">0</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Overdamped&quot;</span><span class="p">)</span>
+        <span class="k">else</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Critically damped&quot;</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="julia-language-notes.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">9.2. </span>Notes on the Julia Language</p>
+        </div>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

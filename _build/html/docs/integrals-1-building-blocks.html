@@ -1,0 +1,1042 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>5.3. Definite Integrals, Part 1: The Building Blocks &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules" href="integrals-2-composite-rules.html" />
+    <link rel="prev" title="5.2. Richardson Extrapolation" href="richardson-extrapolation.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/integrals-1-building-blocks.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/integrals-1-building-blocks.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#approximating-with-a-single-linear-function-the-trapezoid-rule">
+   Approximating with a single linear function: the Trapezoid Rule
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#approximating-with-a-constant-the-midpoint-rule">
+   Approximating with a constant: the Midpoint Rule
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-formulas">
+   Error Formulas
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#proofs-of-these-error-results">
+     Proofs of these error results
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#appendix-approximating-a-definite-integral-with-the-left-hand-endpoint-rule">
+   Appendix: Approximating a Definite Integral With the Left-hand Endpoint Rule
+  </a>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Definite Integrals, Part 1: The Building Blocks</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#approximating-with-a-single-linear-function-the-trapezoid-rule">
+   Approximating with a single linear function: the Trapezoid Rule
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#approximating-with-a-constant-the-midpoint-rule">
+   Approximating with a constant: the Midpoint Rule
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-formulas">
+   Error Formulas
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#proofs-of-these-error-results">
+     Proofs of these error results
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#appendix-approximating-a-definite-integral-with-the-left-hand-endpoint-rule">
+   Appendix: Approximating a Definite Integral With the Left-hand Endpoint Rule
+  </a>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="definite-integrals-part-1-the-building-blocks">
+<h1><span class="section-number">5.3. </span>Definite Integrals, Part 1: The Building Blocks<a class="headerlink" href="#definite-integrals-part-1-the-building-blocks" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Sections 5.2.1 and 5.2.4 of Chapter 5 <em>Numerical Differentiation and Integration</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Sections 4.3 <em>Elmenets of Numerical Integration</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>The objective of this and several subsequent sections is to develop methods for approxmating a definite integral</p>
+<div class="math notranslate nohighlight">
+\[ I = \int_a^b f(x) \; dx \]</div>
+<p>This is arguably even more important than approximating derivatives, for several reasons;
+in particular, because there are many functions for which antiderivative formulas cannot be found,
+so that the result of the Fundamental Theorem of Calculus, that</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) \; dx = F(b) - F(a), \text{ for } F \text{ any antiderivative of } f\]</div>
+<p>does not help us.</p>
+<p>One core idea is to approximate the function <span class="math notranslate nohighlight">\(f\)</span> by a polynomial (or several), and use its integral as an approximation.
+The two simplest possibilities here are approximating by a constant and by a straight line;
+here we explore the latter; the former will be visited soon.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="approximating-with-a-single-linear-function-the-trapezoid-rule">
+<h2>Approximating with a single linear function: the Trapezoid Rule<a class="headerlink" href="#approximating-with-a-single-linear-function-the-trapezoid-rule" title="Permalink to this headline">#</a></h2>
+<p>The idea is to approximate <span class="math notranslate nohighlight">\(f:[a, b] \to \Bbb{R}\)</span> by collocation at the end points of this interval:</p>
+<div class="math notranslate nohighlight">
+\[ f(x) \approx L(x) := \frac{f(a)(b-x) + f(b)(x-a)}{b-a}, = f_{ave} (b-a) \]</div>
+<p>Then the approximation — which will be called <span class="math notranslate nohighlight">\(T_1\)</span>, for reasons that will becom clear soon — is</p>
+<div class="math notranslate nohighlight">
+\[I \approx T_1 = \int_a^b L(x) dx = \frac{f(a) + f(b)}{2} (b-a) \]</div>
+<p>This can be interpreted as replacing <span class="math notranslate nohighlight">\(f(x)\)</span> by <span class="math notranslate nohighlight">\(f_{ave}\)</span> the average of the value at the end points,
+and inegrting that simple function.</p>
+<p>For the example <span class="math notranslate nohighlight">\(f(x) = e^x\)</span> on <span class="math notranslate nohighlight">\([-1, 3]\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">b</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_average</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Trapezoid Rule&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_average</span><span class="p">,</span> <span class="n">f_average</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;-.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Trapezoid Rule area&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/integrals-1-building-blocks_7_0.png" src="../_images/integrals-1-building-blocks_7_0.png" />
+</div>
+</div>
+<p>The approximation <span class="math notranslate nohighlight">\(T_1\)</span> is the area of the orange trapezoid (hence the name!) which is also the area of the green rectangle.</p>
+</section>
+<section id="approximating-with-a-constant-the-midpoint-rule">
+<h2>Approximating with a constant: the Midpoint Rule<a class="headerlink" href="#approximating-with-a-constant-the-midpoint-rule" title="Permalink to this headline">#</a></h2>
+<p>The idea here is to approximate <span class="math notranslate nohighlight">\(f:[a, b] \to \Bbb{R}\)</span> by its value at the midpoint of the interval,
+like the building blocks in a Riemann sum with the middel being the intuitive best choice of where to put the rectangle.</p>
+<div class="math notranslate nohighlight">
+\[ f(x) \approx f_{mid} := f \left(\frac{a+b}{2}\right) \]</div>
+<p>Then the approximation — which will be called <span class="math notranslate nohighlight">\(M_1\)</span> — is</p>
+<div class="math notranslate nohighlight">
+\[ I \approx M_1 = \int_a^b f_{mid} \, dx =  f \left(\frac{a+b}{2}\right)(b-a) \]</div>
+<p>For the same example <span class="math notranslate nohighlight">\(f(x) = e^x\)</span> on <span class="math notranslate nohighlight">\([-1, 3]\)</span></p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_midpoint</span> <span class="o">=</span> <span class="n">f</span><span class="p">((</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_midpoint</span><span class="p">,</span> <span class="n">f_midpoint</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Midpoint Rule&quot;</span><span class="p">)</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/integrals-1-building-blocks_11_0.png" src="../_images/integrals-1-building-blocks_11_0.png" />
+</div>
+</div>
+<p>The approximation <span class="math notranslate nohighlight">\(M_1\)</span> is the area of the red rectangle.</p>
+<p>The two methods can be compared my combining these graphs:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">f_midpoint</span> <span class="o">=</span> <span class="n">f</span><span class="p">((</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+<span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="n">f</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Trapezoid Rule&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_average</span><span class="p">,</span> <span class="n">f_average</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;-.&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Trapezoid Rule area&quot;</span><span class="p">)</span>
+<span class="n">plot</span><span class="p">([</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">f_midpoint</span><span class="p">,</span> <span class="n">f_midpoint</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Midpoint Rule&quot;</span><span class="p">)</span>
+<span class="n">legend</span><span class="p">()</span>
+<span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/integrals-1-building-blocks_14_0.png" src="../_images/integrals-1-building-blocks_14_0.png" />
+</div>
+</div>
+</section>
+<section id="error-formulas">
+<h2>Error Formulas<a class="headerlink" href="#error-formulas" title="Permalink to this headline">#</a></h2>
+<p>These graphs indicate that the trapezoid rule will over-estimate the error for this and any function that is convex up on the interval <span class="math notranslate nohighlight">\([a, b]\)</span>.
+With closer examination it can perhaps be seen that the Midpoint Rule will instead underestimate in this situation, because
+its “overshoot” at left is less than its “undershoot” at right.</p>
+<p>We can derive error formulas that confirm this, and which are the basis for both practical error estimates and for deriving more accurate approximation methods.</p>
+<p>The first such method will be to use multiple small intervals instead of a single bigger one (using piecewise polynomial approximation) and for that, it is convenient to define <span class="math notranslate nohighlight">\(h = b-a\)</span> which will become the parameter that we reduce in order to improve accuracy.</p>
+<div class="proof theorem admonition" id="trapezoid-rule-error">
+<p class="admonition-title"><span class="caption-number">Theorem 5.2 </span> (Error in the Trapezoid Rule, <span class="math notranslate nohighlight">\(T_1\)</span>)</p>
+<section class="theorem-content" id="proof-content">
+<p>For a function <span class="math notranslate nohighlight">\(f\)</span> that is twice differentiable on interval <span class="math notranslate nohighlight">\([a, b]\)</span>, the error in the Trapezoid Rule is</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) dx - T_1 = -\frac{(b-a)^3}{12}f''(\xi) \quad \text{for some} \; \xi \in [a, b] \]</div>
+<p>It will be convenient to define <span class="math notranslate nohighlight">\(h := b-a\)</span> so that this becomes</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) dx - T_1 = -\frac{h^3}{12}f''(\xi) \quad \text{for some} \; \xi \in [a, b]. \]</div>
+</section>
+</div><div class="proof theorem admonition" id="midpoint-rule-error">
+<p class="admonition-title"><span class="caption-number">Theorem 5.3 </span> (Error in the Midpoint Rule, <span class="math notranslate nohighlight">\(M_1\)</span>)</p>
+<section class="theorem-content" id="proof-content">
+<p>For a function <span class="math notranslate nohighlight">\(f\)</span> that is twice differentiable on interval <span class="math notranslate nohighlight">\([a, b]\)</span> and again with <span class="math notranslate nohighlight">\(h=b-a\)</span>,
+the error in the Midpoint Rule is</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) dx - M_1 = \frac{h^3}{24}f''(\xi) \quad \text{for some} \; \xi \in [a, b] \]</div>
+</section>
+</div><p>These will be verified below, using the error formulas for Taylor polynomials and collocation polynomials.</p>
+<p>For now, note that:</p>
+<ul class="simple">
+<li><p>The results confirm that for a function that is convex up, the Trapezoid Rule overestimates and the Midpoint Rule underestimates.</p></li>
+<li><p>The ratio of the errors is approximately <span class="math notranslate nohighlight">\(-2\)</span>. This will be used to get a better result by using a weighted average: <em>Simpson’s Rule.</em></p></li>
+<li><p>The errors are <span class="math notranslate nohighlight">\(O(h^3)\)</span>. This opens the door to Richardson Extrapolation, as will be seen soon in the method of <em>Romberg Integration.</em></p></li>
+</ul>
+<section id="proofs-of-these-error-results">
+<h3>Proofs of these error results<a class="headerlink" href="#proofs-of-these-error-results" title="Permalink to this headline">#</a></h3>
+<p>One side benefit of the following verifications is that they also offer illustrations of how the two fundamental error formulas help us: Taylor’s Formula and its cousin the error formula for polynomial collocation.</p>
+<p>To help prove the above formulas, we introduce a result that also helps in various places later:</p>
+<div class="proof theorem admonition" id="integral-mean-value-theorem">
+<p class="admonition-title"><span class="caption-number">Theorem 5.4 </span> (The Integral Mean Value Theorem)</p>
+<section class="theorem-content" id="proof-content">
+<p>In an integral</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) w(x) \, dx  \]</div>
+<p>with <span class="math notranslate nohighlight">\(f\)</span> continuous and the “weight function” <span class="math notranslate nohighlight">\(w(x)\)</span> positive valued
+(actually, it is enough that <span class="math notranslate nohighlight">\(w(x) \geq 0\)</span> and it is not zero everyhere),
+there is a point <span class="math notranslate nohighlight">\(\xi \in [a,b]\)</span> that gives a “weighted average value” for <span class="math notranslate nohighlight">\(f(x)\)</span> in the sense that</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) w(x) \, dx = \int_a^b f(\xi) w(x) \, dx, = f(\xi) \int_a^b w(x) \, dx \]</div>
+</section>
+</div><div class="proof admonition" id="proof">
+<p>Proof. As <span class="math notranslate nohighlight">\(f\)</span> is continuous on the closed, bounded interval <span class="math notranslate nohighlight">\([a, b]\)</span>, the <strong>Extreme Value Theorem</strong> from calculus says that <span class="math notranslate nohighlight">\(f\)</span> has a minimum <span class="math notranslate nohighlight">\(L\)</span> and a maximum <span class="math notranslate nohighlight">\(H\)</span> on this interval: <span class="math notranslate nohighlight">\(L \leq f(x) \leq H\)</span>.
+Since <span class="math notranslate nohighlight">\(w(x) \geq 0\)</span>, this gives</p>
+<div class="math notranslate nohighlight">
+\[ L w(x) \leq f(x) w(x) \leq H w(x) \]</div>
+<p>and by integrating,</p>
+<div class="math notranslate nohighlight">
+\[ L \int_a^b w(x) \,dx \leq \int_a^b f(x) w(x) \,dx \leq H \int_a^b w(x) \,dx \]</div>
+<p>Dividing by <span class="math notranslate nohighlight">\(\int_a^b w(x) \,dx\)</span> (which is positive),</p>
+<div class="math notranslate nohighlight">
+\[ L \leq \frac{\int_a^b f(x) w(x) \,dx}{\int_a^b w(x) \,dx} \leq H \]</div>
+<p>and the Mean Value Theorem says that <span class="math notranslate nohighlight">\(f\)</span> attains this value for some <span class="math notranslate nohighlight">\(\xi \in [L, H]\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-integral-mean-value-formula">
+<span class="eqno">(5.7)<a class="headerlink" href="#equation-integral-mean-value-formula" title="Permalink to this equation">#</a></span>\[ f(\xi) = \frac{\int_a^b f(x) w(x) \,dx}{\int_a^b w(x) \,dx} \]</div>
+<p>Clearing the denominator gives the claimed result.</p>
+</div>
+<div class="proof admonition" id="proof">
+<p>Proof. (of <a class="reference internal" href="#trapezoid-rule-error">Theorem 5.2</a>, <a class="reference internal" href="#trapezoid-rule-error">the trapezoid rule error formula)</a></p>
+<p>The function integrated to get the Trapezoid Rule is the linear collocating polynomial <span class="math notranslate nohighlight">\(L(x)\)</span>,
+and from the section <a class="reference internal" href="polynomial-collocation-error-formulas.html"><span class="doc">Error Formulas for Polynomial Collocation</span></a>, we have</p>
+<div class="math notranslate nohighlight">
+\[ f(x) - L(x) = \frac{f''(\xi_x)}{2}(x-a)(x-b) \]</div>
+<p>Integrating each side gives</p>
+<div class="math notranslate nohighlight">
+\[
+\int_a^b (f(x) - L(x))
+= I - T_1
+= \int_a^b \frac{f''(\xi_x)}{2}(x-a)(x-b) \, dx
+\]</div>
+<p>To get around the complication that <span class="math notranslate nohighlight">\(\xi_x\)</span> depends on <span class="math notranslate nohighlight">\(x\)</span> in an unknown way, use the Ingtgral Measn Vlaue Theorem with weight function
+<span class="math notranslate nohighlight">\(w(x) = (x-a)(b-x), \geq 0\)</span> for <span class="math notranslate nohighlight">\(a \leq x \leq b\)</span>.
+Then with <span class="math notranslate nohighlight">\(-f''\)</span> as the function <span class="math notranslate nohighlight">\(f\)</span> in <a class="reference internal" href="#equation-integral-mean-value-formula">(5.7)</a>:</p>
+<div class="math notranslate nohighlight">
+\[ I - T_1 = - \int_a^b \frac{f''(\xi_x)}{2}(x-a)(b-x) \, dx
+= - \frac{f''(\xi)}{2} \int_a^b (x-a)(b-x) \, dx \]</div>
+<p>A bit of calculus gives <span class="math notranslate nohighlight">\(\displaystyle \int_a^b (x-a)(b-x) \, dx = \frac{(b-a)^3}{6}\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[ I - T_1  = -\frac{f''(\xi)}{2} \frac{(b-a)^3}{6} = -\frac{f''(\xi)}{12} (b-a)^3 = -\frac{f''(\xi)}{12} h^3, \]</div>
+<p>as advertised.</p>
+</div>
+<div class="proof admonition" id="proof">
+<p>Proof. (of <a class="reference internal" href="#midpoint-rule-error">Theorem 5.3</a>, <a class="reference internal" href="#midpoint-rule-error">the midpoint rule error formula)</a></p>
+<p>For this, we can use Taylor’s Theorem for the linear approximation</p>
+<div class="math notranslate nohighlight">
+\[ f(x) = f(c) + f'(c)(x-c) + \frac{f''(\xi_x)}{2}(x-c)^2 \]</div>
+<p>with <span class="math notranslate nohighlight">\(c = (a+b)/2\)</span>, the midpoint. That is,</p>
+<div class="math notranslate nohighlight">
+\[ f(x) - f(c) = f'(c) (x-c) + \frac{f''(\xi_x)}{2} (x-c)^2 \]</div>
+<p>and integrating each side gives</p>
+<div class="math notranslate nohighlight">
+\[
+\int_a^b f(x) -  f(c) \, dx
+= I - M_1
+= \int_a^b \left[ f'(c)(x-c) + \frac{f''(\xi_x)}{2}(x-c)^2 \right] dx
+\]</div>
+<p>Here symmetry helps, by eliminating the first (potentialy biggest) term in the error:
+we use the fact that <span class="math notranslate nohighlight">\(a = c - h/2\)</span> and <span class="math notranslate nohighlight">\(b = c + h/2\)</span></p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f'(c)(x-c) \, dx = f'(c) \int_{c-h/2}^{c + h/2} x-c \, dx = \left[ (x-c)^2/2 \right]_{c-h/2}^{c + h/2} = (h/2)^2 - (h/2)^2 = 0 \]</div>
+<p>Thus the error simplifies to</p>
+<div class="math notranslate nohighlight">
+\[ I - M_1 = \int_a^b \frac{f''(\xi_x)}{2}(x-c)^2 \, dx \]</div>
+<p>and much as above, the Integral Mean Value Theorem can be used, this time with weight function <span class="math notranslate nohighlight">\(w(x) = (x-c)^2, \geq 0\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ I - M_1 = \frac{f''(\xi)}{2} \int_a^b (x-c)^2 \, dx \]</div>
+<p>Another caluclus exercise:
+<span class="math notranslate nohighlight">\(\displaystyle \int_a^b (x-c)^2 dx = \int_{-h/2}^{h/2} x^2 dx = \left[x^3/3\right]_{-h/2}^{h/2} = h^3/12\)</span>,
+so indeed,</p>
+<div class="math notranslate nohighlight">
+\[ I - M_1 = \frac{f''(\xi)}{24} h^3 \]</div>
+</div>
+</section>
+</section>
+<section id="appendix-approximating-a-definite-integral-with-the-left-hand-endpoint-rule">
+<span id="left-endpoint-rule"></span><h2>Appendix: Approximating a Definite Integral With the Left-hand Endpoint Rule<a class="headerlink" href="#appendix-approximating-a-definite-integral-with-the-left-hand-endpoint-rule" title="Permalink to this headline">#</a></h2>
+<p>An even simpler approximation of <span class="math notranslate nohighlight">\(\int_a^b f(x)\, dx\)</span> is the <em>Left-hand Endpoint Rule</em>,
+probably seen in a calculus course.
+For a single interval, this uses the approximation</p>
+<div class="math notranslate nohighlight">
+\[ f(x) \approx f(a) \]</div>
+<p>leading to</p>
+<div class="math notranslate nohighlight">
+\[I := \int_a^b f(x)\, dx \approx L_1 :=  \int_a^b f(a) \, dx = f(a) (b-a) \]</div>
+<p>The correpsonding composite rule with <span class="math notranslate nohighlight">\(n\)</span> sub-intervals of equal width <span class="math notranslate nohighlight">\(h = (b-a)/n\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[L_n = \sum_{i=0}^{n-1} f(x_i) h, \; = \sum_{i=0}^{n-1} f(a + i h) h\]</div>
+<p>with <span class="math notranslate nohighlight">\(x_i = a + i h\)</span> as before.</p>
+<div class="proof theorem admonition" id="error-left-endpoint-rule">
+<p class="admonition-title"><span class="caption-number">Theorem 5.5 </span> (Error in the Left-hand Endpoint Rule, <span class="math notranslate nohighlight">\(L_1\)</span>)</p>
+<section class="theorem-content" id="proof-content">
+<p>For a function <span class="math notranslate nohighlight">\(f\)</span> that is differentiable on interval <span class="math notranslate nohighlight">\([a, b]\)</span>, the error in the Left-hand Endpoint Rule is</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f(x) dx - L_1 = \frac{(b-a)^2}{2}f'(\xi), = \frac{h^2}{2}f'(\xi) \quad \text{for some} \; \xi \in [a, b]n\]</div>
+</section>
+</div><div class="proof admonition" id="proof">
+<p>Proof. This time use Taylor’s Theorem just for the constant approximation with center <span class="math notranslate nohighlight">\(a\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ f(x) = f(c) + f'(\xi_x)(x-a) \]</div>
+<p>That is,</p>
+<div class="math notranslate nohighlight">
+\[ f(x) - f(a) = f'(\xi_x)(x-a)\]</div>
+<p>so integrating each side gives</p>
+<div class="math notranslate nohighlight">
+\[
+\int_a^b f(x) -  f(a) \, dx
+= I - L_1
+= \int_a^b  f'(\xi_x)(x-a) dx
+\]</div>
+<p>Using the Integral Mean Value Theorem again, now with weight <span class="math notranslate nohighlight">\(w(x) = x-a\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[ \int_a^b f'(\xi_x)(x-a) dx = f'(\xi) \int_a^b (x-a) dx = f'(\xi) \frac{(b-a)^2}{2} = \frac{h^2}{2} f'(\xi) \; \text{for some} \; \xi \in [a, b] \]</div>
+<p>and inserting this into the previous formula gives the result.</p>
+</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="richardson-extrapolation.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">5.2. </span>Richardson Extrapolation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="integrals-2-composite-rules.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">5.4. </span>Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

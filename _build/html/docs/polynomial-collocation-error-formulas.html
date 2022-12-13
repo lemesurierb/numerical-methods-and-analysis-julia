@@ -1,0 +1,1046 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>4.2. Error Formulas for Polynomial Collocation &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="4.3. Choosing the collocation points: the Chebyshev method" href="polynomial-collocation-chebychev.html" />
+    <link rel="prev" title="4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation" href="polynomial-collocation%2Bapproximation.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/polynomial-collocation-error-formulas.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/polynomial-collocation-error-formulas.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-in-p-n-x-collocating-a-polynomial-of-degree-n-1">
+   Error in
+   <span class="math notranslate nohighlight">
+    \(P_n(x)\)
+   </span>
+   collocating a polynomial of degree
+   <span class="math notranslate nohighlight">
+    \(n+1\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-in-p-n-x-when-collocating-with-a-sufficiently-differentiable-function">
+   Error  in
+   <span class="math notranslate nohighlight">
+    \(P_n(x)\)
+   </span>
+   when collocating with a sufficiently differentiable function
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-bound-with-equally-spaced-nodes-is-o-h-n-1-but">
+   Error bound with equally spaced nodes is
+   <span class="math notranslate nohighlight">
+    \(O(h^{n+1})\)
+   </span>
+   , but …
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#possible-failure-of-convergence">
+   Possible failure of convergence
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#two-solutions-piecewise-interpolation-and-least-squares-approximation">
+   Two solutions: piecewise interpolation and least squares approximation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#preview-definite-integrals-en-route-to-solving-differential-equations">
+     Preview: definite integrals (en route to solving differential equations)
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Error Formulas for Polynomial Collocation</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-in-p-n-x-collocating-a-polynomial-of-degree-n-1">
+   Error in
+   <span class="math notranslate nohighlight">
+    \(P_n(x)\)
+   </span>
+   collocating a polynomial of degree
+   <span class="math notranslate nohighlight">
+    \(n+1\)
+   </span>
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-in-p-n-x-when-collocating-with-a-sufficiently-differentiable-function">
+   Error  in
+   <span class="math notranslate nohighlight">
+    \(P_n(x)\)
+   </span>
+   when collocating with a sufficiently differentiable function
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#error-bound-with-equally-spaced-nodes-is-o-h-n-1-but">
+   Error bound with equally spaced nodes is
+   <span class="math notranslate nohighlight">
+    \(O(h^{n+1})\)
+   </span>
+   , but …
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#possible-failure-of-convergence">
+   Possible failure of convergence
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#two-solutions-piecewise-interpolation-and-least-squares-approximation">
+   Two solutions: piecewise interpolation and least squares approximation
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#preview-definite-integrals-en-route-to-solving-differential-equations">
+     Preview: definite integrals (en route to solving differential equations)
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="error-formulas-for-polynomial-collocation">
+<h1><span class="section-number">4.2. </span>Error Formulas for Polynomial Collocation<a class="headerlink" href="#error-formulas-for-polynomial-collocation" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 3.2.1 <em>Interpolation error formula</em> in <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 3.1 <em>Interpolation and the Lagrange Polynomial</em> in <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Section 4.2 <em>Errors in Polynomial Interpolation</em> in <span id="id3">[<a class="reference internal" href="bibliography.html#id3" title="David Kincaid and Ward Chenney. Numerical Analysis. Brooks/Cole, 1990.">Kincaid and Chenney, 1990</a>]</span>..</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>When a polynomial <span class="math notranslate nohighlight">\(P_n\)</span> is given by collocation to <span class="math notranslate nohighlight">\(n+1\)</span> points <span class="math notranslate nohighlight">\((x_i, y_i)\)</span>, <span class="math notranslate nohighlight">\(y_i = f(x_i)\)</span> on the graph of a function <span class="math notranslate nohighlight">\(f\)</span>, one can ask how accurate it is as an approximation of <span class="math notranslate nohighlight">\(f\)</span> at points <span class="math notranslate nohighlight">\(x\)</span> other than the nodes: what is the error <span class="math notranslate nohighlight">\(E(x) = f(x) - P(x)\)</span>?</p>
+<p>As is often the case, the result is motivated by considering the simplest “non-trival case”:
+<span class="math notranslate nohighlight">\(f\)</span> a polynomial of degree one too high for an exact fit, so of degree <span class="math notranslate nohighlight">\(n+1\)</span>.
+The result is also analogous to the familiar error formula for Taylor polynonial approximations.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">PyPlot</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">include</span><span class="p">(</span><span class="s">&quot;NumericalMethods.jl&quot;</span><span class="p">)</span>
+<span class="k">using</span> <span class="o">.</span><span class="n">NumericalMethods</span><span class="o">:</span> <span class="n">polyfit</span><span class="p">,</span> <span class="n">polyval</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="error-in-p-n-x-collocating-a-polynomial-of-degree-n-1">
+<h2>Error in <span class="math notranslate nohighlight">\(P_n(x)\)</span> collocating a polynomial of degree <span class="math notranslate nohighlight">\(n+1\)</span><a class="headerlink" href="#error-in-p-n-x-collocating-a-polynomial-of-degree-n-1" title="Permalink to this headline">#</a></h2>
+<p>With <span class="math notranslate nohighlight">\(f(x) = c_{n+1} x^{n+1} + c_{n} x^{n} + \cdots + c_0\)</span> a polynomial of degree <span class="math notranslate nohighlight">\(n+1\)</span> and <span class="math notranslate nohighlight">\(P_n(x)\)</span> the unique polynomial of degree at most <span class="math notranslate nohighlight">\(n\)</span> that collocates with it at the <span class="math notranslate nohighlight">\(n+1\)</span> nodes <span class="math notranslate nohighlight">\(x_0, \dots x_n\)</span>, the error</p>
+<div class="math notranslate nohighlight">
+\[E_n(x) = f(x) - P(x)\]</div>
+<p>is a polynomial of degree <span class="math notranslate nohighlight">\(n+1\)</span> with all its roots known: the nodes <span class="math notranslate nohighlight">\(x_i\)</span>.
+Thus it can be factorized as</p>
+<div class="amsmath math notranslate nohighlight" id="equation-013da0c1-110f-46a8-b980-31a0776014da">
+<span class="eqno">(4.1)<a class="headerlink" href="#equation-013da0c1-110f-46a8-b980-31a0776014da" title="Permalink to this equation">#</a></span>\[\begin{align}
+E_n(x) &amp;= C (x-x_0) \cdot (x-x_1) \cdots (x-x_n)\\
+       &amp;= Cx^{n+1} + \text{lower powers of $x$.}
+\end{align}\]</div>
+<p>On the other hand, the only term of degree <span class="math notranslate nohighlight">\(x^{n+1}\)</span> in <span class="math notranslate nohighlight">\(f(x) - P(x)\)</span> is the leading term of <span class="math notranslate nohighlight">\(f(x)\)</span>, <span class="math notranslate nohighlight">\(c_{n+1} x^{n+1}\)</span>.
+Thus <span class="math notranslate nohighlight">\(C = c_{n+1}\)</span>.</p>
+<p>It will be convenient to note that the order <span class="math notranslate nohighlight">\(n+1\)</span> derivative of <span class="math notranslate nohighlight">\(f\)</span> is the constant
+<span class="math notranslate nohighlight">\(f^{(n+1)}D^{n+1}f(x) = (n+1)! c_{n+1}\)</span>, so the error can be written as</p>
+<div class="math notranslate nohighlight" id="equation-collocation-error-1">
+<span class="eqno">(4.2)<a class="headerlink" href="#equation-collocation-error-1" title="Permalink to this equation">#</a></span>\[E_n(x) = f(x) - P_n(x) = \frac{D^{n+1}f(x)}{(n+1)!} (x-x_0) \cdots (x-x_n)= \frac{D^{n+1}f(x)}{(n+1)!}\prod\limits_{i=0}^n (x - x_i).\]</div>
+</section>
+<section id="error-in-p-n-x-when-collocating-with-a-sufficiently-differentiable-function">
+<h2>Error  in <span class="math notranslate nohighlight">\(P_n(x)\)</span> when collocating with a sufficiently differentiable function<a class="headerlink" href="#error-in-p-n-x-when-collocating-with-a-sufficiently-differentiable-function" title="Permalink to this headline">#</a></h2>
+<div class="proof theorem admonition" id="collocation-error-formula">
+<p class="admonition-title"><span class="caption-number">Theorem 4.2 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>For a function <span class="math notranslate nohighlight">\(f\)</span> with continuous derivative of order <span class="math notranslate nohighlight">\(n+1\)</span> <span class="math notranslate nohighlight">\(D^{n+1}f\)</span>,
+the polynomial <span class="math notranslate nohighlight">\(P_n\)</span> of degree at most <span class="math notranslate nohighlight">\(n\)</span> that fits the points <span class="math notranslate nohighlight">\((x_i, f(x_i))\)</span> <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span> differs from <span class="math notranslate nohighlight">\(f\)</span> by</p>
+<div class="math notranslate nohighlight" id="equation-collocation-error-2">
+<span class="eqno">(4.3)<a class="headerlink" href="#equation-collocation-error-2" title="Permalink to this equation">#</a></span>\[E_n(x) = f(x) - P_n(x) = \frac{D^{n+1}f(\xi_x)}{(n+1)!}\prod\limits_{i=0}^n (x - x_i)\]</div>
+<p>for some value of <span class="math notranslate nohighlight">\(\xi_x\)</span> that is amongst the <span class="math notranslate nohighlight">\(n+2\)</span> points <span class="math notranslate nohighlight">\(x_0, \dots x_n\)</span> and <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>In particular, when <span class="math notranslate nohighlight">\(a \leq x_0 &lt; x_1 \cdots &lt; x_n \leq b\)</span> and <span class="math notranslate nohighlight">\(x \in [a,b]\)</span>, then also <span class="math notranslate nohighlight">\(\xi_x \in [a, b]\)</span>.</p>
+</section>
+</div><div class="proof observation admonition" id="comparison-to-taylor-error-formula">
+<p class="admonition-title"><span class="caption-number">Observation 4.1 </span></p>
+<section class="observation-content" id="proof-content">
+<p>This is rather similar to the error formula for the Taylor polynomial <span class="math notranslate nohighlight">\(p_n\)</span> with center <span class="math notranslate nohighlight">\(x_0\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-taylor-error">
+<span class="eqno">(4.4)<a class="headerlink" href="#equation-taylor-error" title="Permalink to this equation">#</a></span>\[e_n(x) = f(x) - p_n(x) = \frac{D^{n+1}f(\xi)}{(n+1)!} (x-x_0)^{n+1},\, \text{some $\xi$ between $x_0$ and $x$.} \]</div>
+<p>This is effectively the limit of Equation <a class="reference internal" href="#equation-collocation-error-2">(4.3)</a> when all the <span class="math notranslate nohighlight">\(x_i\)</span> congeal to <span class="math notranslate nohighlight">\(x_0\)</span>.</p>
+</section>
+</div></section>
+<section id="error-bound-with-equally-spaced-nodes-is-o-h-n-1-but">
+<h2>Error bound with equally spaced nodes is <span class="math notranslate nohighlight">\(O(h^{n+1})\)</span>, but …<a class="headerlink" href="#error-bound-with-equally-spaced-nodes-is-o-h-n-1-but" title="Permalink to this headline">#</a></h2>
+<p>An important special case is when there is a single parameter <span class="math notranslate nohighlight">\(h\)</span> describing the spacing of the nodes; when they are the equally spaced values <span class="math notranslate nohighlight">\(x_i = a + i h\)</span>, <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span>, so that <span class="math notranslate nohighlight">\(x_0 = a\)</span> and <span class="math notranslate nohighlight">\(x_n = b\)</span> with <span class="math notranslate nohighlight">\(h = \displaystyle \frac{b-a}{n}\)</span>.
+Then there is a somewhat more practically usable error bound:</p>
+<div class="proof theorem admonition" id="collocation-error-formula-equally-spaced-nodes">
+<p class="admonition-title"><span class="caption-number">Theorem 4.3 </span></p>
+<section class="theorem-content" id="proof-content">
+<p>For <span class="math notranslate nohighlight">\(x \in [a,b]\)</span> and the above equaly spaced nodes in that interval <span class="math notranslate nohighlight">\([a,b]\)</span>,</p>
+<div class="math notranslate nohighlight" id="equation-collocation-error-h">
+<span class="eqno">(4.5)<a class="headerlink" href="#equation-collocation-error-h" title="Permalink to this equation">#</a></span>\[| E_n(x) | = \left| f(x) - P_n(x)\right| \leq \frac{M_{n+1}}{n+1} h^{n+1}, = O(h^{n+1}),\]</div>
+<p>where <span class="math notranslate nohighlight">\(M_{n+1} = \max\limits_{x \in [a,b]} | D^{n+1}f(x)|\)</span>.</p>
+</section>
+</div></section>
+<section id="possible-failure-of-convergence">
+<h2>Possible failure of convergence<a class="headerlink" href="#possible-failure-of-convergence" title="Permalink to this headline">#</a></h2>
+<p>A major practical problem with this error bound is that is does not in general guarantee convergence
+<span class="math notranslate nohighlight">\(P_n(x) \to f(x)\)</span> as <span class="math notranslate nohighlight">\(n \to \infty\)</span> with fixed interval <span class="math notranslate nohighlight">\([a, b]\)</span>, because in some cases <span class="math notranslate nohighlight">\(M_{n+1}\)</span> grows too fast.</p>
+<p>A famous example is the “Witch of Agnesi” (so-called because it was introduced by Maria Agnesi,
+author of the first textbook on differential and integral calculus).</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">agnesi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">x</span><span class="o">^</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">graph_agnesi_collocation</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">title</span><span class="p">(</span><span class="s">&quot;The Witch of Agnesi and collocating polynomial of degree n=</span><span class="si">$n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>  <span class="c"># Plot 200 points as some fine detail is needed</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">agnesi</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Witch of Agnesi&quot;</span><span class="p">)</span>
+    <span class="n">xnodes</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">ynodes</span> <span class="o">=</span> <span class="n">agnesi</span><span class="o">.</span><span class="p">(</span><span class="n">xnodes</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">polyfit</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">ynodes</span><span class="p">)</span>
+    <span class="n">P_n</span> <span class="o">=</span> <span class="n">polyval</span><span class="o">.</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">coeffs</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">xnodes</span><span class="p">,</span> <span class="n">ynodes</span><span class="p">,</span> <span class="s">&quot;r*&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;Collocation nodes&quot;</span><span class="p">)</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">P_n</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s">&quot;P_</span><span class="si">$n</span><span class="s">(x)&quot;</span><span class="p">)</span>
+    <span class="n">legend</span><span class="p">()</span>
+    <span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+
+    <span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">title</span><span class="p">(</span><span class="s">&quot;Error curve&quot;</span><span class="p">)</span>
+    <span class="n">E_n</span> <span class="o">=</span> <span class="n">P_n</span> <span class="o">-</span> <span class="n">y</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">E_n</span><span class="p">)</span>
+    <span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Start with <span class="math notranslate nohighlight">\(n=4\)</span>, which seems somewhat well-behaved:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">graph_agnesi_collocation</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation-error-formulas_13_0.png" src="../_images/polynomial-collocation-error-formulas_13_0.png" />
+<img alt="../_images/polynomial-collocation-error-formulas_13_1.png" src="../_images/polynomial-collocation-error-formulas_13_1.png" />
+</div>
+</div>
+<p>Now increase the number of inervals, doubling each time.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">graph_agnesi_collocation</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation-error-formulas_15_0.png" src="../_images/polynomial-collocation-error-formulas_15_0.png" />
+<img alt="../_images/polynomial-collocation-error-formulas_15_1.png" src="../_images/polynomial-collocation-error-formulas_15_1.png" />
+</div>
+</div>
+<p>The curve fits better in the central part, but gets worse towards the ends!</p>
+<p>One hint as to why is to plot the polynomial factor in the error formula above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">graph_error_formula_polynomial</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+    <span class="n">title</span><span class="p">(</span><span class="s">&quot;The polynomial factor in the error formula for degree </span><span class="si">$n</span><span class="s">&quot;</span><span class="p">)</span>
+    <span class="n">n_plot_points</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n_plot_points</span><span class="p">)</span>
+    <span class="n">x_nodes</span> <span class="o">=</span> <span class="n">range</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">polynomial_factor</span> <span class="o">=</span> <span class="n">ones</span><span class="p">(</span><span class="n">n_plot_points</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x_node</span> <span class="k">in</span> <span class="n">x_nodes</span>
+        <span class="n">polynomial_factor</span> <span class="o">.*=</span> <span class="p">(</span><span class="n">x</span> <span class="o">.-</span> <span class="n">x_node</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">polynomial_factor</span><span class="p">)</span>
+    <span class="n">grid</span><span class="p">(</span><span class="nb">true</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">graph_error_formula_polynomial</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">graph_error_formula_polynomial</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation-error-formulas_18_0.png" src="../_images/polynomial-collocation-error-formulas_18_0.png" />
+<img alt="../_images/polynomial-collocation-error-formulas_18_1.png" src="../_images/polynomial-collocation-error-formulas_18_1.png" />
+</div>
+</div>
+<p>As n increases, it just gets worse:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">graph_agnesi_collocation</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+<span class="n">graph_error_formula_polynomial</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/polynomial-collocation-error-formulas_20_0.png" src="../_images/polynomial-collocation-error-formulas_20_0.png" />
+<img alt="../_images/polynomial-collocation-error-formulas_20_1.png" src="../_images/polynomial-collocation-error-formulas_20_1.png" />
+<img alt="../_images/polynomial-collocation-error-formulas_20_2.png" src="../_images/polynomial-collocation-error-formulas_20_2.png" />
+</div>
+</div>
+</section>
+<section id="two-solutions-piecewise-interpolation-and-least-squares-approximation">
+<h2>Two solutions: piecewise interpolation and least squares approximation<a class="headerlink" href="#two-solutions-piecewise-interpolation-and-least-squares-approximation" title="Permalink to this headline">#</a></h2>
+<p>The approach of least squares approximation is introduced in the next section <a class="reference internal" href="least-squares-fitting.html"><span class="doc">Least-Squares Fitting to Data</span></a>;
+that can be appropriate when the original data is not exact (due ot measureknet eror in an experiment, for example)
+so a good approximation at each node can be more appropriate than exact collocation at each but with implausable behavior between the nodes.</p>
+<p>When instead exact collocation is sought, piecewise interpolation is typically used.
+This involves collocation with multiple polynomials of a fixed degree, ech on a prt of the domain.
+Then for each such polynomial <span class="math notranslate nohighlight">\(M_{m+1}\)</span> in the above error formula is independnt of the number <span class="math notranslate nohighlight">\(N\)</span> of nodes and
+with the nodes on interval <span class="math notranslate nohighlight">\([a, b]\)</span> at equal spacing <span class="math notranslate nohighlight">\(h = (b-a)/(N-1)\)</span>, one has the convergence result</p>
+<div class="math notranslate nohighlight">
+\[
+| E_m(x) \leq \frac{M_{m+1}}{m+1} h^{m+1} = O(h^{m+1}) = O \left( \frac{1}{N^{m+1}} \right), \to 0 \text{ as } N \to \infty.
+\]</div>
+<p>This only requires that <span class="math notranslate nohighlight">\(f\)</span> has a continuous derivatives up to order <span class="math notranslate nohighlight">\(m+1\)</span>.</p>
+<p>The simplest case of this — quite often used in comuter graphics, including <code class="docutils literal notranslate"><span class="pre">PyPlot.plot</span></code> —
+is to divide the domain into <span class="math notranslate nohighlight">\(N-1\)</span> sub-intervals of equal width separated by nodes
+<span class="math notranslate nohighlight">\(x_i = a + i h\)</span>, <span class="math notranslate nohighlight">\(0 \leq i \leq n\)</span>, and then approximate <span class="math notranslate nohighlight">\(f(x)\)</span> <em>linearly</em> on each sub-interval by using the two surrounding nodes <span class="math notranslate nohighlight">\(x_i\)</span> and <span class="math notranslate nohighlight">\(x_{i+1}\)</span> determined by having <span class="math notranslate nohighlight">\(x_i \leq x \leq x_{i+1}\)</span>:
+this is <strong>piecewise linear interpolation.</strong></p>
+<p>This gives the approximating function <span class="math notranslate nohighlight">\(L_N(x)\)</span>,
+and the above error formula, now with <span class="math notranslate nohighlight">\(m=1\)</span>, says that the worst absolute error anywhere in the interval <span class="math notranslate nohighlight">\([a, b]\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[
+|E_2(x)| = |f(x) - L_N(x)| \leq \frac{M_2}{2} h^2, \quad M_2 = \max\limits_{x \in [a,b]} | f''(x)|.
+\]</div>
+<p>Thus for any <span class="math notranslate nohighlight">\(f\)</span> that is is twice continuously differentiable the error at each <span class="math notranslate nohighlight">\(x\)</span>-value converges to zero as <span class="math notranslate nohighlight">\(N \to \infty\)</span>.
+Further, it is <em>uniform convergence</em>: the maximum error over all points in the domain goes to zero.</p>
+<section id="preview-definite-integrals-en-route-to-solving-differential-equations">
+<h3>Preview: definite integrals (en route to solving differential equations)<a class="headerlink" href="#preview-definite-integrals-en-route-to-solving-differential-equations" title="Permalink to this headline">#</a></h3>
+<p>Integrating this piecewise linear approximation over interval <span class="math notranslate nohighlight">\([a, b]\)</span> gives the Compound Trapezoid Rule approximation of <span class="math notranslate nohighlight">\(\int_a^b f(x) dx\)</span>.
+As we will soon see, this also has error at worst <span class="math notranslate nohighlight">\(O(h^2), = O(1/N^2)\)</span>:
+each doubling of effort reduces errors by a factor of about four.</p>
+<p>Also, you might have heard of Simpson’s Rule for approximating definite integrals (and anyway, you will soon!):
+that uses piecewise quadratic interpolation and we will see that this improves the errors to <span class="math notranslate nohighlight">\(O(h^4), = O(1/N^4)\)</span>:
+each doubling of effort reduces errors by a factor of about 16.</p>
+<div class="proof remark admonition" id="remark-3">
+<p class="admonition-title"><span class="caption-number">Remark 4.5 </span> (Computer graphics and smoother approximating curves)</p>
+<section class="remark-content" id="proof-content">
+<p>As mentioned, computer graphics often draws graphs from data points this way, most often with either piecewise linear or piecewise cubic (<span class="math notranslate nohighlight">\(m=3\)</span>) approximation.</p>
+<p>However, this can give sharp “corners” at the nodes, so many modes are needed to make this visually acceptable.
+That is unavoidable with piecewise linear curves, but for higher degrees there are modifications of this strategy that give smoother curves: piecewise cubics turn out to work very nicely for that, and these are inroduced in the section <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html"><span class="doc">Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics</span></a>.</p>
+</section>
+</div></section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="polynomial-collocation%2Bapproximation.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">4.1. </span>Polynomial Collocation (Interpolation/Extrapolation) and Approximation</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="polynomial-collocation-chebychev.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">4.3. </span>Choosing the collocation points: the Chebyshev method</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>

@@ -1,0 +1,1280 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+    <title>3.5. Solving \(Ax = b\) With Both Pivoting and LU Factorization &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="../_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="../_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc." href="linear-equations-5-error-bounds-condition-numbers.html" />
+    <link rel="prev" title="3.4. Solving \(Ax = b\) with LU factorization" href="linear-equations-3-lu-factorization.html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="../index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="../_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 current active has-children">
+  <a class="reference internal" href="linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul class="current">
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<div class="menu-dropdown menu-dropdown-launch-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Launch interactive content">
+      <i class="fas fa-rocket"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="https://mybinder.org/v2/gh/executablebooks/jupyter-book/master?urlpath=tree/docs/linear-equations-4-plu-factorization.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Launch on Binder"
+>
+  
+
+<span class="headerbtn__icon-container">
+  
+    <img src="../_static/images/logo_binder.svg">
+  </span>
+<span class="headerbtn__text-container">Binder</span>
+</a>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+<div class="menu-dropdown menu-dropdown-download-buttons">
+  <button class="headerbtn menu-dropdown__trigger"
+      aria-label="Download this page">
+      <i class="fas fa-download"></i>
+  </button>
+  <div class="menu-dropdown__content">
+    <ul>
+      <li>
+        <a href="../_sources/docs/linear-equations-4-plu-factorization.ipynb"
+   class="headerbtn"
+   data-toggle="tooltip"
+data-placement="left"
+title="Download source file"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="headerbtn__text-container">.ipynb</span>
+</a>
+
+      </li>
+      
+      <li>
+        
+<button onclick="printPdf(this)"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="left"
+title="Print to PDF"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="headerbtn__text-container">.pdf</span>
+</button>
+
+      </li>
+      
+    </ul>
+  </div>
+</div>
+<label for="__page-toc"
+  class="headerbtn headerbtn-page-toc"
+  
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-list"></i>
+  </span>
+
+</label>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+    <div class="tocsection onthispage pt-5 pb-3">
+        <i class="fas fa-list"></i> Contents
+    </div>
+    <nav id="bd-toc-nav" aria-label="Page">
+        <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#row-swapping-is-all-you-need">
+   Row swapping is all you need
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-what-happens-at-stage-5-k-5">
+     Example: what happens at stage 5 (
+     <span class="math notranslate nohighlight">
+      \(k=5\)
+     </span>
+     )?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-general-pattern">
+     The general pattern
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pseudo-code-for-lu-factorization-with-row-swapping-first-version">
+     Pseudo-code for LU factorization with row swapping (first version)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#but-what-about-the-right-hand-side-b">
+     But what about the right-hand side,
+     <span class="math notranslate nohighlight">
+      \(b\)
+     </span>
+     ?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pseudo-code-for-lu-factorization-with-a-permutation-vector">
+     Pseudo-code for LU factorization with a permutation vector
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#forward-and-backward-substitution-with-a-permutation-vector">
+     Forward and backward substitution with a permutation vector
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </nav>
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1>Solving Ax = b With Both Pivoting and LU Factorization</h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                        <div>
+                            <h2> Contents </h2>
+                        </div>
+                        <nav aria-label="Page">
+                            <ul class="visible nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#introduction">
+   Introduction
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#row-swapping-is-all-you-need">
+   Row swapping is all you need
+  </a>
+  <ul class="nav section-nav flex-column">
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#example-what-happens-at-stage-5-k-5">
+     Example: what happens at stage 5 (
+     <span class="math notranslate nohighlight">
+      \(k=5\)
+     </span>
+     )?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#the-general-pattern">
+     The general pattern
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pseudo-code-for-lu-factorization-with-row-swapping-first-version">
+     Pseudo-code for LU factorization with row swapping (first version)
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#but-what-about-the-right-hand-side-b">
+     But what about the right-hand side,
+     <span class="math notranslate nohighlight">
+      \(b\)
+     </span>
+     ?
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#pseudo-code-for-lu-factorization-with-a-permutation-vector">
+     Pseudo-code for LU factorization with a permutation vector
+    </a>
+   </li>
+   <li class="toc-h3 nav-item toc-entry">
+    <a class="reference internal nav-link" href="#forward-and-backward-substitution-with-a-permutation-vector">
+     Forward and backward substitution with a permutation vector
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+                        </nav>
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+  <section class="tex2jax_ignore mathjax_ignore" id="solving-ax-b-with-both-pivoting-and-lu-factorization">
+<h1><span class="section-number">3.5. </span>Solving <span class="math notranslate nohighlight">\(Ax = b\)</span> With Both Pivoting and LU Factorization<a class="headerlink" href="#solving-ax-b-with-both-pivoting-and-lu-factorization" title="Permalink to this headline">#</a></h1>
+<p><strong>References:</strong></p>
+<ul class="simple">
+<li><p>Section 2.4 <em>The PA=LU Factorization</em> of <span id="id1">[<a class="reference internal" href="bibliography.html#id4" title="Timothy Sauer. Numerical Analysis. Pearson, 3rd edition, 2019.">Sauer, 2019</a>]</span>.</p></li>
+<li><p>Section 6.5 <em>Matrix Factorizations</em> of <span id="id2">[<a class="reference internal" href="bibliography.html#id5" title="Richard L. Burden, J. Douglas Faires, and Annette M. Burden. Numerical Analysis. Cengage, 10th edition, 2016.">Burden <em>et al.</em>, 2016</a>]</span>.</p></li>
+<li><p>Section 8.1 <em>Matrix Factorizations</em> of <span id="id3">[<a class="reference internal" href="bibliography.html#id2" title="Ward Chenney and David Kincaid. Numerical Mathematics and Computing. Cengage, 7 edition, 2012.">Chenney and Kincaid, 2012</a>]</span>.</p></li>
+</ul>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">#</a></h2>
+<p>The last step in producing an algorithm for solving the general case of <span class="math notranslate nohighlight">\(n\)</span> simultaneous linear equations in <span class="math notranslate nohighlight">\(n\)</span> variables that is <em>robust</em>, <em>efficient</em> and with good control of <em>rounding error</em> is to combine the ideas of
+<strong>partial pivoting</strong> from <a class="reference internal" href="linear-equations-2-pivoting.html"><span class="doc">Partial Pivoting</span></a>
+and
+<strong>LU factorization</strong> from <a class="reference internal" href="linear-equations-3-lu-factorization.html"><span class="doc">Solving Ax = b with LU factorization</span></a>.</p>
+<p>This is sometimes described in three parts:</p>
+<ul class="simple">
+<li><p><em>permute</em> (reorder) the rows of the matirx <span class="math notranslate nohighlight">\(A\)</span> by multiplying it at left by a suitable <em>permutation matrix</em> <span class="math notranslate nohighlight">\(P\)</span>; one with a single “1” in each row and each column and zeros elsewhere;</p></li>
+<li><p>Get the LU factorization of this matrix: <span class="math notranslate nohighlight">\(PA = LU\)</span>.</p></li>
+<li><p>To solve <span class="math notranslate nohighlight">\(A x = b\)</span></p>
+<ul>
+<li><p>Express as <span class="math notranslate nohighlight">\(P A x = L U x = P b\)</span> (which just involves computing <span class="math notranslate nohighlight">\(Pb\)</span>, which reorders the elements of <span class="math notranslate nohighlight">\(b\)</span>)</p></li>
+<li><p>Solve <span class="math notranslate nohighlight">\(L c = P b\)</span> for <span class="math notranslate nohighlight">\(c\)</span> by forward substitution</p></li>
+<li><p>Solve <span class="math notranslate nohighlight">\(U x = c\)</span> for <span class="math notranslate nohighlight">\(x\)</span> by backward substitution:
+as before, this gives <span class="math notranslate nohighlight">\(L U x = L c = P b\)</span> and <span class="math notranslate nohighlight">\(L U x = P A x\)</span>, so <span class="math notranslate nohighlight">\(PAx = Pb\)</span>;
+since a permutation matrix <span class="math notranslate nohighlight">\(P\)</span> is invertible (just unravel the row swaps), this ensures that <span class="math notranslate nohighlight">\(Ax = b\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<p>This gives a nice formulas in terms of matrices; however we can describe it a bit more compactly and efficiently by just talking about the permutation of the rows, described by a <em>permutation vector</em> — an <span class="math notranslate nohighlight">\(n\)</span> component vector
+<span class="math notranslate nohighlight">\(\pi = [\pi_1, \pi_2 , \dots, \pi_n]\)</span>
+whose elements are the integers from 1 to <span class="math notranslate nohighlight">\(n\)</span> in some order.
+So that is how the algorithm will be described below.</p>
+<p>(Aside: I use the conventional name <span class="math notranslate nohighlight">\(\pi\)</span> for a permutation vector, partly to distinguish from the notation <span class="math notranslate nohighlight">\(p_i\)</span> used for <em>pivot</em> rows; however, feel free to use the name <span class="math notranslate nohighlight">\(p\)</span> instead, especially in Julia code.)</p>
+<p>A number of details of this sketch will now be filled in, including the very useful fact that the permutation vector (or matrix) can be contsructed “on the fly”, as rows are swapped in partial pivoting.</p>
+</section>
+<section id="row-swapping-is-all-you-need">
+<h2>Row swapping is all you need<a class="headerlink" href="#row-swapping-is-all-you-need" title="Permalink to this headline">#</a></h2>
+<p>Let us look at maximal element partial pivoting, but described in terms of the entries of the factors <span class="math notranslate nohighlight">\(L\)</span> and <span class="math notranslate nohighlight">\(U\)</span>, and updating matrix <span class="math notranslate nohighlight">\(A\)</span> with a succession of row swaps.</p>
+<p>(For now, I omit what happens to the right-hand side vector <span class="math notranslate nohighlight">\(b\)</span>; that is where the permutation vector <span class="math notranslate nohighlight">\(p\)</span> will come in, as addressed below.)</p>
+<p>What happens if pivoting occurs at some stage <span class="math notranslate nohighlight">\(k\)</span>, with swapping of row <span class="math notranslate nohighlight">\(k\)</span> with a row <span class="math notranslate nohighlight">\(p_k &gt; 5\)</span>?</p>
+<p>One might fear that the process has to start again from the top using the modified version of matrix <span class="math notranslate nohighlight">\(A\)</span>,
+but in fact all previous work can be reused, just swapping those rows “everywhere”.</p>
+<section id="example-what-happens-at-stage-5-k-5">
+<h3>Example: what happens at stage 5 (<span class="math notranslate nohighlight">\(k=5\)</span>)?<a class="headerlink" href="#example-what-happens-at-stage-5-k-5" title="Permalink to this headline">#</a></h3>
+<p>To see this with a concrete example consider what happens if at stage <span class="math notranslate nohighlight">\(k=5\)</span> we swap rows 5 and 10 of <span class="math notranslate nohighlight">\(A\)</span>.</p>
+<p>A) Firstly, what happens to matrix <span class="math notranslate nohighlight">\(A\)</span>?</p>
+<p>The previous steps of the LU factorization process only involved entries of <span class="math notranslate nohighlight">\(A\)</span> in its first four rows and first four columns, and this row swap has no effect of them.
+Likewise, in row reduction, changes at and below row <span class="math notranslate nohighlight">\(k=5\)</span> have no effect on the first four rows of the row reduced form, <span class="math notranslate nohighlight">\(U\)</span>.</p>
+<p>Thus, the only change here is to swap the entries of <span class="math notranslate nohighlight">\(A\)</span> between rows 5 and 10.
+What is more, the subsequent calculations only involve columns of index <span class="math notranslate nohighlight">\(j=5\)</span> upwards,
+so in fact we only need to update those entries.
+This can be written as</p>
+<div class="math notranslate nohighlight">
+\[ a_{5, j} \leftrightarrow a_{10, j}, \quad 5 \leq j \leq n \]</div>
+<p>Thus if we are working in Julia with <span class="math notranslate nohighlight">\(A\)</span> stored in an array, the update is the slice operation</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>( A[5, 5:end], A[10, 5:end] ) = ( A[10, 5:end], A[5, 5:end] ) 
+</pre></div>
+</div>
+<p>B) Next, look at the work done so far on <span class="math notranslate nohighlight">\(U\)</span>.</p>
+<p>That just consists of the previous rows <span class="math notranslate nohighlight">\(1 \leq i \leq 4\)</span>, and the swapping of rows 5 with 10 has no effect up there:</p>
+<p><em>Values already computed in <span class="math notranslate nohighlight">\(U\)</span> are unchanged.</em></p>
+<p>C) Finally, look at the work done so far on the multipiers <span class="math notranslate nohighlight">\(l_{i,j}\)</span>; that is, matrix <span class="math notranslate nohighlight">\(L\)</span>.</p>
+<p>The values computed so far are the first four columns of <span class="math notranslate nohighlight">\(L\)</span>;
+the multiples <span class="math notranslate nohighlight">\(l_{i,j}\)</span>, <span class="math notranslate nohighlight">\(1 \leq j \leq 4\)</span> of row <span class="math notranslate nohighlight">\(j\)</span> subtracted from row <span class="math notranslate nohighlight">\(i &gt; j\)</span>.
+These <em>do</em> change: for example, the multiple <span class="math notranslate nohighlight">\(l_{5,2}\)</span> of row <span class="math notranslate nohighlight">\(2\)</span> is now subtracted from what was row 5 but is now row 10: thus, the new value of <span class="math notranslate nohighlight">\(l_{10,2}\)</span> is the previous value of <span class="math notranslate nohighlight">\(l_{5,2}\)</span>.</p>
+<p>Likewise, the same is true in reverse: the new value of <span class="math notranslate nohighlight">\(l_{5,2}\)</span> is the previous value of <span class="math notranslate nohighlight">\(l_{10,2}\)</span>.
+This applies for all of the first four rows, so second index <span class="math notranslate nohighlight">\(1 \leq j \leq 4\)</span>:</p>
+<p><em>The entries of <span class="math notranslate nohighlight">\(L\)</span> computed so far are swapped between rows 5 and 10, leaving the rest unchanged.</em></p>
+<p>As this is again only for some columns — the first four — the swaps needed are:</p>
+<div class="math notranslate nohighlight">
+\[ l_{5, j} \leftrightarrow l_{10, j}, \quad 1 \leq j \leq 4 \]</div>
+<p>or in Julia’a slice notation for an array <span class="math notranslate nohighlight">\(L\)</span>:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>( L[5, 1:4], L[10, 1:4] ) = ( L[10, 1:4], L[5, 1:4] )
+</pre></div>
+</div>
+</section>
+<section id="the-general-pattern">
+<h3>The general pattern<a class="headerlink" href="#the-general-pattern" title="Permalink to this headline">#</a></h3>
+<p>The example above extends to all stages <span class="math notranslate nohighlight">\(k\)</span> of row reduction or computing the LU factorization of a row-permuted version of matrix <span class="math notranslate nohighlight">\(A\)</span>,
+where we adjust the pivot element at position <span class="math notranslate nohighlight">\((k, k)\)</span> by first swapping row <span class="math notranslate nohighlight">\(k\)</span> with a row <span class="math notranslate nohighlight">\(p_k, \geq k\)</span>.
+(Allowing that sometimes no swap is needed, so that <span class="math notranslate nohighlight">\(p_k = k\)</span>.)</p>
+<p>Gathering the key formulas above, this part of the algorithm is</p>
+<div class="proof algorithm admonition" id="algorithm-plu-fragment">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.6 </span></p>
+<section class="algorithm-content" id="proof-content">
+<p>for k from 1 to n-1
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <em>Find the pivot row</em> <span class="math notranslate nohighlight">\(p_k, \geq k\)</span>.
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> if <span class="math notranslate nohighlight">\(p_k &gt; k\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> Swap <span class="math notranslate nohighlight">\(l_{k, j} \leftrightarrow l_{p_k, j}, \quad 1 \leq j &lt; k \)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> Swap <span class="math notranslate nohighlight">\(a_{k, j} \leftrightarrow a_{p_k, j}, \quad k \leq j \leq n \)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+end</p>
+</section>
+</div></section>
+<section id="pseudo-code-for-lu-factorization-with-row-swapping-first-version">
+<h3>Pseudo-code for LU factorization with row swapping (first version)<a class="headerlink" href="#pseudo-code-for-lu-factorization-with-row-swapping-first-version" title="Permalink to this headline">#</a></h3>
+<p>Here I also adopt slice notation; for example, <span class="math notranslate nohighlight">\(a_{k, k:n}\)</span> denotes the slice <span class="math notranslate nohighlight">\([a_{k, k} \dots a_{k, n}]\)</span>.</p>
+<div class="proof algorithm admonition" id="algorithm-plu-1">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.7 </span> (LU factorization with row swapping, I)</p>
+<section class="algorithm-content" id="proof-content">
+<p>for k from 1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <em>Find the pivot element:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(p = k\)</span>  <span class="math notranslate nohighlight">\(\quad\)</span> <em>(p will be the index of the pivot row)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for i from k+1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> if |u_{i, k}| &gt; |u_{p, k}|
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> p <span class="math notranslate nohighlight">\(\leftarrow\)</span> i
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> if p &gt; k <span class="math notranslate nohighlight">\(\quad\)</span> <em>(Swap rows)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(l_{k, 1:k-1} \leftrightarrow l_{p, 1:k-1}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(a_{k, k:n} \leftrightarrow a_{p, k:n}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for j from k to n <span class="math notranslate nohighlight">\(\quad\)</span> <em>(Get the non-zero elements in row <span class="math notranslate nohighlight">\(k\)</span> of <span class="math notranslate nohighlight">\(U\)</span>)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,j}=a_{k,j}-\sum_{s=1}^{k-1}l_{k,s}u_{s,j}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for i from k+1 to n <span class="math notranslate nohighlight">\(\quad\)</span> <em>(Get the non-zero elements in column <span class="math notranslate nohighlight">\(k\)</span> of <span class="math notranslate nohighlight">\(L\)</span> — except the 1’s on its diagonal)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,k}=\displaystyle\frac{a_{i,k}-\sum_{s=1}^{k-1}l_{i,s}u_{s,k}}{u_{k,k}}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+end</p>
+</section>
+</div></section>
+<section id="but-what-about-the-right-hand-side-b">
+<h3>But what about the right-hand side, <span class="math notranslate nohighlight">\(b\)</span>?<a class="headerlink" href="#but-what-about-the-right-hand-side-b" title="Permalink to this headline">#</a></h3>
+<p>One thing is missing from this strategy so far:
+if we are solving with a given right-hand-side column vector <span class="math notranslate nohighlight">\(b\)</span>, we would also swap its rows at each stage, with</p>
+<div class="math notranslate nohighlight">
+\[ b_k \leftrightarrow b_{p_k} \]</div>
+<p>but with the LU factorization we need to keep track of these swaps for use later.</p>
+<p>This turns out to mesh nicely with another detail: we can avoid actually copying array entries around by just keeping track of the order in which we use rows to get zeros in other rows.
+Our goal will be a permutation vector <span class="math notranslate nohighlight">\(\pi = [\pi_1, \pi_2, \dots \pi_n]\)</span> which says:</p>
+<ul class="simple">
+<li><p>First use row <span class="math notranslate nohighlight">\(\pi_1\)</span> to get zeros in column 1 of the <span class="math notranslate nohighlight">\(n-1\)</span> other rows.</p></li>
+<li><p>Then use row <span class="math notranslate nohighlight">\(\pi_2\)</span> to get zeros in column 2 of the <span class="math notranslate nohighlight">\(n-2\)</span> remaining rows.</p></li>
+<li><p>…</p></li>
+</ul>
+<p>To do this:</p>
+<ul class="simple">
+<li><p>first, initialize an array <span class="math notranslate nohighlight">\(\pi = [1, 2, \dots, n]\)</span></p></li>
+<li><p>at stage <span class="math notranslate nohighlight">\(k\)</span>, if the pivot element is in row <span class="math notranslate nohighlight">\(p_k \neq k\)</span>, swap the corresponding elements in <span class="math notranslate nohighlight">\(\pi\)</span>
+(rather than swapping entire rows of arrays):</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[\pi_k \leftrightarrow \pi_{p_k}\]</div>
+<p>Introducing the name <span class="math notranslate nohighlight">\(A'\)</span> for the new version of matrix <span class="math notranslate nohighlight">\(A\)</span>,
+its row <span class="math notranslate nohighlight">\(k\)</span> has entries <span class="math notranslate nohighlight">\(a'_{k, j} = a_{\pi_k, j}\)</span>.</p>
+<p>This pattern persists through each row swap: instead of computing a succesion of updated versions of matrix <span class="math notranslate nohighlight">\(A\)</span>,
+we leave it alone and just change the row indices:</p>
+<p><em>All references to entries of <span class="math notranslate nohighlight">\(A\)</span> are now done with permuted row index: <span class="math notranslate nohighlight">\(a_{\pi_i, j}\)</span></em></p>
+<p>The same applies to the array <span class="math notranslate nohighlight">\(L\)</span> of multipliers:</p>
+<p><em>All references to entries of <span class="math notranslate nohighlight">\(L\)</span> are now done with <span class="math notranslate nohighlight">\(l_{\pi_i, j}\)</span></em>.</p>
+<p>Finally, since these row swaps also apply to the right-hand side <span class="math notranslate nohighlight">\(b\)</span>, we do the same there:</p>
+<p><em>All references to entries of <span class="math notranslate nohighlight">\(b\)</span> are now done with <span class="math notranslate nohighlight">\(b_{\pi_i}\)</span></em>.</p>
+</section>
+<section id="pseudo-code-for-lu-factorization-with-a-permutation-vector">
+<h3>Pseudo-code for LU factorization with a permutation vector<a class="headerlink" href="#pseudo-code-for-lu-factorization-with-a-permutation-vector" title="Permalink to this headline">#</a></h3>
+<div class="proof algorithm admonition" id="algorithm-plu-2">
+<p class="admonition-title"><span class="caption-number">Algorithm 3.8 </span> (LU factorization with row swapping, II)</p>
+<section class="algorithm-content" id="proof-content">
+<p><em>Initialize the permutation vector,</em> <span class="math notranslate nohighlight">\(\pi \leftarrow [1, 2, \dots, n]\)</span></p>
+<p>for k from 1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <em>Find the pivot element:</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(p \leftarrow k\)</span>  <span class="math notranslate nohighlight">\(\quad\)</span> <em>(p will be the index of the pivot row)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for i from k+1 to n
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> if <span class="math notranslate nohighlight">\(|u_{i, k}| &gt; |u_{p, k}|\)</span>:
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(p \leftarrow i\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> if p &gt; k <span class="math notranslate nohighlight">\(\quad\)</span> <em>(Just swap indices, not rows)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span><span class="math notranslate nohighlight">\(\quad\)</span> <span class="math notranslate nohighlight">\(\pi_k \leftrightarrow \pi_p\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for j from k to n <span class="math notranslate nohighlight">\(\quad\)</span> <em>(Get the non-zero elements in row <span class="math notranslate nohighlight">\(k\)</span> of <span class="math notranslate nohighlight">\(U\)</span>)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(u_{k,j} \leftarrow a_{k,j}-\sum_{s=1}^{k-1}l_{k,s}u_{s,j}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> for i from k+1 to n <span class="math notranslate nohighlight">\(\quad\)</span> <em>(Get the non-zero elements in column <span class="math notranslate nohighlight">\(k\)</span> of <span class="math notranslate nohighlight">\(L\)</span> — except the 1’s on its diagonal)</em>
+<br>
+<span class="math notranslate nohighlight">\(\quad\quad\)</span> <span class="math notranslate nohighlight">\(l_{i,k} \leftarrow \displaystyle\frac{a_{i,k}-\sum_{s=1}^{k-1}l_{i,s}u_{s,k}}{u_{k,k}}\)</span>
+<br>
+<span class="math notranslate nohighlight">\(\quad\)</span> end
+<br>
+end</p>
+</section>
+</div><div class="proof remark admonition" id="remark-LU-with-P">
+<p class="admonition-title"><span class="caption-number">Remark 3.16 </span></p>
+<section class="remark-content" id="proof-content">
+<p>For the version with a permutation matrix <span class="math notranslate nohighlight">\(P\)</span>, instead:</p>
+<ul class="simple">
+<li><p>start with an array <span class="math notranslate nohighlight">\(P\)</span> that is the identity matrix, and then</p></li>
+<li><p>swap its rows <span class="math notranslate nohighlight">\(k \leftrightarrow p_k\)</span> at stage <span class="math notranslate nohighlight">\(k\)</span> instead of swapping the entries of <span class="math notranslate nohighlight">\(\pi\)</span> or the rows of <span class="math notranslate nohighlight">\(A\)</span> and <span class="math notranslate nohighlight">\(L\)</span>.</p></li>
+</ul>
+</section>
+</div><div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="n">LinearAlgebra</span><span class="o">:</span> <span class="n">norm</span>
+<span class="k">using</span> <span class="n">LinearAlgebra</span><span class="o">:</span> <span class="o">⋅</span>  <span class="c"># For the dot product (the centered dot can be typed as \cdot then tab)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">include</span><span class="p">(</span><span class="s">&quot;NumericalMethods.jl&quot;</span><span class="p">)</span>
+<span class="k">using</span> <span class="o">.</span><span class="n">NumericalMethods</span><span class="o">:</span> <span class="n">printmatrix</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">plu</span><span class="p">(</span><span class="n">A</span><span class="p">;</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">false</span><span class="p">)</span>
+    <span class="c"># Compute the Doolittle PA=LU factorization of A —</span>
+    <span class="c"># but with the permutation recorded as permutation vector, not as the permutation matrix P.</span>
+    <span class="c"># Sums like $\sum_{s=1}^{k-1} l_{k,s} u_{s,j}$ are done as matrix products;</span>
+    <span class="c"># in the above case, row matrix L[k, 1:k-1] by column matrix U[1:k-1,j] gives the sum for a give j,</span>
+    <span class="c"># and row matrix L[k, 1:k-1] by matrix U[1:k-1,k:n] gives the relevant row vector.</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">size</span><span class="p">(</span><span class="n">A</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>  <span class="c"># gives the number of rows in the 2D array.</span>
+    <span class="c"># Julia can use Greek letters (and in fact, UNICODE):</span>
+    <span class="c"># to insert character π, type \pi, hit tab, and select &quot;π&quot; from the menu.</span>
+    <span class="c"># Or just call it &quot;perm&quot; or such.</span>
+    <span class="nb">π</span> <span class="o">=</span> <span class="n">collect</span><span class="p">(</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="p">)</span>
+    <span class="c"># Julia language note: function &quot;collect&quot; converts the abstract entity &quot;1:n&quot; into an array of numbers.</span>
+    
+    <span class="c"># Initialize U as the zero matrix;</span>
+    <span class="c"># correct below the main diagonal, with the other entries to be computed below.</span>
+    <span class="n">U</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="c"># Initialize L as zeros;</span>
+    <span class="c"># correct above the main diagonal, with the other entries to be computed below,</span>
+    <span class="c"># including the ones on the diagonal.</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;k=</span><span class="si">$k</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="c"># Find the pivot element in column k:</span>
+        <span class="n">pivotrow</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="n">abs_u_ik_max</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="n">abs_u_ik</span> <span class="o">=</span> <span class="n">abs</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="n">k</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">abs_u_ik</span> <span class="o">&gt;</span> <span class="n">abs_u_ik_max</span>
+                <span class="n">pivotrow</span> <span class="o">=</span> <span class="n">row</span>
+                <span class="n">abs_u_ik_max</span> <span class="o">=</span> <span class="n">abs_u_ik</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">pivotrow</span> <span class="o">&gt;</span> <span class="n">k</span> <span class="c"># swap rows, virtually</span>
+            <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;Swap row </span><span class="si">$k</span><span class="s"> with row </span><span class="si">$pivotrow</span><span class="s">&quot;</span><span class="p">);</span> <span class="k">end</span>
+            <span class="p">(</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="nb">π</span><span class="p">[</span><span class="n">pivotrow</span><span class="p">])</span> <span class="o">=</span> <span class="p">(</span><span class="nb">π</span><span class="p">[</span><span class="n">pivotrow</span><span class="p">],</span> <span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="k">else</span>
+            <span class="k">if</span> <span class="n">demomode</span><span class="p">;</span> <span class="n">println</span><span class="p">(</span><span class="s">&quot;No row swap needed.&quot;</span><span class="p">);</span> <span class="k">end</span>
+        <span class="k">end</span>
+        <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="o">:</span><span class="n">end</span><span class="p">]</span>
+        <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">k</span><span class="p">],</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+            <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span> <span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="n">k</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">]</span> <span class="o">⋅</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span> <span class="p">)</span> <span class="o">/</span> <span class="n">U</span><span class="p">[</span><span class="n">k</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>
+            <span class="c"># Julia note: To enter the centered dot notation for the dot product, type &quot;\cdot&quot; and then hit the tab key.</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">demomode</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;permuted A is:&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">row</span> <span class="k">in</span> <span class="mi">1</span><span class="o">:</span><span class="n">n</span>
+                <span class="n">println</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">row</span><span class="p">],</span><span class="o">:</span><span class="p">])</span>
+            <span class="k">end</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Intermediate L is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+            <span class="n">println</span><span class="p">(</span><span class="s">&quot;Intermediate U is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c"># The last row (index &quot;end&quot;) is special: nothing to do for L except put in the 1 on the &quot;permuted main diagonal&quot;</span>
+    <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="n">U</span><span class="p">[</span><span class="k">end</span><span class="p">,</span><span class="k">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">A</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="k">end</span><span class="p">]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="k">end</span><span class="p">],</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">⋅</span> <span class="n">U</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="k">end</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">demomode</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;After the final step, k=</span><span class="si">$</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;L is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+        <span class="n">println</span><span class="p">(</span><span class="s">&quot;U is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="nb">π</span><span class="p">)</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">A</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.0</span>  <span class="o">-</span><span class="mf">3.0</span>  <span class="mf">22.0</span> <span class="p">;</span> <span class="mf">3.0</span> <span class="mf">5.0</span> <span class="o">-</span><span class="mf">6.0</span> <span class="p">;</span> <span class="mf">4.0</span> <span class="mf">235.0</span> <span class="mf">7.0</span> <span class="p">]</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;A is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+<span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">U</span><span class="p">,</span> <span class="nb">π</span><span class="p">)</span> <span class="o">=</span> <span class="n">plu</span><span class="p">(</span><span class="n">A</span><span class="p">,</span> <span class="n">demomode</span><span class="o">=</span><span class="nb">true</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">Function plu gives&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;L=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">L</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;U=&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">U</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;row permution </span><span class="si">$</span><span class="p">(</span><span class="nb">π</span><span class="p">)</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The &#39;residual&#39; or &#39;backward error&#39; A-LU is&quot;</span><span class="p">);</span> <span class="n">printmatrix</span><span class="p">(</span><span class="n">A</span> <span class="o">-</span> <span class="n">L</span><span class="o">*</span><span class="n">U</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>A is
+[ 1.0 -3.0 22.0 
+  3.0 5.0 -6.0 
+  4.0 235.0 7.0 ]
+k=1
+Swap row 1 with row 3
+permuted A is:
+[4.0, 235.0, 7.0]
+[3.0, 5.0, -6.0]
+[1.0, -3.0, 22.0]
+Intermediate L is
+[ 0.25 0.0 0.0 
+  0.75 0.0 0.0 
+  1.0 0.0 0.0 ]
+Intermediate U is
+[ 4.0 235.0 7.0 
+  0.0 0.0 0.0 
+  0.0 0.0 0.0 ]
+k=2
+No row swap needed.
+permuted A is:
+[4.0, 235.0, 7.0]
+[3.0, 5.0, -6.0]
+[1.0, -3.0, 22.0]
+Intermediate L is
+[ 0.25 0.3605839416058394 0.0 
+  0.75 1.0 0.0 
+  1.0 0.0 0.0 ]
+Intermediate U is
+[ 4.0 235.0 7.0 
+  0.0 -171.25 -11.25 
+  0.0 0.0 0.0 ]
+After the final step, k=2
+L is
+[ 0.25 0.3605839416058394 1.0 
+  0.75 1.0 0.0 
+  1.0 0.0 0.0 ]
+U is
+[ 4.0 235.0 7.0 
+  0.0 -171.25 -11.25 
+  0.0 0.0 24.306569343065693 ]
+
+Function plu gives
+L=
+[ 0.25 0.3605839416058394 1.0 
+  0.75 1.0 0.0 
+  1.0 0.0 0.0 ]
+U=
+[ 4.0 235.0 7.0 
+  0.0 -171.25 -11.25 
+  0.0 0.0 24.306569343065693 ]
+row permution [3, 2, 1]
+The &#39;residual&#39; or &#39;backward error&#39; A-LU is
+[ 0.0 0.0 0.0 
+  0.0 0.0 0.0 
+  0.0 0.0 0.0 ]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Matrix <span class="math notranslate nohighlight">\(L\)</span> is not actually lower triangular, due to the permutation of its rows,
+but is still fine for a version of forward substitution, because</p>
+<ul class="simple">
+<li><p>row <span class="math notranslate nohighlight">\(\pi_1\)</span> only involves <span class="math notranslate nohighlight">\(x_1\)</span> (multiplied by 1) and so can be used to solve for <span class="math notranslate nohighlight">\(x_1\)</span></p></li>
+<li><p>row <span class="math notranslate nohighlight">\(\pi_2\)</span> only involves <span class="math notranslate nohighlight">\(x_1\)</span> and <span class="math notranslate nohighlight">\(x_2\)</span> (the latter multiplied by 1) and so can be used to solve for <span class="math notranslate nohighlight">\(x_2\)</span></p></li>
+<li><p>…</p></li>
+</ul>
+<div class="proof definition admonition" id="definition-psychologically-triangular">
+<p class="admonition-title"><span class="caption-number">Definition 3.6 </span> (Psychologically [lower] triangular)</p>
+<section class="definition-content" id="proof-content">
+<p>A matrix like this — one that is a row-permutation of a [lower] triangular matrix — is called <strong>psychologically [lower] triangular</strong>.
+(Maybe because it believes itself to be such?)</p>
+</section>
+</div></section>
+<section id="forward-and-backward-substitution-with-a-permutation-vector">
+<h3>Forward and backward substitution with a permutation vector<a class="headerlink" href="#forward-and-backward-substitution-with-a-permutation-vector" title="Permalink to this headline">#</a></h3>
+<p>To solve <span class="math notranslate nohighlight">\(L c = b\)</span>, all one has to change from the formulas for forward substitution seen in the previous section
+<a class="reference internal" href="linear-equations-3-lu-factorization.html"><span class="doc">Solving Ax = b with LU factorization</span></a>
+is to put the permuted row index <span class="math notranslate nohighlight">\(\pi_i\)</span> in both <span class="math notranslate nohighlight">\(L\)</span> and <span class="math notranslate nohighlight">\(b\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ c_i = b_{\pi_i} - \sum_{j=1}^{i-1} l_{\pi_i,j} c_j,\; 1 \leq i \leq n \]</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="n">forwardsubstitution</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="nb">π</span><span class="p">)</span>
+    <span class="c"># Version 2: with permutation of rows</span>
+    <span class="c"># Solve L c = b for c, with permutation of the rows of L and of b.</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">length</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="k">in</span> <span class="mi">2</span><span class="o">:</span><span class="n">n</span>
+        <span class="n">c</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">-</span> <span class="n">L</span><span class="p">[</span><span class="nb">π</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="p">]</span> <span class="o">⋅</span> <span class="n">c</span><span class="p">[</span><span class="mi">1</span><span class="o">:</span><span class="n">i</span><span class="p">]</span>
+    <span class="k">end</span>
+    <span class="k">return</span> <span class="n">c</span>
+<span class="k">end</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">];</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">c</span> <span class="o">=</span> <span class="n">forwardsubstitution</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="nb">π</span><span class="p">)</span>
+<span class="n">print</span><span class="p">(</span><span class="s">&quot;c = </span><span class="si">$c</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>c = [4.0, 0.0, 1.0]
+</pre></div>
+</div>
+</div>
+</div>
+<p>Then the final step, solving <span class="math notranslate nohighlight">\(Ux = b\)</span> for <span class="math notranslate nohighlight">\(x\)</span>, needs no change, because <span class="math notranslate nohighlight">\(U\)</span> had no rows swapped,
+so we are done; we can import the function <code class="docutils literal notranslate"><span class="pre">backwardSubstitution</span></code> seen previously</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="k">using</span> <span class="o">.</span><span class="n">NumericalMethods</span><span class="o">:</span> <span class="n">backwardsubstitution</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-julia notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">backwardsubstitution</span><span class="p">(</span><span class="n">U</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;x = </span><span class="si">$x</span><span class="s">&quot;</span><span class="p">)</span>
+<span class="n">Ax</span> <span class="o">=</span> <span class="n">A</span><span class="o">*</span><span class="n">x</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">b</span> <span class="o">-</span> <span class="n">A</span><span class="o">*</span><span class="n">x</span>
+<span class="n">println</span><span class="p">(</span><span class="s">&quot;The residual r = b - Ax is </span><span class="se">\n</span><span class="si">$r</span><span class="se">\n</span><span class="s">with maximum norm </span><span class="si">$</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="nb">Inf</span><span class="p">))</span><span class="s">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>x = [1.0867867867867869, -0.002702702702702703, 0.04114114114114114]
+The residual r = b - Ax is 
+[0.0, 0.0, 0.0]
+with maximum norm 0.0
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "julia-1.8"
+        },
+        kernelOptions: {
+            kernelName: "julia-1.8",
+            path: "./docs"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'julia-1.8'</script>
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+    <a class='left-prev' id="prev-link" href="linear-equations-3-lu-factorization.html" title="previous page">
+        <i class="fas fa-angle-left"></i>
+        <div class="prev-next-info">
+            <p class="prev-next-subtitle">previous</p>
+            <p class="prev-next-title"><span class="section-number">3.4. </span>Solving <span class="math notranslate nohighlight">\(Ax = b\)</span> with LU factorization</p>
+        </div>
+    </a>
+    <a class='right-next' id="next-link" href="linear-equations-5-error-bounds-condition-numbers.html" title="next page">
+    <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title"><span class="section-number">3.6. </span>Error bounds for linear algebra, condition numbers, matrix norms, etc.</p>
+    </div>
+    <i class="fas fa-angle-right"></i>
+    </a>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
