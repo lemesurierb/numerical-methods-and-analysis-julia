@@ -1,0 +1,2063 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Proof Index &#8212; Introduction to Numerical Methods and Analysis with Julia (draft)</title>
+    
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+<link href="_static/styles/pydata-sphinx-theme.css?digest=1999514e3f237ded88cf" rel="stylesheet">
+
+    
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=5115cc725059bd94278eecd172e13a965bf8f5a9" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/proof.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
+    
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf">
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=9c920249402e914e316237a7dbc6769907cce411"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown, .tag_hide_input div.cell_input, .tag_hide-input div.cell_input, .tag_hide_output div.cell_output, .tag_hide-output div.cell_output, .tag_hide_cell.cell, .tag_hide-cell.cell';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="None">
+    
+
+    <!-- Google Analytics -->
+    
+
+    <script>
+      DOCUMENTATION_OPTIONS.COLLAPSE_INDEX = true;
+    </script>
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="60">
+<!-- Checkboxes to toggle the left sidebar -->
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle navigation sidebar">
+<label class="overlay overlay-navbar" for="__navigation">
+    <div class="visually-hidden">Toggle navigation sidebar</div>
+</label>
+<!-- Checkboxes to toggle the in-page toc -->
+<input type="checkbox" class="sidebar-toggle" name="__page-toc" id="__page-toc" aria-label="Toggle in-page Table of Contents">
+<label class="overlay overlay-pagetoc" for="__page-toc">
+    <div class="visually-hidden">Toggle in-page Table of Contents</div>
+</label>
+<!-- Headers at the top -->
+<div class="announcement header-item noprint"></div>
+<div class="header header-item noprint"></div>
+
+    
+    <div class="container-fluid" id="banner"></div>
+
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<!-- Sidebar -->
+<div class="bd-sidebar noprint" id="site-navigation">
+    <div class="bd-sidebar__content">
+        <div class="bd-sidebar__top"><div class="navbar-brand-box">
+    <a class="navbar-brand text-wrap" href="index.html">
+      
+        <!-- `logo` is deprecated in Sphinx 4.0, so remove this when we stop supporting 3 -->
+        
+      
+      
+      <img src="_static/WM_SSM_new_logo.jpg" class="logo" alt="logo">
+      
+      
+      <h1 class="site-logo" id="site-title">Introduction to Numerical Methods and Analysis with Julia (draft)</h1>
+      
+    </a>
+</div><form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
+</form><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="index.html">
+                    Preface
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="docs/introduction.html">
+   1. Introduction
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/root-finding.html">
+   2. Root-finding
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/>
+  <label for="toctree-checkbox-1">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/root-finding-by-interval-halving.html">
+     2.1. Root Finding by Interval Halving (Bisection)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/fixed-point-iteration.html">
+     2.2. Solving Equations by Fixed Point Iteration (of Contraction Mappings)
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/newtons-method.html">
+     2.3. Newton’s Method for Solving Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/taylors-theorem.html">
+     2.4. Taylor’s Theorem and the Accuracy of Linearization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/error-measures-convergence-rates.html">
+     2.5. Measures of Error and Order of Convergence
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/newtons-method-convergence-rate.html">
+     2.6. The Convergence Rate of Newton’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/root-finding-without-derivatives.html">
+     2.7. Root-finding without Derivatives
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/linear-algebra.html">
+   3. Linear Algebra and Simultaneous Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/>
+  <label for="toctree-checkbox-2">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-1-row-reduction.html">
+     3.1. Row Reduction/Gaussian Elimination
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/machine-numbers-rounding-error-and-error-propagation.html">
+     3.2. Machine Numbers, Rounding Error and Error Propagation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-2-pivoting.html">
+     3.3. Partial Pivoting
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-3-lu-factorization.html">
+     3.4. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     with LU factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-4-plu-factorization.html">
+     3.5. Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     With Both Pivoting and LU Factorization
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-5-error-bounds-condition-numbers.html">
+     3.6. Error bounds for linear algebra, condition numbers, matrix norms, etc.
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-6-iterative-methods.html">
+     3.7. Iterative Methods for Simultaneous Linear Equations
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html">
+     3.8. Faster Methods for Solving
+     <span class="math notranslate nohighlight">
+      \(Ax = b\)
+     </span>
+     for Tridiagonal and Banded matrices, and Strict Diagonal Dominance
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/eigenproblems.html">
+     3.9. Computing Eigenvalues and Eigenvectors: the Power Method, and a bit beyond
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/newtons-method-for-systems-intro.html">
+     3.10. Solving Nonlinear Systems of Equations by generalizations of Newton’s Method — a brief introduction
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/collocation-approximation.html">
+   4. Polynomial Collocation and Approximation
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/>
+  <label for="toctree-checkbox-3">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/polynomial-collocation%2Bapproximation.html">
+     4.1. Polynomial Collocation (Interpolation/Extrapolation) and Approximation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/polynomial-collocation-error-formulas.html">
+     4.2. Error Formulas for Polynomial Collocation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/polynomial-collocation-chebychev.html">
+     4.3. Choosing the collocation points: the Chebyshev method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/piecewise-polynomial-approximation-and-splines.html">
+     4.4. Piecewise Polynomial Approximating Functions: Splines and Hermite Cubics
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/least-squares-fitting.html">
+     4.5. Least-Squares Fitting to Data
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/least-squares-fitting-appendix-geometrical-approach.html">
+     4.6. Least-squares Fitting to Data: Appendix on The Geometrical Approach
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/calculus.html">
+   5. Derivatives and Definite Integrals
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/>
+  <label for="toctree-checkbox-4">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/derivatives-and-the-method-of-undetermined-coefficents.html">
+     5.1. Approximating Derivatives by the Method of Undetermined Coefficients
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/richardson-extrapolation.html">
+     5.2. Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/integrals-1-building-blocks.html">
+     5.3. Definite Integrals, Part 1: The Building Blocks
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/integrals-2-composite-rules.html">
+     5.4. Definite Integrals, Part 2: The Composite Trapezoid and Midpoint Rules
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/integrals-3-simpson-richardson.html">
+     5.5. Definite Integrals, Part 3: The (Composite) Simpson’s Rule and Richardson Extrapolation
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/integrals-4-romberg-integration.html">
+     5.6. Definite Integrals, Part 4: Romberg Integration
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/minimization.html">
+   6. Minimization
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/>
+  <label for="toctree-checkbox-5">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/minimization-1D.html">
+     6.1. Finding the Minimum of a Function of One Variable Without Using Derivatives – under construction
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/minimization-multidimensional-stub.html">
+     6.2. Finding the Minimum of a Function of Several Variables — Coming Soon
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/ODE-IVPs.html">
+   7. Initial Value Problems for Ordinary Differential Equations
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/>
+  <label for="toctree-checkbox-6">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-0-background-examples.html">
+     7.1. Background and Some Examples
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-1-Euler.html">
+     7.2. Euler’s Method
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-2-Runge-Kutta.html">
+     7.3. Runge-Kutta Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-3-error-results-one-step-methods.html">
+     7.4. A Global Error Bound for One Step Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-4-system-higher-order-equations.html">
+     7.5. Systems of ODEs and Higher Order ODEs
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-5-error-control.html">
+     7.6. Error Control and Variable Step Sizes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-6-multi-step-methods-introduction.html">
+     7.7. An Introduction to Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-7-multi-step-methods-Adams-Bashforth.html">
+     7.8. Adams-Bashforth Multistep Methods
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/ODE-IVP-8-implicit-methods-Adams-Moulton.html">
+     7.9. Implicit Methods: Adams-Moulton
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="docs/bibliography.html">
+   8. Bibliography
+  </a>
+ </li>
+ <li class="toctree-l1 has-children">
+  <a class="reference internal" href="docs/appendices.html">
+   9. Appendices
+  </a>
+  <input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/>
+  <label for="toctree-checkbox-7">
+   <i class="fas fa-chevron-down">
+   </i>
+  </label>
+  <ul>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/installing-julia-and-packages.html">
+     9.1. Installing Julia and some useful add-ons
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/julia-language-notes.html">
+     9.2. Notes on the Julia Language
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="docs/NumericalMethods.html">
+     9.3. Module
+     <code class="docutils literal notranslate">
+      <span class="pre">
+       NumericalMethods
+      </span>
+     </code>
+    </a>
+   </li>
+  </ul>
+ </li>
+</ul>
+
+    </div>
+</nav></div>
+        <div class="bd-sidebar__bottom">
+             <!-- To handle the deprecated key -->
+            
+            <div class="navbar_extra_footer">
+            Powered by <a href="https://jupyterbook.org">Jupyter Book</a>
+            </div>
+            
+        </div>
+    </div>
+    <div id="rtd-footer-container"></div>
+</div>
+
+
+          
+
+
+          
+<!-- A tiny helper pixel to detect if we've scrolled -->
+<div class="sbt-scroll-pixel-helper"></div>
+<!-- Main content -->
+<div class="col py-0 content-container">
+    
+    <div class="header-article row sticky-top noprint">
+        
+
+
+
+<div class="col py-1 d-flex header-article-main">
+    <div class="header-article__left">
+        
+        <label for="__navigation"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="right"
+title="Toggle navigation"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-bars"></i>
+  </span>
+
+</label>
+
+        
+    </div>
+    <div class="header-article__right">
+<button onclick="toggleFullScreen()"
+  class="headerbtn"
+  data-toggle="tooltip"
+data-placement="bottom"
+title="Fullscreen mode"
+>
+  
+
+<span class="headerbtn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+    </div>
+</div>
+
+<!-- Table of contents -->
+<div class="col-md-3 bd-toc show noprint">
+</div>
+    </div>
+    <div class="article row">
+        <div class="col pl-md-3 pl-lg-5 content-container">
+            <!-- Table of contents that is only displayed when printing the page -->
+            <div id="jb-print-docs-body" class="onlyprint">
+                <h1></h1>
+                <!-- Table of contents -->
+                <div id="print-main-content">
+                    <div id="jb-print-toc">
+                        
+                    </div>
+                </div>
+            </div>
+            <main id="main-content" role="main">
+                
+              <div>
+                
+
+   <h1>Proof Index</h1>
+
+   <div class="modindex-jumpbox">
+   <a href="#cap-a-contraction-mapping-theorem"><strong>a-contraction-mapping-theorem</strong></a> | 
+   <a href="#cap-a-derivative-based-fixed-point-theorem"><strong>a-derivative-based-fixed-point-theorem</strong></a> | 
+   <a href="#cap-absolute-backward-error"><strong>absolute-backward-error</strong></a> | 
+   <a href="#cap-absolute-error"><strong>absolute-error</strong></a> | 
+   <a href="#cap-algorithm-Doolittle-factorization"><strong>algorithm-Doolittle-factorization</strong></a> | 
+   <a href="#cap-algorithm-plu-1"><strong>algorithm-plu-1</strong></a> | 
+   <a href="#cap-algorithm-plu-2"><strong>algorithm-plu-2</strong></a> | 
+   <a href="#cap-algorithm-plu-fragment"><strong>algorithm-plu-fragment</strong></a> | 
+   <a href="#cap-backward-error"><strong>backward-error</strong></a> | 
+   <a href="#cap-backward-error-redux"><strong>backward-error-redux</strong></a> | 
+   <a href="#cap-backward-substitution"><strong>backward-substitution</strong></a> | 
+   <a href="#cap-backward-substitution-redux"><strong>backward-substitution-redux</strong></a> | 
+   <a href="#cap-bisection-for"><strong>bisection-for</strong></a> | 
+   <a href="#cap-bisection-step"><strong>bisection-step</strong></a> | 
+   <a href="#cap-bisection-while"><strong>bisection-while</strong></a> | 
+   <a href="#cap-bisection-x-cosx"><strong>bisection-x-cosx</strong></a> | 
+   <a href="#cap-check-with-taylor`"><strong>check-with-taylor`</strong></a> | 
+   <a href="#cap-choose-step-size-1"><strong>choose-step-size-1</strong></a> | 
+   <a href="#cap-choose-step-size-2"><strong>choose-step-size-2</strong></a> | 
+   <a href="#cap-collocation-error-formula"><strong>collocation-error-formula</strong></a> | 
+   <a href="#cap-collocation-error-formula-equally-spaced-nodes"><strong>collocation-error-formula-equally-spaced-nodes</strong></a> | 
+   <a href="#cap-comparison-to-taylor-error-formula"><strong>comparison-to-taylor-error-formula</strong></a> | 
+   <a href="#cap-convergence-of-order-p"><strong>convergence-of-order-p</strong></a> | 
+   <a href="#cap-definition-absolute-error"><strong>definition-absolute-error</strong></a> | 
+   <a href="#cap-definition-columnwise-strictly-diagonally-dominant"><strong>definition-columnwise-strictly-diagonally-dominant</strong></a> | 
+   <a href="#cap-definition-contraction-mapping"><strong>definition-contraction-mapping</strong></a> | 
+   <a href="#cap-definition-error"><strong>definition-error</strong></a> | 
+   <a href="#cap-definition-mapping"><strong>definition-mapping</strong></a> | 
+   <a href="#cap-definition-psychologically-triangular"><strong>definition-psychologically-triangular</strong></a> | 
+   <a href="#cap-definition-strictly-diagonally-dominant"><strong>definition-strictly-diagonally-dominant</strong></a> | 
+   <a href="#cap-definition-tridiagonal"><strong>definition-tridiagonal</strong></a> | 
+   <a href="#cap-definition-vector-valued-contraction-mapping"><strong>definition-vector-valued-contraction-mapping</strong></a> | 
+   <a href="#cap-dolittle-general"><strong>dolittle-general</strong></a> | 
+   <a href="#cap-error-bound-chebychev-collocation"><strong>error-bound-chebychev-collocation</strong></a> | 
+   <a href="#cap-error-bounds-clamped-splines"><strong>error-bounds-clamped-splines</strong></a> | 
+   <a href="#cap-error-bounds-hermite-cubics"><strong>error-bounds-hermite-cubics</strong></a> | 
+   <a href="#cap-error-left-endpoint-rule"><strong>error-left-endpoint-rule</strong></a> | 
+   <a href="#cap-error-redux"><strong>error-redux</strong></a> | 
+   <a href="#cap-errors-when-approximating-derivatives"><strong>errors-when-approximating-derivatives</strong></a> | 
+   <a href="#cap-euler-variable-h"><strong>euler-variable-h</strong></a> | 
+   <a href="#cap-example-0"><strong>example-0</strong></a> | 
+   <a href="#cap-example-1-x-4cosx"><strong>example-1-x-4cosx</strong></a> | 
+   <a href="#cap-example-2"><strong>example-2</strong></a> | 
+   <a href="#cap-example-2-x-cosx"><strong>example-2-x-cosx</strong></a> | 
+   <a href="#cap-example-3"><strong>example-3</strong></a> | 
+   <a href="#cap-example-3-x-cosx-fpi"><strong>example-3-x-cosx-fpi</strong></a> | 
+   <a href="#cap-example-4"><strong>example-4</strong></a> | 
+   <a href="#cap-example-almost-division-by-zero"><strong>example-almost-division-by-zero</strong></a> | 
+   <a href="#cap-example-avoiding-small-denominators"><strong>example-avoiding-small-denominators</strong></a> | 
+   <a href="#cap-example-basic-forward-difference"><strong>example-basic-forward-difference</strong></a> | 
+   <a href="#cap-example-hilbert-matrices"><strong>example-hilbert-matrices</strong></a> | 
+   <a href="#cap-example-less-obvious-division-by-zero"><strong>example-less-obvious-division-by-zero</strong></a> | 
+   <a href="#cap-example-newton-x-cosx"><strong>example-newton-x-cosx</strong></a> | 
+   <a href="#cap-example-obvious-division-by-zero"><strong>example-obvious-division-by-zero</strong></a> | 
+   <a href="#cap-example-three-point-centered-difference"><strong>example-three-point-centered-difference</strong></a> | 
+   <a href="#cap-example-three-point-one-sided-difference"><strong>example-three-point-one-sided-difference</strong></a> | 
+   <a href="#cap-example-three-point-one-sided-difference-method-2"><strong>example-three-point-one-sided-difference-method-2</strong></a> | 
+   <a href="#cap-explicit-midpoint"><strong>explicit-midpoint</strong></a> | 
+   <a href="#cap-explicit-trapezoid"><strong>explicit-trapezoid</strong></a> | 
+   <a href="#cap-forward-substitution"><strong>forward-substitution</strong></a> | 
+   <a href="#cap-gaussian-elimination"><strong>gaussian-elimination</strong></a> | 
+   <a href="#cap-gaussian-elimination-inserting-zeros"><strong>gaussian-elimination-inserting-zeros</strong></a> | 
+   <a href="#cap-generalized-mean-value-theorem"><strong>generalized-mean-value-theorem</strong></a> | 
+   <a href="#cap-geometrical-derivation-of-least-squares"><strong>geometrical-derivation-of-least-squares</strong></a> | 
+   <a href="#cap-inf-nan"><strong>inf-nan</strong></a> | 
+   <a href="#cap-integral-mean-value-theorem"><strong>integral-mean-value-theorem</strong></a> | 
+   <a href="#cap-interpolation-example-1"><strong>interpolation-example-1</strong></a> | 
+   <a href="#cap-interpolation-example-2"><strong>interpolation-example-2</strong></a> | 
+   <a href="#cap-interpolation-example-3"><strong>interpolation-example-3</strong></a> | 
+   <a href="#cap-inverse-power-method"><strong>inverse-power-method</strong></a> | 
+   <a href="#cap-julia-Random-rand"><strong>julia-Random-rand</strong></a> | 
+   <a href="#cap-julia-array-slicing"><strong>julia-array-slicing</strong></a> | 
+   <a href="#cap-julia-array-slicing-2"><strong>julia-array-slicing-2</strong></a> | 
+   <a href="#cap-julia-collect"><strong>julia-collect</strong></a> | 
+   <a href="#cap-julia-dot"><strong>julia-dot</strong></a> | 
+   <a href="#cap-julia-eigenvec"><strong>julia-eigenvec</strong></a> | 
+   <a href="#cap-julia-function-short-form"><strong>julia-function-short-form</strong></a> | 
+   <a href="#cap-julia-iteration-conditionals"><strong>julia-iteration-conditionals</strong></a> | 
+   <a href="#cap-julia-modules"><strong>julia-modules</strong></a> | 
+   <a href="#cap-julia-norm-opnorm"><strong>julia-norm-opnorm</strong></a> | 
+   <a href="#cap-julia-println"><strong>julia-println</strong></a> | 
+   <a href="#cap-julia-range"><strong>julia-range</strong></a> | 
+   <a href="#cap-julia-remark-keyword-parameters"><strong>julia-remark-keyword-parameters</strong></a> | 
+   <a href="#cap-julia-splat"><strong>julia-splat</strong></a> | 
+   <a href="#cap-julia-summing"><strong>julia-summing</strong></a> | 
+   <a href="#cap-julia-vectorization"><strong>julia-vectorization</strong></a> | 
+   <a href="#cap-linear-convergence"><strong>linear-convergence</strong></a> | 
+   <a href="#cap-lu-banded"><strong>lu-banded</strong></a> | 
+   <a href="#cap-lu-banded-symmetric"><strong>lu-banded-symmetric</strong></a> | 
+   <a href="#cap-lu-factorization"><strong>lu-factorization</strong></a> | 
+   <a href="#cap-midpoint-rule-error"><strong>midpoint-rule-error</strong></a> | 
+   <a href="#cap-module-numerical-methods"><strong>module-numerical-methods</strong></a> | 
+   <a href="#cap-multiplication-by-juxtaposition-in-julia"><strong>multiplication-by-juxtaposition-in-julia</strong></a> | 
+   <a href="#cap-multistep-method"><strong>multistep-method</strong></a> | 
+   <a href="#cap-multistep-method-redux"><strong>multistep-method-redux</strong></a> | 
+   <a href="#cap-naive-gaussian-elimination"><strong>naive-gaussian-elimination</strong></a> | 
+   <a href="#cap-no-scaled-partial-pivoting"><strong>no-scaled-partial-pivoting</strong></a> | 
+   <a href="#cap-observation-1"><strong>observation-1</strong></a> | 
+   <a href="#cap-ode-damped-mass-spring"><strong>ode-damped-mass-spring</strong></a> | 
+   <a href="#cap-ode-fast-slow"><strong>ode-fast-slow</strong></a> | 
+   <a href="#cap-ode-freely-rotating-pendulum"><strong>ode-freely-rotating-pendulum</strong></a> | 
+   <a href="#cap-ode-integration"><strong>ode-integration</strong></a> | 
+   <a href="#cap-ode-ivp-7-2"><strong>ode-ivp-7-2</strong></a> | 
+   <a href="#cap-ode-nonlinear"><strong>ode-nonlinear</strong></a> | 
+   <a href="#cap-ode-simplest-genuine"><strong>ode-simplest-genuine</strong></a> | 
+   <a href="#cap-ode-simplest-genuine-solved"><strong>ode-simplest-genuine-solved</strong></a> | 
+   <a href="#cap-ode-stiff"><strong>ode-stiff</strong></a> | 
+   <a href="#cap-ode-stiff-solved"><strong>ode-stiff-solved</strong></a> | 
+   <a href="#cap-odeivp-onestep-order-of-global-error"><strong>odeivp-onestep-order-of-global-error</strong></a> | 
+   <a href="#cap-polyfit-and-multiple-dispatch"><strong>polyfit-and-multiple-dispatch</strong></a> | 
+   <a href="#cap-power-method"><strong>power-method</strong></a> | 
+   <a href="#cap-proposition-1"><strong>proposition-1</strong></a> | 
+   <a href="#cap-proposition-1-fpi-iterates-converge-to-fp"><strong>proposition-1-fpi-iterates-converge-to-fp</strong></a> | 
+   <a href="#cap-proposition-2"><strong>proposition-2</strong></a> | 
+   <a href="#cap-proposition-2-ivp-fpi-version"><strong>proposition-2-ivp-fpi-version</strong></a> | 
+   <a href="#cap-proposition-3"><strong>proposition-3</strong></a> | 
+   <a href="#cap-relative-error"><strong>relative-error</strong></a> | 
+   <a href="#cap-remark-1"><strong>remark-1</strong></a> | 
+   <a href="#cap-remark-1-not-quite-zero-values-and-rounding"><strong>remark-1-not-quite-zero-values-and-rounding</strong></a> | 
+   <a href="#cap-remark-12"><strong>remark-12</strong></a> | 
+   <a href="#cap-remark-2-lu-is-functionally-correct"><strong>remark-2-lu-is-functionally-correct</strong></a> | 
+   <a href="#cap-remark-3"><strong>remark-3</strong></a> | 
+   <a href="#cap-remark-5"><strong>remark-5</strong></a> | 
+   <a href="#cap-remark-LU-with-P"><strong>remark-LU-with-P</strong></a> | 
+   <a href="#cap-remark-dolittle"><strong>remark-dolittle</strong></a> | 
+   <a href="#cap-remark-importing-backwardsubstitution"><strong>remark-importing-backwardsubstitution</strong></a> | 
+   <a href="#cap-remark-julia-arrays"><strong>remark-julia-arrays</strong></a> | 
+   <a href="#cap-remark-julia-style"><strong>remark-julia-style</strong></a> | 
+   <a href="#cap-remark-multiple-dispatch-polyfit"><strong>remark-multiple-dispatch-polyfit</strong></a> | 
+   <a href="#cap-remark-other-matrix-norms"><strong>remark-other-matrix-norms</strong></a> | 
+   <a href="#cap-remark-positive-definite-also-works"><strong>remark-positive-definite-also-works</strong></a> | 
+   <a href="#cap-remark-positive-definite-matrices-also-work"><strong>remark-positive-definite-matrices-also-work</strong></a> | 
+   <a href="#cap-remark-vector-derivative notation"><strong>remark-vector-derivative notation</strong></a> | 
+   <a href="#cap-richardson-forward-differences"><strong>richardson-forward-differences</strong></a> | 
+   <a href="#cap-richardson0n-to-kn"><strong>richardson0n-to-kn</strong></a> | 
+   <a href="#cap-rkf"><strong>rkf</strong></a> | 
+   <a href="#cap-robust"><strong>robust</strong></a> | 
+   <a href="#cap-romberg-integration"><strong>romberg-integration</strong></a> | 
+   <a href="#cap-runge-kutta"><strong>runge-kutta</strong></a> | 
+   <a href="#cap-secant-method"><strong>secant-method</strong></a> | 
+   <a href="#cap-separatrices"><strong>separatrices</strong></a> | 
+   <a href="#cap-stiffness"><strong>stiffness</strong></a> | 
+   <a href="#cap-super-linear"><strong>super-linear</strong></a> | 
+   <a href="#cap-swapping-values-in-julia"><strong>swapping-values-in-julia</strong></a> | 
+   <a href="#cap-taylors-theorem-a"><strong>taylors-theorem-a</strong></a> | 
+   <a href="#cap-taylors-theorem-h"><strong>taylors-theorem-h</strong></a> | 
+   <a href="#cap-theorem-1"><strong>theorem-1</strong></a> | 
+   <a href="#cap-theorem-Crout-SDD"><strong>theorem-Crout-SDD</strong></a> | 
+   <a href="#cap-theorem-LU-SDD"><strong>theorem-LU-SDD</strong></a> | 
+   <a href="#cap-theorem-collocation"><strong>theorem-collocation</strong></a> | 
+   <a href="#cap-theorem-gaus-seidel-convergence"><strong>theorem-gaus-seidel-convergence</strong></a> | 
+   <a href="#cap-theorem-jacobi-convergence"><strong>theorem-jacobi-convergence</strong></a> | 
+   <a href="#cap-theorem-loss-of-precision"><strong>theorem-loss-of-precision</strong></a> | 
+   <a href="#cap-theorem-matrix-iteration-convergence"><strong>theorem-matrix-iteration-convergence</strong></a> | 
+   <a href="#cap-theorem-no-pivoting-columnwise-sdd"><strong>theorem-no-pivoting-columnwise-sdd</strong></a> | 
+   <a href="#cap-theorem-row-reduction-preserves-sdd"><strong>theorem-row-reduction-preserves-sdd</strong></a> | 
+   <a href="#cap-to-do-Installing"><strong>to-do-Installing</strong></a> | 
+   <a href="#cap-trapezoid-rule-error"><strong>trapezoid-rule-error</strong></a> | 
+   <a href="#cap-trapezoid-step-size"><strong>trapezoid-step-size</strong></a> | 
+   <a href="#cap-triangular-matrix"><strong>triangular-matrix</strong></a> | 
+   <a href="#cap-uniformly-contracting"><strong>uniformly-contracting</strong></a> | 
+   <a href="#cap-vector-valued-contraction-mapping-theorem"><strong>vector-valued-contraction-mapping-theorem</strong></a> | 
+   <a href="#cap-vectorization-broadcasting-in-julia"><strong>vectorization-broadcasting-in-julia</strong></a> | 
+   <a href="#cap-well-posed"><strong>well-posed</strong></a> | 
+   <a href="#cap-zip-in-julia"><strong>zip-in-julia</strong></a>
+   </div>
+
+   <table class="indextable modindextable">
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-a-contraction-mapping-theorem"><td></td><td>
+       <strong>a-contraction-mapping-theorem</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#a-contraction-mapping-theorem"><code class="xref">a-contraction-mapping-theorem</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-a-derivative-based-fixed-point-theorem"><td></td><td>
+       <strong>a-derivative-based-fixed-point-theorem</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#a-derivative-based-fixed-point-theorem"><code class="xref">a-derivative-based-fixed-point-theorem</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-absolute-backward-error"><td></td><td>
+       <strong>absolute-backward-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#absolute-backward-error"><code class="xref">absolute-backward-error</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-absolute-error"><td></td><td>
+       <strong>absolute-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#absolute-error"><code class="xref">absolute-error</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-algorithm-Doolittle-factorization"><td></td><td>
+       <strong>algorithm-Doolittle-factorization</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-3-lu-factorization.html#algorithm-Doolittle-factorization"><code class="xref">algorithm-Doolittle-factorization</code></a> <em>(docs/linear-equations-3-lu-factorization)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-algorithm-plu-1"><td></td><td>
+       <strong>algorithm-plu-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-4-plu-factorization.html#algorithm-plu-1"><code class="xref">algorithm-plu-1</code></a> <em>(docs/linear-equations-4-plu-factorization)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-algorithm-plu-2"><td></td><td>
+       <strong>algorithm-plu-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-4-plu-factorization.html#algorithm-plu-2"><code class="xref">algorithm-plu-2</code></a> <em>(docs/linear-equations-4-plu-factorization)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-algorithm-plu-fragment"><td></td><td>
+       <strong>algorithm-plu-fragment</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-4-plu-factorization.html#algorithm-plu-fragment"><code class="xref">algorithm-plu-fragment</code></a> <em>(docs/linear-equations-4-plu-factorization)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-backward-error"><td></td><td>
+       <strong>backward-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#backward-error"><code class="xref">backward-error</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-backward-error-redux"><td></td><td>
+       <strong>backward-error-redux</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#backward-error-redux"><code class="xref">backward-error-redux</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-backward-substitution"><td></td><td>
+       <strong>backward-substitution</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#backward-substitution"><code class="xref">backward-substitution</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-backward-substitution-redux"><td></td><td>
+       <strong>backward-substitution-redux</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#backward-substitution-redux"><code class="xref">backward-substitution-redux</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-bisection-for"><td></td><td>
+       <strong>bisection-for</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#bisection-for"><code class="xref">bisection-for</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-bisection-step"><td></td><td>
+       <strong>bisection-step</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#bisection-step"><code class="xref">bisection-step</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-bisection-while"><td></td><td>
+       <strong>bisection-while</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#bisection-while"><code class="xref">bisection-while</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-bisection-x-cosx"><td></td><td>
+       <strong>bisection-x-cosx</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#bisection-x-cosx"><code class="xref">bisection-x-cosx</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-check-with-taylor`"><td></td><td>
+       <strong>check-with-taylor`</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/derivatives-and-the-method-of-undetermined-coefficents.html#check-with-taylor`"><code class="xref">check-with-taylor`</code></a> <em>(docs/derivatives-and-the-method-of-undetermined-coefficents)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-choose-step-size-1"><td></td><td>
+       <strong>choose-step-size-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-5-error-control.html#choose-step-size-1"><code class="xref">choose-step-size-1</code></a> <em>(docs/ODE-IVP-5-error-control)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-choose-step-size-2"><td></td><td>
+       <strong>choose-step-size-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-5-error-control.html#choose-step-size-2"><code class="xref">choose-step-size-2</code></a> <em>(docs/ODE-IVP-5-error-control)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-collocation-error-formula"><td></td><td>
+       <strong>collocation-error-formula</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation-error-formulas.html#collocation-error-formula"><code class="xref">collocation-error-formula</code></a> <em>(docs/polynomial-collocation-error-formulas)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-collocation-error-formula-equally-spaced-nodes"><td></td><td>
+       <strong>collocation-error-formula-equally-spaced-nodes</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation-error-formulas.html#collocation-error-formula-equally-spaced-nodes"><code class="xref">collocation-error-formula-equally-spaced-nodes</code></a> <em>(docs/polynomial-collocation-error-formulas)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-comparison-to-taylor-error-formula"><td></td><td>
+       <strong>comparison-to-taylor-error-formula</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation-error-formulas.html#comparison-to-taylor-error-formula"><code class="xref">comparison-to-taylor-error-formula</code></a> <em>(docs/polynomial-collocation-error-formulas)</em></td><td>
+       <em>observation</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-convergence-of-order-p"><td></td><td>
+       <strong>convergence-of-order-p</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#convergence-of-order-p"><code class="xref">convergence-of-order-p</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-absolute-error"><td></td><td>
+       <strong>definition-absolute-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#definition-absolute-error"><code class="xref">definition-absolute-error</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-columnwise-strictly-diagonally-dominant"><td></td><td>
+       <strong>definition-columnwise-strictly-diagonally-dominant</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#definition-columnwise-strictly-diagonally-dominant"><code class="xref">definition-columnwise-strictly-diagonally-dominant</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-contraction-mapping"><td></td><td>
+       <strong>definition-contraction-mapping</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#definition-contraction-mapping"><code class="xref">definition-contraction-mapping</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-error"><td></td><td>
+       <strong>definition-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#definition-error"><code class="xref">definition-error</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-mapping"><td></td><td>
+       <strong>definition-mapping</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#definition-mapping"><code class="xref">definition-mapping</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-psychologically-triangular"><td></td><td>
+       <strong>definition-psychologically-triangular</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-4-plu-factorization.html#definition-psychologically-triangular"><code class="xref">definition-psychologically-triangular</code></a> <em>(docs/linear-equations-4-plu-factorization)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-strictly-diagonally-dominant"><td></td><td>
+       <strong>definition-strictly-diagonally-dominant</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#definition-strictly-diagonally-dominant"><code class="xref">definition-strictly-diagonally-dominant</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-tridiagonal"><td></td><td>
+       <strong>definition-tridiagonal</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#definition-tridiagonal"><code class="xref">definition-tridiagonal</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-definition-vector-valued-contraction-mapping"><td></td><td>
+       <strong>definition-vector-valued-contraction-mapping</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-6-iterative-methods.html#definition-vector-valued-contraction-mapping"><code class="xref">definition-vector-valued-contraction-mapping</code></a> <em>(docs/linear-equations-6-iterative-methods)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-dolittle-general"><td></td><td>
+       <strong>dolittle-general</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#dolittle-general"><code class="xref">dolittle-general</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-error-bound-chebychev-collocation"><td></td><td>
+       <strong>error-bound-chebychev-collocation</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation-chebychev.html#error-bound-chebychev-collocation"><code class="xref">error-bound-chebychev-collocation</code></a> <em>(docs/polynomial-collocation-chebychev)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-error-bounds-clamped-splines"><td></td><td>
+       <strong>error-bounds-clamped-splines</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/piecewise-polynomial-approximation-and-splines.html#error-bounds-clamped-splines"><code class="xref">error-bounds-clamped-splines</code></a> <em>(docs/piecewise-polynomial-approximation-and-splines)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-error-bounds-hermite-cubics"><td></td><td>
+       <strong>error-bounds-hermite-cubics</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/piecewise-polynomial-approximation-and-splines.html#error-bounds-hermite-cubics"><code class="xref">error-bounds-hermite-cubics</code></a> <em>(docs/piecewise-polynomial-approximation-and-splines)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-error-left-endpoint-rule"><td></td><td>
+       <strong>error-left-endpoint-rule</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-1-building-blocks.html#error-left-endpoint-rule"><code class="xref">error-left-endpoint-rule</code></a> <em>(docs/integrals-1-building-blocks)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-error-redux"><td></td><td>
+       <strong>error-redux</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#error-redux"><code class="xref">error-redux</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-errors-when-approximating-derivatives"><td></td><td>
+       <strong>errors-when-approximating-derivatives</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/machine-numbers-rounding-error-and-error-propagation.html#errors-when-approximating-derivatives"><code class="xref">errors-when-approximating-derivatives</code></a> <em>(docs/machine-numbers-rounding-error-and-error-propagation)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-euler-variable-h"><td></td><td>
+       <strong>euler-variable-h</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-5-error-control.html#euler-variable-h"><code class="xref">euler-variable-h</code></a> <em>(docs/ODE-IVP-5-error-control)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-0"><td></td><td>
+       <strong>example-0</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-8-implicit-methods-Adams-Moulton.html#example-0"><code class="xref">example-0</code></a> <em>(docs/ODE-IVP-8-implicit-methods-Adams-Moulton)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-1-x-4cosx"><td></td><td>
+       <strong>example-1-x-4cosx</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#example-1-x-4cosx"><code class="xref">example-1-x-4cosx</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-2"><td></td><td>
+       <strong>example-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#example-2"><code class="xref">example-2</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-2-x-cosx"><td></td><td>
+       <strong>example-2-x-cosx</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#example-2-x-cosx"><code class="xref">example-2-x-cosx</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-3"><td></td><td>
+       <strong>example-3</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#example-3"><code class="xref">example-3</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-3-x-cosx-fpi"><td></td><td>
+       <strong>example-3-x-cosx-fpi</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#example-3-x-cosx-fpi"><code class="xref">example-3-x-cosx-fpi</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-4"><td></td><td>
+       <strong>example-4</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#example-4"><code class="xref">example-4</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-almost-division-by-zero"><td></td><td>
+       <strong>example-almost-division-by-zero</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#example-almost-division-by-zero"><code class="xref">example-almost-division-by-zero</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-avoiding-small-denominators"><td></td><td>
+       <strong>example-avoiding-small-denominators</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#example-avoiding-small-denominators"><code class="xref">example-avoiding-small-denominators</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-basic-forward-difference"><td></td><td>
+       <strong>example-basic-forward-difference</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/derivatives-and-the-method-of-undetermined-coefficents.html#example-basic-forward-difference"><code class="xref">example-basic-forward-difference</code></a> <em>(docs/derivatives-and-the-method-of-undetermined-coefficents)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-hilbert-matrices"><td></td><td>
+       <strong>example-hilbert-matrices</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-5-error-bounds-condition-numbers.html#example-hilbert-matrices"><code class="xref">example-hilbert-matrices</code></a> <em>(docs/linear-equations-5-error-bounds-condition-numbers)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-less-obvious-division-by-zero"><td></td><td>
+       <strong>example-less-obvious-division-by-zero</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#example-less-obvious-division-by-zero"><code class="xref">example-less-obvious-division-by-zero</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-newton-x-cosx"><td></td><td>
+       <strong>example-newton-x-cosx</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#example-newton-x-cosx"><code class="xref">example-newton-x-cosx</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-obvious-division-by-zero"><td></td><td>
+       <strong>example-obvious-division-by-zero</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#example-obvious-division-by-zero"><code class="xref">example-obvious-division-by-zero</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-three-point-centered-difference"><td></td><td>
+       <strong>example-three-point-centered-difference</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/derivatives-and-the-method-of-undetermined-coefficents.html#example-three-point-centered-difference"><code class="xref">example-three-point-centered-difference</code></a> <em>(docs/derivatives-and-the-method-of-undetermined-coefficents)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-three-point-one-sided-difference"><td></td><td>
+       <strong>example-three-point-one-sided-difference</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/derivatives-and-the-method-of-undetermined-coefficents.html#example-three-point-one-sided-difference"><code class="xref">example-three-point-one-sided-difference</code></a> <em>(docs/derivatives-and-the-method-of-undetermined-coefficents)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-example-three-point-one-sided-difference-method-2"><td></td><td>
+       <strong>example-three-point-one-sided-difference-method-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/derivatives-and-the-method-of-undetermined-coefficents.html#example-three-point-one-sided-difference-method-2"><code class="xref">example-three-point-one-sided-difference-method-2</code></a> <em>(docs/derivatives-and-the-method-of-undetermined-coefficents)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-explicit-midpoint"><td></td><td>
+       <strong>explicit-midpoint</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-2-Runge-Kutta.html#explicit-midpoint"><code class="xref">explicit-midpoint</code></a> <em>(docs/ODE-IVP-2-Runge-Kutta)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-explicit-trapezoid"><td></td><td>
+       <strong>explicit-trapezoid</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-2-Runge-Kutta.html#explicit-trapezoid"><code class="xref">explicit-trapezoid</code></a> <em>(docs/ODE-IVP-2-Runge-Kutta)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-forward-substitution"><td></td><td>
+       <strong>forward-substitution</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#forward-substitution"><code class="xref">forward-substitution</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-gaussian-elimination"><td></td><td>
+       <strong>gaussian-elimination</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#gaussian-elimination"><code class="xref">gaussian-elimination</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-gaussian-elimination-inserting-zeros"><td></td><td>
+       <strong>gaussian-elimination-inserting-zeros</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#gaussian-elimination-inserting-zeros"><code class="xref">gaussian-elimination-inserting-zeros</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-generalized-mean-value-theorem"><td></td><td>
+       <strong>generalized-mean-value-theorem</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-2-composite-rules.html#generalized-mean-value-theorem"><code class="xref">generalized-mean-value-theorem</code></a> <em>(docs/integrals-2-composite-rules)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-geometrical-derivation-of-least-squares"><td></td><td>
+       <strong>geometrical-derivation-of-least-squares</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/least-squares-fitting.html#geometrical-derivation-of-least-squares"><code class="xref">geometrical-derivation-of-least-squares</code></a> <em>(docs/least-squares-fitting)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-inf-nan"><td></td><td>
+       <strong>inf-nan</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#inf-nan"><code class="xref">inf-nan</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-integral-mean-value-theorem"><td></td><td>
+       <strong>integral-mean-value-theorem</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-1-building-blocks.html#integral-mean-value-theorem"><code class="xref">integral-mean-value-theorem</code></a> <em>(docs/integrals-1-building-blocks)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-interpolation-example-1"><td></td><td>
+       <strong>interpolation-example-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#interpolation-example-1"><code class="xref">interpolation-example-1</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-interpolation-example-2"><td></td><td>
+       <strong>interpolation-example-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#interpolation-example-2"><code class="xref">interpolation-example-2</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-interpolation-example-3"><td></td><td>
+       <strong>interpolation-example-3</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#interpolation-example-3"><code class="xref">interpolation-example-3</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-inverse-power-method"><td></td><td>
+       <strong>inverse-power-method</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/eigenproblems.html#inverse-power-method"><code class="xref">inverse-power-method</code></a> <em>(docs/eigenproblems)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-Random-rand"><td></td><td>
+       <strong>julia-Random-rand</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#julia-Random-rand"><code class="xref">julia-Random-rand</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-array-slicing"><td></td><td>
+       <strong>julia-array-slicing</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#julia-array-slicing"><code class="xref">julia-array-slicing</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-array-slicing-2"><td></td><td>
+       <strong>julia-array-slicing-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#julia-array-slicing-2"><code class="xref">julia-array-slicing-2</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-collect"><td></td><td>
+       <strong>julia-collect</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-5-error-bounds-condition-numbers.html#julia-collect"><code class="xref">julia-collect</code></a> <em>(docs/linear-equations-5-error-bounds-condition-numbers)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-dot"><td></td><td>
+       <strong>julia-dot</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/eigenproblems.html#julia-dot"><code class="xref">julia-dot</code></a> <em>(docs/eigenproblems)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-eigenvec"><td></td><td>
+       <strong>julia-eigenvec</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/eigenproblems.html#julia-eigenvec"><code class="xref">julia-eigenvec</code></a> <em>(docs/eigenproblems)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-function-short-form"><td></td><td>
+       <strong>julia-function-short-form</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#julia-function-short-form"><code class="xref">julia-function-short-form</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-iteration-conditionals"><td></td><td>
+       <strong>julia-iteration-conditionals</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#julia-iteration-conditionals"><code class="xref">julia-iteration-conditionals</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-modules"><td></td><td>
+       <strong>julia-modules</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#julia-modules"><code class="xref">julia-modules</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-norm-opnorm"><td></td><td>
+       <strong>julia-norm-opnorm</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-5-error-bounds-condition-numbers.html#julia-norm-opnorm"><code class="xref">julia-norm-opnorm</code></a> <em>(docs/linear-equations-5-error-bounds-condition-numbers)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-println"><td></td><td>
+       <strong>julia-println</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#julia-println"><code class="xref">julia-println</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-range"><td></td><td>
+       <strong>julia-range</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-by-interval-halving.html#julia-range"><code class="xref">julia-range</code></a> <em>(docs/root-finding-by-interval-halving)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-remark-keyword-parameters"><td></td><td>
+       <strong>julia-remark-keyword-parameters</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#julia-remark-keyword-parameters"><code class="xref">julia-remark-keyword-parameters</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-splat"><td></td><td>
+       <strong>julia-splat</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#julia-splat"><code class="xref">julia-splat</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-summing"><td></td><td>
+       <strong>julia-summing</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#julia-summing"><code class="xref">julia-summing</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-julia-vectorization"><td></td><td>
+       <strong>julia-vectorization</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#julia-vectorization"><code class="xref">julia-vectorization</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-linear-convergence"><td></td><td>
+       <strong>linear-convergence</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#linear-convergence"><code class="xref">linear-convergence</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-lu-banded"><td></td><td>
+       <strong>lu-banded</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#lu-banded"><code class="xref">lu-banded</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-lu-banded-symmetric"><td></td><td>
+       <strong>lu-banded-symmetric</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#lu-banded-symmetric"><code class="xref">lu-banded-symmetric</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-lu-factorization"><td></td><td>
+       <strong>lu-factorization</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices.html#lu-factorization"><code class="xref">lu-factorization</code></a> <em>(docs/linear-equations-7-tridiagonal-banded-and-SDD-matrices)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-midpoint-rule-error"><td></td><td>
+       <strong>midpoint-rule-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-1-building-blocks.html#midpoint-rule-error"><code class="xref">midpoint-rule-error</code></a> <em>(docs/integrals-1-building-blocks)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-module-numerical-methods"><td></td><td>
+       <strong>module-numerical-methods</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#module-numerical-methods"><code class="xref">module-numerical-methods</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-multiplication-by-juxtaposition-in-julia"><td></td><td>
+       <strong>multiplication-by-juxtaposition-in-julia</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#multiplication-by-juxtaposition-in-julia"><code class="xref">multiplication-by-juxtaposition-in-julia</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-multistep-method"><td></td><td>
+       <strong>multistep-method</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-6-multi-step-methods-introduction.html#multistep-method"><code class="xref">multistep-method</code></a> <em>(docs/ODE-IVP-6-multi-step-methods-introduction)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-multistep-method-redux"><td></td><td>
+       <strong>multistep-method-redux</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-7-multi-step-methods-Adams-Bashforth.html#multistep-method-redux"><code class="xref">multistep-method-redux</code></a> <em>(docs/ODE-IVP-7-multi-step-methods-Adams-Bashforth)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-naive-gaussian-elimination"><td></td><td>
+       <strong>naive-gaussian-elimination</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#naive-gaussian-elimination"><code class="xref">naive-gaussian-elimination</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-no-scaled-partial-pivoting"><td></td><td>
+       <strong>no-scaled-partial-pivoting</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-2-pivoting.html#no-scaled-partial-pivoting"><code class="xref">no-scaled-partial-pivoting</code></a> <em>(docs/linear-equations-2-pivoting)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-observation-1"><td></td><td>
+       <strong>observation-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-without-derivatives.html#observation-1"><code class="xref">observation-1</code></a> <em>(docs/root-finding-without-derivatives)</em></td><td>
+       <em>observation</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-damped-mass-spring"><td></td><td>
+       <strong>ode-damped-mass-spring</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-damped-mass-spring"><code class="xref">ode-damped-mass-spring</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-fast-slow"><td></td><td>
+       <strong>ode-fast-slow</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-fast-slow"><code class="xref">ode-fast-slow</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-freely-rotating-pendulum"><td></td><td>
+       <strong>ode-freely-rotating-pendulum</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-freely-rotating-pendulum"><code class="xref">ode-freely-rotating-pendulum</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-integration"><td></td><td>
+       <strong>ode-integration</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-integration"><code class="xref">ode-integration</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-ivp-7-2"><td></td><td>
+       <strong>ode-ivp-7-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-8-implicit-methods-Adams-Moulton.html#ode-ivp-7-2"><code class="xref">ode-ivp-7-2</code></a> <em>(docs/ODE-IVP-8-implicit-methods-Adams-Moulton)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-nonlinear"><td></td><td>
+       <strong>ode-nonlinear</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-nonlinear"><code class="xref">ode-nonlinear</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-simplest-genuine"><td></td><td>
+       <strong>ode-simplest-genuine</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-simplest-genuine"><code class="xref">ode-simplest-genuine</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-simplest-genuine-solved"><td></td><td>
+       <strong>ode-simplest-genuine-solved</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-2-Runge-Kutta.html#ode-simplest-genuine-solved"><code class="xref">ode-simplest-genuine-solved</code></a> <em>(docs/ODE-IVP-2-Runge-Kutta)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-stiff"><td></td><td>
+       <strong>ode-stiff</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#ode-stiff"><code class="xref">ode-stiff</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-ode-stiff-solved"><td></td><td>
+       <strong>ode-stiff-solved</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-2-Runge-Kutta.html#ode-stiff-solved"><code class="xref">ode-stiff-solved</code></a> <em>(docs/ODE-IVP-2-Runge-Kutta)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-odeivp-onestep-order-of-global-error"><td></td><td>
+       <strong>odeivp-onestep-order-of-global-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-3-error-results-one-step-methods.html#odeivp-onestep-order-of-global-error"><code class="xref">odeivp-onestep-order-of-global-error</code></a> <em>(docs/ODE-IVP-3-error-results-one-step-methods)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-polyfit-and-multiple-dispatch"><td></td><td>
+       <strong>polyfit-and-multiple-dispatch</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/least-squares-fitting.html#polyfit-and-multiple-dispatch"><code class="xref">polyfit-and-multiple-dispatch</code></a> <em>(docs/least-squares-fitting)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-power-method"><td></td><td>
+       <strong>power-method</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/eigenproblems.html#power-method"><code class="xref">power-method</code></a> <em>(docs/eigenproblems)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-proposition-1"><td></td><td>
+       <strong>proposition-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method-convergence-rate.html#proposition-1"><code class="xref">proposition-1</code></a> <em>(docs/newtons-method-convergence-rate)</em></td><td>
+       <em>proposition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-proposition-1-fpi-iterates-converge-to-fp"><td></td><td>
+       <strong>proposition-1-fpi-iterates-converge-to-fp</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#proposition-1-fpi-iterates-converge-to-fp"><code class="xref">proposition-1-fpi-iterates-converge-to-fp</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>proposition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-proposition-2"><td></td><td>
+       <strong>proposition-2</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method-convergence-rate.html#proposition-2"><code class="xref">proposition-2</code></a> <em>(docs/newtons-method-convergence-rate)</em></td><td>
+       <em>proposition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-proposition-2-ivp-fpi-version"><td></td><td>
+       <strong>proposition-2-ivp-fpi-version</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#proposition-2-ivp-fpi-version"><code class="xref">proposition-2-ivp-fpi-version</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>proposition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-proposition-3"><td></td><td>
+       <strong>proposition-3</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#proposition-3"><code class="xref">proposition-3</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>proposition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-relative-error"><td></td><td>
+       <strong>relative-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#relative-error"><code class="xref">relative-error</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-1"><td></td><td>
+       <strong>remark-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-2-composite-rules.html#remark-1"><code class="xref">remark-1</code></a> <em>(docs/integrals-2-composite-rules)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-1-not-quite-zero-values-and-rounding"><td></td><td>
+       <strong>remark-1-not-quite-zero-values-and-rounding</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#remark-1-not-quite-zero-values-and-rounding"><code class="xref">remark-1-not-quite-zero-values-and-rounding</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-12"><td></td><td>
+       <strong>remark-12</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#remark-12"><code class="xref">remark-12</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-2-lu-is-functionally-correct"><td></td><td>
+       <strong>remark-2-lu-is-functionally-correct</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#remark-2-lu-is-functionally-correct"><code class="xref">remark-2-lu-is-functionally-correct</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>observation</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-3"><td></td><td>
+       <strong>remark-3</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation-error-formulas.html#remark-3"><code class="xref">remark-3</code></a> <em>(docs/polynomial-collocation-error-formulas)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-5"><td></td><td>
+       <strong>remark-5</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#remark-5"><code class="xref">remark-5</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-LU-with-P"><td></td><td>
+       <strong>remark-LU-with-P</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-4-plu-factorization.html#remark-LU-with-P"><code class="xref">remark-LU-with-P</code></a> <em>(docs/linear-equations-4-plu-factorization)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-dolittle"><td></td><td>
+       <strong>remark-dolittle</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-3-lu-factorization.html#remark-dolittle"><code class="xref">remark-dolittle</code></a> <em>(docs/linear-equations-3-lu-factorization)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-importing-backwardsubstitution"><td></td><td>
+       <strong>remark-importing-backwardsubstitution</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#remark-importing-backwardsubstitution"><code class="xref">remark-importing-backwardsubstitution</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-julia-arrays"><td></td><td>
+       <strong>remark-julia-arrays</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#remark-julia-arrays"><code class="xref">remark-julia-arrays</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-julia-style"><td></td><td>
+       <strong>remark-julia-style</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method.html#remark-julia-style"><code class="xref">remark-julia-style</code></a> <em>(docs/newtons-method)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-multiple-dispatch-polyfit"><td></td><td>
+       <strong>remark-multiple-dispatch-polyfit</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/least-squares-fitting.html#remark-multiple-dispatch-polyfit"><code class="xref">remark-multiple-dispatch-polyfit</code></a> <em>(docs/least-squares-fitting)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-other-matrix-norms"><td></td><td>
+       <strong>remark-other-matrix-norms</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-5-error-bounds-condition-numbers.html#remark-other-matrix-norms"><code class="xref">remark-other-matrix-norms</code></a> <em>(docs/linear-equations-5-error-bounds-condition-numbers)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-positive-definite-also-works"><td></td><td>
+       <strong>remark-positive-definite-also-works</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-3-lu-factorization.html#remark-positive-definite-also-works"><code class="xref">remark-positive-definite-also-works</code></a> <em>(docs/linear-equations-3-lu-factorization)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-positive-definite-matrices-also-work"><td></td><td>
+       <strong>remark-positive-definite-matrices-also-work</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#remark-positive-definite-matrices-also-work"><code class="xref">remark-positive-definite-matrices-also-work</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-remark-vector-derivative notation"><td></td><td>
+       <strong>remark-vector-derivative notation</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/newtons-method-for-systems-intro.html#remark-vector-derivative notation"><code class="xref">remark-vector-derivative notation</code></a> <em>(docs/newtons-method-for-systems-intro)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-richardson-forward-differences"><td></td><td>
+       <strong>richardson-forward-differences</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/richardson-extrapolation.html#richardson-forward-differences"><code class="xref">richardson-forward-differences</code></a> <em>(docs/richardson-extrapolation)</em></td><td>
+       <em>example</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-richardson0n-to-kn"><td></td><td>
+       <strong>richardson0n-to-kn</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/richardson-extrapolation.html#richardson0n-to-kn"><code class="xref">richardson0n-to-kn</code></a> <em>(docs/richardson-extrapolation)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-rkf"><td></td><td>
+       <strong>rkf</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-5-error-control.html#rkf"><code class="xref">rkf</code></a> <em>(docs/ODE-IVP-5-error-control)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-robust"><td></td><td>
+       <strong>robust</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/machine-numbers-rounding-error-and-error-propagation.html#robust"><code class="xref">robust</code></a> <em>(docs/machine-numbers-rounding-error-and-error-propagation)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-romberg-integration"><td></td><td>
+       <strong>romberg-integration</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-4-romberg-integration.html#romberg-integration"><code class="xref">romberg-integration</code></a> <em>(docs/integrals-4-romberg-integration)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-runge-kutta"><td></td><td>
+       <strong>runge-kutta</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-2-Runge-Kutta.html#runge-kutta"><code class="xref">runge-kutta</code></a> <em>(docs/ODE-IVP-2-Runge-Kutta)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-secant-method"><td></td><td>
+       <strong>secant-method</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/root-finding-without-derivatives.html#secant-method"><code class="xref">secant-method</code></a> <em>(docs/root-finding-without-derivatives)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-separatrices"><td></td><td>
+       <strong>separatrices</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#separatrices"><code class="xref">separatrices</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-stiffness"><td></td><td>
+       <strong>stiffness</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-0-background-examples.html#stiffness"><code class="xref">stiffness</code></a> <em>(docs/ODE-IVP-0-background-examples)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-super-linear"><td></td><td>
+       <strong>super-linear</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/error-measures-convergence-rates.html#super-linear"><code class="xref">super-linear</code></a> <em>(docs/error-measures-convergence-rates)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-swapping-values-in-julia"><td></td><td>
+       <strong>swapping-values-in-julia</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-2-pivoting.html#swapping-values-in-julia"><code class="xref">swapping-values-in-julia</code></a> <em>(docs/linear-equations-2-pivoting)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-taylors-theorem-a"><td></td><td>
+       <strong>taylors-theorem-a</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/taylors-theorem.html#taylors-theorem-a"><code class="xref">taylors-theorem-a</code></a> <em>(docs/taylors-theorem)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-taylors-theorem-h"><td></td><td>
+       <strong>taylors-theorem-h</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/taylors-theorem.html#taylors-theorem-h"><code class="xref">taylors-theorem-h</code></a> <em>(docs/taylors-theorem)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-1"><td></td><td>
+       <strong>theorem-1</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/derivatives-and-the-method-of-undetermined-coefficents.html#theorem-1"><code class="xref">theorem-1</code></a> <em>(docs/derivatives-and-the-method-of-undetermined-coefficents)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-Crout-SDD"><td></td><td>
+       <strong>theorem-Crout-SDD</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-3-lu-factorization.html#theorem-Crout-SDD"><code class="xref">theorem-Crout-SDD</code></a> <em>(docs/linear-equations-3-lu-factorization)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-LU-SDD"><td></td><td>
+       <strong>theorem-LU-SDD</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-3-lu-factorization.html#theorem-LU-SDD"><code class="xref">theorem-LU-SDD</code></a> <em>(docs/linear-equations-3-lu-factorization)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-collocation"><td></td><td>
+       <strong>theorem-collocation</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#theorem-collocation"><code class="xref">theorem-collocation</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-gaus-seidel-convergence"><td></td><td>
+       <strong>theorem-gaus-seidel-convergence</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-6-iterative-methods.html#theorem-gaus-seidel-convergence"><code class="xref">theorem-gaus-seidel-convergence</code></a> <em>(docs/linear-equations-6-iterative-methods)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-jacobi-convergence"><td></td><td>
+       <strong>theorem-jacobi-convergence</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-6-iterative-methods.html#theorem-jacobi-convergence"><code class="xref">theorem-jacobi-convergence</code></a> <em>(docs/linear-equations-6-iterative-methods)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-loss-of-precision"><td></td><td>
+       <strong>theorem-loss-of-precision</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/machine-numbers-rounding-error-and-error-propagation.html#theorem-loss-of-precision"><code class="xref">theorem-loss-of-precision</code></a> <em>(docs/machine-numbers-rounding-error-and-error-propagation)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-matrix-iteration-convergence"><td></td><td>
+       <strong>theorem-matrix-iteration-convergence</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-6-iterative-methods.html#theorem-matrix-iteration-convergence"><code class="xref">theorem-matrix-iteration-convergence</code></a> <em>(docs/linear-equations-6-iterative-methods)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-no-pivoting-columnwise-sdd"><td></td><td>
+       <strong>theorem-no-pivoting-columnwise-sdd</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-2-pivoting.html#theorem-no-pivoting-columnwise-sdd"><code class="xref">theorem-no-pivoting-columnwise-sdd</code></a> <em>(docs/linear-equations-2-pivoting)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-theorem-row-reduction-preserves-sdd"><td></td><td>
+       <strong>theorem-row-reduction-preserves-sdd</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-1-row-reduction.html#theorem-row-reduction-preserves-sdd"><code class="xref">theorem-row-reduction-preserves-sdd</code></a> <em>(docs/linear-equations-1-row-reduction)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-to-do-Installing"><td></td><td>
+       <strong>to-do-Installing</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/installing-julia-and-packages.html#to-do-Installing"><code class="xref">to-do-Installing</code></a> <em>(docs/installing-julia-and-packages)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-trapezoid-rule-error"><td></td><td>
+       <strong>trapezoid-rule-error</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/integrals-1-building-blocks.html#trapezoid-rule-error"><code class="xref">trapezoid-rule-error</code></a> <em>(docs/integrals-1-building-blocks)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-trapezoid-step-size"><td></td><td>
+       <strong>trapezoid-step-size</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/ODE-IVP-5-error-control.html#trapezoid-step-size"><code class="xref">trapezoid-step-size</code></a> <em>(docs/ODE-IVP-5-error-control)</em></td><td>
+       <em>algorithm</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-triangular-matrix"><td></td><td>
+       <strong>triangular-matrix</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-3-lu-factorization.html#triangular-matrix"><code class="xref">triangular-matrix</code></a> <em>(docs/linear-equations-3-lu-factorization)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-uniformly-contracting"><td></td><td>
+       <strong>uniformly-contracting</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/fixed-point-iteration.html#uniformly-contracting"><code class="xref">uniformly-contracting</code></a> <em>(docs/fixed-point-iteration)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-vector-valued-contraction-mapping-theorem"><td></td><td>
+       <strong>vector-valued-contraction-mapping-theorem</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/linear-equations-6-iterative-methods.html#vector-valued-contraction-mapping-theorem"><code class="xref">vector-valued-contraction-mapping-theorem</code></a> <em>(docs/linear-equations-6-iterative-methods)</em></td><td>
+       <em>theorem</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-vectorization-broadcasting-in-julia"><td></td><td>
+       <strong>vectorization-broadcasting-in-julia</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#vectorization-broadcasting-in-julia"><code class="xref">vectorization-broadcasting-in-julia</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>remark</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-well-posed"><td></td><td>
+       <strong>well-posed</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/machine-numbers-rounding-error-and-error-propagation.html#well-posed"><code class="xref">well-posed</code></a> <em>(docs/machine-numbers-rounding-error-and-error-propagation)</em></td><td>
+       <em>definition</em></td></tr>
+     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
+     <tr class="cap" id="cap-zip-in-julia"><td></td><td>
+       <strong>zip-in-julia</strong></td><td></td></tr>
+     <tr>
+       <td></td>
+       <td>
+       <a href="docs/polynomial-collocation%2Bapproximation.html#zip-in-julia"><code class="xref">zip-in-julia</code></a> <em>(docs/polynomial-collocation+approximation)</em></td><td>
+       <em>remark</em></td></tr>
+   </table>
+
+
+              </div>
+              
+            </main>
+            <footer class="footer-article noprint">
+                
+    <!-- Previous / next buttons -->
+<div class='prev-next-area'>
+</div>
+            </footer>
+        </div>
+    </div>
+    <div class="footer-content row">
+        <footer class="col footer"><p>
+  
+    By Brenton LeMesurier (College of Charleston, South Carolina) with contributions from Stephen Roberts (Australian National University).<br/>
+  
+      &copy; Copyright 2021–2022.<br/>
+</p>
+        </footer>
+    </div>
+    
+</div>
+
+
+      </div>
+    </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/pydata-sphinx-theme.js?digest=1999514e3f237ded88cf"></script>
+
+
+  </body>
+</html>
